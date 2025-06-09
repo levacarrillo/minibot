@@ -3,7 +3,7 @@
 #define UTILITIES_HPP
 
 
-movement_ generate_action(Direction direction, MovementParams movement) {
+movement_ generate_movement(Direction direction, MovementParams movement) {
     movement_ output;
 
     switch(direction) {

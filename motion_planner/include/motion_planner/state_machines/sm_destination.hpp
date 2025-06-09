@@ -23,47 +23,47 @@ bool sm_destination(LightSensorsData light_data, MovementParams *params, movemen
     switch (state) {
         case 1: // SM STATE: CHECK FOR THRESHOLD REACHED
             if (intensity > THRESHOLD_DEST) {
-                *movement = generate_action(NEUTRAL, *params);
+                *movement = generate_movement(NEUTRAL, *params);
                 std::cout << "\n ****************** Motion Planner: .-> Reached light source ***************\n" << std::endl;
                 params->state = 1;
                 return false; // CONTINUE RUNNING: FALSE
             } else {
-                *movement = generate_action(FORWARD, *params);
+                *movement = generate_movement(FORWARD, *params);
                 params->state = 2;
             }
             break;
         
         case 2: // SM STATE: CHECK FOR DESTINATION
             if (light_direction == BACKWARD_RIGHT) {
-                *movement = generate_action(RIGHT, *params);
+                *movement = generate_movement(RIGHT, *params);
                 params->state = 3;
             } else if (light_direction == BACKWARD_LEFT) {
-                *movement = generate_action(LEFT, *params);
+                *movement = generate_movement(LEFT, *params);
                 params->state = 4;
             } else if (light_direction == FORWARD_RIGHT) {
-                *movement = generate_action(FORWARD, *params);
+                *movement = generate_movement(FORWARD, *params);
                 params->state = 3;
             } else if (light_direction == FORWARD_LEFT) {
-                *movement = generate_action(FORWARD, *params);
+                *movement = generate_movement(FORWARD, *params);
                 params->state = 4;
             } else if (light_direction == FORWARD) {
-                *movement = generate_action(FORWARD, *params);
+                *movement = generate_movement(FORWARD, *params);
                 params->state = 1;
             }
             break;
         
         case 3: // SM STATE: TURN RIGHT
-            *movement = generate_action(RIGHT, *params);
+            *movement = generate_movement(RIGHT, *params);
             params->state = 1;
             break;
         
         case 4: // SM STATE: TURN LEFT
-            *movement = generate_action(LEFT, *params);
+            *movement = generate_movement(LEFT, *params);
             params->state = 1;
             break;
         
         default:
-            *movement = generate_action(NEUTRAL, *params);
+            *movement = generate_movement(NEUTRAL, *params);
             params->state = 1;
             break;
     }
