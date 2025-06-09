@@ -3,8 +3,8 @@
 #define UTILITIES_HPP
 
 
-movement_ generate_movement(Direction direction, MovementParams movement) {
-    movement_ output;
+Movement generate_movement(Direction direction, MovementParams movement) {
+    Movement output;
 
     switch(direction) {
         case NO_DIRECTION:

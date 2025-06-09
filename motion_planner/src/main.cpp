@@ -17,12 +17,13 @@ int main(int argc, char *argv[]) {
     bool behavior_runnig = node->behavior_is_running();
 
     if(behavior_runnig) {
-      movement_ movement;
+      Movement movement;
       RCLCPP_INFO(node->get_logger(), "\n \n  MOTION PLANNER \n____________________________\n");
       node->print_selected_behavior();
       Behaviors behavior = node->get_selected_behavior();
       MovementParams movement_params = node->get_movement_params();
       LightSensorsData light_data = node->get_light_sensors_data();
+      LaserSensorData laser_data  = node->get_laser_sensor_data();
       
       bool valid_behavior = false;
 

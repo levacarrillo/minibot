@@ -33,10 +33,10 @@ const std::map<std::string, Behaviors> behavior_names = {
     {"USER_SM", USER_SM},
 };
 
-typedef struct movement {
+typedef struct Movement_ {
     float twist;
     float advance;
-} movement_;
+} Movement;
 
 typedef struct LightSensorsData_ {
     std::array<float, 8> light_readings;
@@ -45,6 +45,12 @@ typedef struct LightSensorsData_ {
     float light_sensor_max;
     float light_threshold;
 } LightSensorsData;
+
+typedef struct LaserSensorData_ {
+    std::array<float, 512> laser_readings;
+    Direction obstacle_direction;
+    float laser_threshold;
+} LaserSensorData;
 
 typedef struct MovementParams_ {
     float max_advance;

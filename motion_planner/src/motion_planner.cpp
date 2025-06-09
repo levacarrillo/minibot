@@ -12,9 +12,11 @@ MotionPlanner::MotionPlanner() : Node("motion_planner") {
   this->declare_parameter("max_advance", this->movement_params.max_advance);
   this->declare_parameter("max_turn_angle", this->movement_params.max_turn_angle);
   this->declare_parameter("light_threshold", this->light_sensors_data.light_threshold);
+  this->declare_parameter("laser_threshold", this->laser_sensor_data.laser_threshold);
   
-  this->light_readings_client = this->create_client<GetLightReadings>("get_light_readings");
+  this->laser_readings_client = this->create_client<GetScan>("get_scan");
   this->go_to_pose_client = rclcpp_action::create_client<GoToPose>(this, "go_to_pose");
+  this->light_readings_client = this->create_client<GetLightReadings>("get_light_readings");
 
   timer_ = this->create_wall_timer(
     1000ms, std::bind(&MotionPlanner::timer_callback, this));
@@ -26,6 +28,7 @@ void MotionPlanner::timer_callback() {
   this->movement_params.max_advance = this->get_parameter("max_advance").as_double();
   this->movement_params.max_turn_angle = this->get_parameter("max_turn_angle").as_double();
   this->light_sensors_data.light_threshold = this->get_parameter("light_threshold").as_double();
+  this->laser_sensor_data.laser_threshold  = this->get_parameter("laser_threshold").as_double();
 }
 
 bool MotionPlanner::behavior_is_running() {
@@ -76,7 +79,24 @@ LightSensorsData MotionPlanner::get_light_sensors_data() {
   return this->light_sensors_data;
 }
 
-void MotionPlanner::move_robot(movement_ movement) {
+LaserSensorData MotionPlanner::get_laser_sensor_data() {
+  while(!this->laser_readings_client->wait_for_service(1s)) {
+    RCLCPP_WARN(this->get_logger(), "SERVICE /get_scan NOT AVAILABLE, WAITING AGAIN...");   
+  }
+  auto request = std::make_shared<GetScan::Request>();
+  auto result = this->laser_readings_client->async_send_request(request);
+  if (rclcpp::spin_until_future_complete(this->get_node_base_interface(), result) == rclcpp::FutureReturnCode::SUCCESS) {
+    auto response = result.get();
+    // this->laser_sensor_data.laser_readings = response->scan;
+    this->laser_sensor_data.obstacle_direction = get_obstacle_direction(this->laser_sensor_data);
+  } else {
+    RCLCPP_ERROR(this->get_logger(), "FAILED TO CALL SERVICE /get_scan");
+  }
+
+  return this->laser_sensor_data;
+}
+
+void MotionPlanner::move_robot(Movement movement) {
   while(!this->go_to_pose_client->wait_for_action_server(1s)) {
     RCLCPP_WARN(this->get_logger(), "ACTION SERVER /go_to_pose NOT AVAILABLE AFTER WAITING, RETRYING...");
   }

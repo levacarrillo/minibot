@@ -13,7 +13,7 @@
 ************************************************/
 
 
-bool sm_destination(LightSensorsData light_data, MovementParams *params, movement_ *movement) {
+bool sm_destination(LightSensorsData light_data, MovementParams *params, Movement *movement) {
 
     int state = params->state;
     float intensity = light_data.light_sensor_max;

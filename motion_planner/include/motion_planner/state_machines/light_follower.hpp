@@ -13,7 +13,7 @@
 ************************************************/
 
 
-bool light_follower(LightSensorsData light_data, MovementParams params, movement_ *movement) {
+bool light_follower(LightSensorsData light_data, MovementParams params, Movement *movement) {
     
     int sensor_max_value = 0;
 

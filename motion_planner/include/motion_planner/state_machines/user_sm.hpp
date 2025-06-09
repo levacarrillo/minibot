@@ -13,7 +13,7 @@
 ************************************************/
 
 
-bool user_sm(LightSensorsData light_data, MovementParams m, movement_ *movement) {
+bool user_sm(LightSensorsData light_data, MovementParams m, Movement *movement) {
     int sensor_max_value = 0;
     
     bool continue_running;
