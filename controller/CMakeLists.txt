@@ -14,8 +14,8 @@ find_package(rclcpp_action REQUIRED)
 add_executable(line_follower src/line_follower.cpp)
 ament_target_dependencies(line_follower rclcpp geometry_msgs)
 
-add_executable(move_robot src/move_robot.cpp)
-ament_target_dependencies(move_robot rclcpp geometry_msgs)
+add_executable(move_in_circles src/move_in_circles.cpp)
+ament_target_dependencies(move_in_circles rclcpp geometry_msgs)
 
 add_executable(pose_commander_action_server src/pose_commander_action_server.cpp)
 ament_target_dependencies(pose_commander_action_server rclcpp geometry_msgs interfaces rclcpp_action)
@@ -23,7 +23,7 @@ ament_target_dependencies(pose_commander_action_server rclcpp geometry_msgs inte
 
 install(TARGETS
   line_follower
-  move_robot
+  move_in_circles
   pose_commander_action_server
   DESTINATION lib/${PROJECT_NAME}
 )

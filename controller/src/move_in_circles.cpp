@@ -1,17 +1,17 @@
 #include "rclcpp/rclcpp.hpp"
 #include "geometry_msgs/msg/twist.hpp"
 
-class MoveRobot : public rclcpp::Node {
+class MoveInCircles : public rclcpp::Node {
 public:
-    MoveRobot()
-    : Node("move_robot")
+    MoveInCircles()
+    : Node("move_in_circles")
     {
         publisher_ = this->create_publisher<geometry_msgs::msg::Twist>("/cmd_vel", 10);
         timer_ = this->create_wall_timer(
             std::chrono::milliseconds(500),
-            std::bind(&MoveRobot::publish_velocity, this)
+            std::bind(&MoveInCircles::publish_velocity, this)
         );
-        RCLCPP_INFO(this->get_logger(), "Initializing move_robot node...");
+        RCLCPP_INFO(this->get_logger(), "Initializing move_in_circles node...");
     }
 
 private:
@@ -22,7 +22,7 @@ private:
         msg.angular.z = 0.5;
 
         publisher_->publish(msg);
-        RCLCPP_INFO(this->get_logger(), "Publishing: linear.x=%.2f, angular.z=%.2f", msg.linear.x, msg.angular.z);
+        RCLCPP_INFO(this->get_logger(), "PUBLISHING: linear.x=%.2f, angular.z=%.2f", msg.linear.x, msg.angular.z);
     }
 
     rclcpp::Publisher<geometry_msgs::msg::Twist>::SharedPtr publisher_;
@@ -32,7 +32,7 @@ private:
 int main(int argc, char * argv[])
 {
     rclcpp::init(argc, argv);
-    rclcpp::spin(std::make_shared<MoveRobot>());
+    rclcpp::spin(std::make_shared<MoveInCircles>());
     rclcpp::shutdown();
     return 0;
 }
