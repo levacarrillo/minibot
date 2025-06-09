@@ -23,7 +23,7 @@ bool sm_destination(LightSensorsData light_data, MovementParams *params, movemen
     switch (state) {
         case 1: // SM STATE: CHECK FOR THRESHOLD REACHED
             if (intensity > THRESHOLD_DEST) {
-                *movement = generate_movement(NEUTRAL, *params);
+                *movement = generate_movement(NO_DIRECTION, *params);
                 std::cout << "\n ****************** Motion Planner: .-> Reached light source ***************\n" << std::endl;
                 params->state = 1;
                 return false; // CONTINUE RUNNING: FALSE
@@ -63,7 +63,7 @@ bool sm_destination(LightSensorsData light_data, MovementParams *params, movemen
             break;
         
         default:
-            *movement = generate_movement(NEUTRAL, *params);
+            *movement = generate_movement(NO_DIRECTION, *params);
             params->state = 1;
             break;
     }

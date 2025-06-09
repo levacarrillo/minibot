@@ -7,7 +7,7 @@ movement_ generate_movement(Direction direction, MovementParams movement) {
     movement_ output;
 
     switch(direction) {
-        case NEUTRAL:
+        case NO_DIRECTION:
             output.twist   = 0.0f;
             output.advance = 0.0f;
             break;

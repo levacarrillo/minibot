@@ -16,11 +16,11 @@ enum Direction {
     FORWARD_RIGHT,
     FORWARD_LEFT,
     LEFT,
-    NEUTRAL,
     RIGHT,
     BACKWARD,
     BACKWARD_LEFT,
-    BACKWARD_RIGHT
+    BACKWARD_RIGHT,
+    NO_DIRECTION
 };
 
 const std::map<std::string, Behaviors> behavior_names = {
