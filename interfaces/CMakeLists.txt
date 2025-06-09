@@ -12,7 +12,6 @@ find_package(sensor_msgs REQUIRED)
 
 rosidl_generate_interfaces(${PROJECT_NAME}
   "srv/GetScan.srv"
-  "srv/GoToPose.srv"
   "srv/GetLightReadings.srv"
   "action/GoToPose.action"
   DEPENDENCIES sensor_msgs
