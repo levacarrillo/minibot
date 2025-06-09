@@ -24,7 +24,8 @@ int main(int argc, char *argv[]) {
       MovementParams movement_params = node->get_movement_params();
       LightSensorsData light_data = node->get_light_sensors_data();
       LaserSensorData laser_data  = node->get_laser_sensor_data();
-      
+
+
       bool valid_behavior = false;
 
       switch(behavior) {

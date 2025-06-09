@@ -23,8 +23,8 @@ std::vector<std::string> get_behavior_list() {
 Direction get_obstacle_direction(LaserSensorData scan_data) {
   bool obstacle_right = false;
   bool obstacle_left  = false;
-  int aux = 0;
 
+  int aux = 0;
   if (scan_data.laser_readings.size() % 2 != 0 ) {
     aux = 1;
     if (scan_data.laser_readings[scan_data.laser_readings.size() - aux / 2] < scan_data.laser_threshold) {
@@ -32,12 +32,13 @@ Direction get_obstacle_direction(LaserSensorData scan_data) {
     }
   }
 
-  for (int i=0; scan_data.laser_readings.size() - aux / 2; i++) {
+  for (size_t i=0; (i<((scan_data.laser_readings.size() - aux) / 2) - 1); i++) {
     if (scan_data.laser_readings[i] < scan_data.laser_threshold) {
       obstacle_right = true;
     }
   }
-  for (int i=scan_data.laser_readings.size() - aux / 2; (i=scan_data.laser_readings.size()); i++) {
+
+  for (size_t i=((scan_data.laser_readings.size() - aux) / 2) + aux; (i<scan_data.laser_readings.size()); i++) {
     if (scan_data.laser_readings[i] < scan_data.laser_threshold) {
       obstacle_left = true;
     }
