@@ -1,10 +1,10 @@
 /***********************************************
 *                                              *
-*      light_follower.hpp                      *
+*      sm_avoid_obstacles.hpp                  *
 *                                              *
 *      Diego Cordero                           *
 *      Jesus Savage			                   *
-*					                           *
+*	   Luis González                           *
 *                                              *
 *              Bio-Robotics Laboratory         *
 *              UNAM, 2019                      *
@@ -13,7 +13,7 @@
 ************************************************/
 
 
-bool sm_avoid_obstacles(LightSensorsData light_data, MovementParams m, Movement *movement) {
+void sm_avoid_obstacles(LightSensorsData light_data, LaserSensorData laser_data, MovementParams m, Movement *movement) {
     int sensor_max_value = 0;
     
     bool continue_running;
@@ -27,7 +27,7 @@ bool sm_avoid_obstacles(LightSensorsData light_data, MovementParams m, Movement 
     if(intensity > THRESHOLD_DEST) {
         movement->twist   = 0.0;
         movement->advance = 0.0;
-        std::cout << "\n ****************** Motion Planner: light_follower.-> Reached light source ***************\n" << std::endl;
+        std::cout << "\n ****************** Motion Planner: sm_avoid_obstacles.-> Reached light source ***************\n" << std::endl;
         continue_running = false;
     } else {
 
@@ -43,6 +43,4 @@ bool sm_avoid_obstacles(LightSensorsData light_data, MovementParams m, Movement 
         movement->advance = max_advance;
         continue_running = true;
     }
-
-    return continue_running;
 }

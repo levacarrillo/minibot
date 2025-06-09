@@ -43,17 +43,17 @@ int main(int argc, char *argv[]) {
         break;
         
         case SM_AVOID_OBSTACLES:
-          behavior_runnig = sm_avoid_obstacles(light_data, movement_params, &movement);
+          sm_avoid_obstacles(light_data, laser_data, movement_params, &movement);
           valid_behavior = true;
         break;
         
         case SM_AVOIDANCE_DESTINATION:
-          behavior_runnig = sm_avoidance_destination(light_data, movement_params, &movement);
+          behavior_runnig = sm_avoidance_destination(light_data, laser_data, movement_params, &movement);
           valid_behavior = true;
         break;
 
         case USER_SM:
-          behavior_runnig = user_sm(light_data, movement_params, &movement);
+          behavior_runnig = user_sm(light_data, laser_data, movement_params, &movement);
           valid_behavior = true;
         break;
         

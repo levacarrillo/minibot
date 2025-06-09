@@ -1,10 +1,10 @@
 /***********************************************
 *                                              *
-*      light_follower.hpp                      *
+*      user_sm.hpp                             *
 *                                              *
-*      Diego Cordero                           *
 *      Jesus Savage			                   *
-*					                           *
+*      Diego Cordero                           *
+*	   Luis González                           *
 *                                              *
 *              Bio-Robotics Laboratory         *
 *              UNAM, 2019                      *
@@ -13,7 +13,7 @@
 ************************************************/
 
 
-bool user_sm(LightSensorsData light_data, MovementParams m, Movement *movement) {
+bool user_sm(LightSensorsData light_data, LaserSensorData laser_data, MovementParams m, Movement *movement) {
     int sensor_max_value = 0;
     
     bool continue_running;
@@ -27,7 +27,7 @@ bool user_sm(LightSensorsData light_data, MovementParams m, Movement *movement) 
     if(intensity > THRESHOLD_FOLLOWER) {
         movement->twist   = 0.0;
         movement->advance = 0.0;
-        std::cout << "\n ****************** Motion Planner: light_follower.-> Reached light source ***************\n" << std::endl;
+        std::cout << "\n ****************** Motion Planner: user_sm.-> Reached light source ***************\n" << std::endl;
         continue_running = false;
     } else {
 

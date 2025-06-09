@@ -1,10 +1,10 @@
 /***********************************************
 *                                              *
-*      state_machine_destination.h             *
+*      sm_destination.hpp                      *
 *                                              *
-*      Diego Cordero                           *
 *      Jesus Savage			                   *
-*					                           *
+*      Diego Cordero                           *
+*	   Luis González                           *
 *                                              *
 *              Bio-Robotics Laboratory         *
 *              UNAM, 2019                      *
@@ -24,7 +24,7 @@ bool sm_destination(LightSensorsData light_data, MovementParams *params, Movemen
         case 1: // SM STATE: CHECK FOR THRESHOLD REACHED
             if (intensity > THRESHOLD_DEST) {
                 *movement = generate_movement(NONE, *params);
-                std::cout << "\n ****************** Motion Planner: .-> Reached light source ***************\n" << std::endl;
+                std::cout << "\n ****************** Motion Planner: sm_destination.-> Reached light source ***************\n" << std::endl;
                 params->state = 1;
                 return false; // CONTINUE RUNNING: FALSE
             } else {

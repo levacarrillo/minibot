@@ -2,9 +2,9 @@
 *                                              *
 *      light_follower.hpp                      *
 *                                              *
-*      Diego Cordero                           *
 *      Jesus Savage			                   *
-*					                           *
+*      Diego Cordero                           *
+*	   Luis González                           *
 *                                              *
 *              Bio-Robotics Laboratory         *
 *              UNAM, 2019                      *
