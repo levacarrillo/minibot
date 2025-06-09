@@ -19,8 +19,8 @@ int main(int argc, char *argv[]) {
     if(behavior_runnig) {
       movement_ movement;
       RCLCPP_INFO(node->get_logger(), "\n \n  MOTION PLANNER \n____________________________\n");
-      node->show_behavior_selected();
-      Behaviors behavior = node->get_behavior_selected();
+      node->print_selected_behavior();
+      Behaviors behavior = node->get_selected_behavior();
       MovementParams movement_params = node->get_movement_params();
       LightSensorsData light_data = node->get_light_sensors_data();
       

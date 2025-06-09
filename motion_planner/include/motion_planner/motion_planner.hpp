@@ -20,16 +20,16 @@ class MotionPlanner : public rclcpp::Node {
     void stop_behavior();
     bool behavior_is_running();
     void move_robot(movement_);
-    void show_behavior_selected();
+    void print_selected_behavior();
     
-    Behaviors get_behavior_selected();
+    Behaviors get_selected_behavior();
     MovementParams get_movement_params();
     LightSensorsData get_light_sensors_data();
 
   private:
     movement_ stop;
     bool behavior_running;
-    std::string behavior_selected;    
+    std::string selected_behavior;    
     MovementParams movement_params;
     LightSensorsData light_sensors_data;
     rclcpp::TimerBase::SharedPtr timer_;

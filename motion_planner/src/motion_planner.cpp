@@ -6,7 +6,7 @@ MotionPlanner::MotionPlanner() : Node("motion_planner") {
 
   RCLCPP_INFO(this->get_logger(), "INITIALIZING MOTION_PLANNER NODE...");
 
-  this->declare_parameter("behavior", this->behavior_selected);
+  this->declare_parameter("behavior", this->selected_behavior);
   this->declare_parameter("run_behavior", this->behavior_running);
   this->declare_parameter("behavior_list", get_behavior_list());
   this->declare_parameter("max_advance", this->movement_params.max_advance);
@@ -21,7 +21,7 @@ MotionPlanner::MotionPlanner() : Node("motion_planner") {
 }
 
 void MotionPlanner::timer_callback() {
-  this->behavior_selected = this->get_parameter("behavior").as_string();
+  this->selected_behavior = this->get_parameter("behavior").as_string();
   this->behavior_running  = this->get_parameter("run_behavior").as_bool();
   this->movement_params.max_advance = this->get_parameter("max_advance").as_double();
   this->movement_params.max_turn_angle = this->get_parameter("max_turn_angle").as_double();
@@ -38,15 +38,15 @@ void MotionPlanner::stop_behavior() {
   this->move_robot(this->stop);
 }
 
-void MotionPlanner::show_behavior_selected() {
-  if (this->behavior_selected == "")
+void MotionPlanner::print_selected_behavior() {
+  if (this->selected_behavior == "")
     RCLCPP_WARN(this->get_logger(), "NO BEHAVIOR SELECTED");
   else
-    RCLCPP_INFO(this->get_logger(), "BEHAVIOR SELECTED->%s", this->behavior_selected.c_str());
+    RCLCPP_INFO(this->get_logger(), "BEHAVIOR SELECTED->%s", this->selected_behavior.c_str());
 }
 
-Behaviors MotionPlanner::get_behavior_selected() {
-  return find_behavior(this->behavior_selected);
+Behaviors MotionPlanner::get_selected_behavior() {
+  return find_behavior(this->selected_behavior);
 }
 
 MovementParams MotionPlanner::get_movement_params() {
