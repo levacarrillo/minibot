@@ -2,35 +2,35 @@
 #define STRUCTURES__HPP
 
 enum Behaviors {
-    NONE,
+    USER_SM,
     UNKNOWN,
+    NO_SELECTED,
     LIGHT_FOLLOWER,
     SM_DESTINATION,
     SM_AVOID_OBSTACLES,
-    SM_AVOIDANCE_DESTINATION,
-    USER_SM
+    SM_AVOIDANCE_DESTINATION
 };
 
 enum Direction {
-    FORWARD,
-    FORWARD_RIGHT,
-    FORWARD_LEFT,
     LEFT,
     RIGHT,
+    FORWARD,
     BACKWARD,
+    FORWARD_RIGHT,
+    FORWARD_LEFT,
     BACKWARD_LEFT,
     BACKWARD_RIGHT,
-    NO_DIRECTION
+    NONE
 };
 
 const std::map<std::string, Behaviors> behavior_names = {
-    {"", NONE},
+    {"", NO_SELECTED},
+    {"USER_SM", USER_SM},
     {"UNKNOWN", UNKNOWN},
     {"LIGHT_FOLLOWER", LIGHT_FOLLOWER},
     {"SM_DESTINATION", SM_DESTINATION},
     {"SM_AVOID_OBSTACLES", SM_AVOID_OBSTACLES},
-    {"SM_AVOIDANCE_DESTINATION", SM_AVOIDANCE_DESTINATION},
-    {"USER_SM", USER_SM},
+    {"SM_AVOIDANCE_DESTINATION", SM_AVOIDANCE_DESTINATION}
 };
 
 typedef struct Movement_ {

@@ -28,7 +28,7 @@ int main(int argc, char *argv[]) {
       bool valid_behavior = false;
 
       switch(behavior) {
-        case NONE:
+        case NO_SELECTED:
           valid_behavior = false;
         break;
         

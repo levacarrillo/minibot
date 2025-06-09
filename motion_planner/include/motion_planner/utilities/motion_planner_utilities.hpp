@@ -47,7 +47,7 @@ Direction get_obstacle_direction(LaserSensorData scan_data) {
   if (obstacle_left)  return FORWARD_LEFT;
   if (obstacle_right) return FORWARD_RIGHT;
 
-  return NO_DIRECTION;
+  return NONE;
 }
 
 Direction get_light_direction(std::array<float, 8> light_readings) {
