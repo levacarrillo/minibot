@@ -1,0 +1,15 @@
+# Ignore everything
+*
+
+# But these files
+!.gitignore
+
+# And these subdirectories
+!motion_planner/
+!motion_planner/*.hpp
+
+!motion_planner/state_machines/
+!motion_planner/state_machines/*.hpp
+
+!motion_planner/utilities/
+!motion_planner/utilities/*.hpp

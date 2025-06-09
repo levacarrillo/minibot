@@ -1,0 +1,26 @@
+# Ignore everything
+*
+
+# But these files
+!.gitignore
+!CMakeLists.txt
+!package.xml
+
+# And these subdirectories
+!include/
+!include/hardware/
+
+!launch/
+!launch/*.py
+!launch/*.launch
+
+!rviz/
+!rviz/*.rviz
+
+!src/
+!src/*.cpp
+
+!urdf/
+!urdf/*.xml
+!urdf/*.urdf
+!urdf/*.xacro

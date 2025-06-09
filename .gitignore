@@ -1,0 +1,12 @@
+# Ignore everything
+*
+
+# But these files
+!.gitignore
+
+# And these subdirectories
+!controller/
+!hardware/
+!interfaces/
+!mobile_base/
+!motion_planner/

@@ -1,0 +1,17 @@
+# Ignore everything
+*
+
+# But these files
+!.gitignore
+!CMakeLists.txt
+!package.xml
+
+# And these subdirectories
+!action/
+!action/*.action
+
+!include/
+!include/interfaces/
+
+!srv/
+!srv/*.srv

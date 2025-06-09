@@ -1,0 +1,20 @@
+# Ignore everything
+*
+
+# But these files
+!.gitignore
+!CMakeLists.txt
+!package.xml
+
+# And these subdirectories
+!config/
+!config/*.yaml
+
+!include/
+
+!launch/
+!launch/*.py
+!launch/*.launch
+
+!src/
+!src/*.cpp

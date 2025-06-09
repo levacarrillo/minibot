@@ -1,0 +1,7 @@
+motion_planner:
+  ros__parameters:
+    behavior: "LIGHT_FOLLOWER"
+    run_behavior: true
+    max_advance: 1.0 # METERS
+    max_turn_angle: 1.0 # RADIANS
+    light_threshold: 2.0

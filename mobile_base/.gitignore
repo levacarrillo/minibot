@@ -1,0 +1,18 @@
+# Ignore everything
+*
+
+# But these files
+!.gitignore
+!CMakeLists.txt
+!package.xml
+
+# And these subdirectories
+!include/
+!include/mobile_base/
+
+!launch/
+!launch/*.py
+!launch/*.launch
+
+!src/
+!src/*.cpp

@@ -1,0 +1,4 @@
+---
+float32[8] readings
+int32 max_index
+float32 max_value
