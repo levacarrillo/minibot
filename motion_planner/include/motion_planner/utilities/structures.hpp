@@ -47,7 +47,7 @@ typedef struct LightSensorsData_ {
 } LightSensorsData;
 
 typedef struct LaserSensorData_ {
-    std::array<float, 512> laser_readings;
+    std::vector<float> laser_readings;
     Direction obstacle_direction;
     float laser_threshold;
 } LaserSensorData;

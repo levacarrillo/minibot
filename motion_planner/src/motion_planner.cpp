@@ -87,7 +87,7 @@ LaserSensorData MotionPlanner::get_laser_sensor_data() {
   auto result = this->laser_readings_client->async_send_request(request);
   if (rclcpp::spin_until_future_complete(this->get_node_base_interface(), result) == rclcpp::FutureReturnCode::SUCCESS) {
     auto response = result.get();
-    // this->laser_sensor_data.laser_readings = response->scan;
+    this->laser_sensor_data.laser_readings = response->scan;
     this->laser_sensor_data.obstacle_direction = get_obstacle_direction(this->laser_sensor_data);
   } else {
     RCLCPP_ERROR(this->get_logger(), "FAILED TO CALL SERVICE /get_scan");

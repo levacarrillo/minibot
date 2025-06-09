@@ -1,2 +1,2 @@
 ---
-sensor_msgs/LaserScan scan
+float32[] scan
