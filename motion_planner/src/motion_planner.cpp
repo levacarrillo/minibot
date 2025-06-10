@@ -113,28 +113,28 @@ void MotionPlanner::move_robot(Movement movement) {
   auto goal_handle_future = this->go_to_pose_client->async_send_goal(goal_msg);
 
   if (rclcpp::spin_until_future_complete(this->get_node_base_interface(), goal_handle_future) != rclcpp::FutureReturnCode::SUCCESS) {
-    RCLCPP_ERROR(this->get_logger(), "FAILED TO SEND GOAL");
+    RCLCPP_ERROR(this->get_logger(), "FAILED TO SEND MOVEMENT");
     return;
   }
 
   auto goal_handle = goal_handle_future.get();
   if (!goal_handle) {
-    RCLCPP_ERROR(this->get_logger(), "GOAL REJECTED BY SERVER");
+    RCLCPP_ERROR(this->get_logger(), "MOVEMENT REJECTED BY SERVER");
     return;
   }
 
-  RCLCPP_INFO(this->get_logger(), "GOAL ACCEPTED, WAITING FOR RESULT...");
+  // RCLCPP_INFO(this->get_logger(), "MOVEMENT ACCEPTED, WAITING FOR RESULT...");
 
   auto result_future = this->go_to_pose_client->async_get_result(goal_handle);
   if (rclcpp::spin_until_future_complete(this->get_node_base_interface(), result_future) != rclcpp::FutureReturnCode::SUCCESS) {
-    RCLCPP_ERROR(this->get_logger(), "GOAL RESULT COULDN'T BEEN GOTTEN");
+    RCLCPP_ERROR(this->get_logger(), "MOVEMENT RESULT COULDN'T BEEN FOUND");
     return;
   }
 
   auto result = result_future.get();
   if (result.code == rclcpp_action::ResultCode::SUCCEEDED) {
-    RCLCPP_INFO(this->get_logger(), "GOAL FINISHED SUCCESSFULLY");
+    RCLCPP_INFO(this->get_logger(), "MOVEMENT FINISHED SUCCESSFULLY");
   } else {
-    RCLCPP_ERROR(this->get_logger(), "GOAL FINISHED WITH AN ERROR");
+    RCLCPP_ERROR(this->get_logger(), "MOVEMENT FINISHED WITH AN ERROR");
   }
 }

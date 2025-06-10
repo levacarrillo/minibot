@@ -18,7 +18,7 @@ void sm_avoid_obstacles(LaserSensorData laser_data, MovementParams *params, Move
     int state = params->state;
     Direction obstacle_direction = laser_data.obstacle_direction;
 
-    std::cout << "______________________________________________  SM_AVOID_OBSTACLES: STATE->" << state << std::endl;
+    std::cout << "______________________________________________: SM STATE->" << state << std::endl;
     switch(state) {
 
         case 0: // SM STATE: CHECK FOR DESTINATION

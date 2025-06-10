@@ -13,36 +13,96 @@
 ************************************************/
 
 
-bool sm_avoidance_destination(LightSensorsData light_data, LaserSensorData laser_data, MovementParams m, Movement *movement) {
-    int sensor_max_value = 0;
-    
-    bool continue_running;
+bool sm_avoidance_destination(LightSensorsData light_data, LaserSensorData laser_data, MovementParams *params, Movement *movement) {
 
+    float THRESHOLD = light_data.light_threshold;
+
+    int state = params->state;
+    
     float intensity = light_data.light_sensor_max;
-    float THRESHOLD_FOLLOWER = light_data.light_threshold;
     std::array<float, 8> light_values = light_data.light_readings;
-    float max_advance = m.max_advance;
 
-
-    if(intensity > THRESHOLD_FOLLOWER) {
-        movement->twist   = 0.0;
-        movement->advance = 0.0;
-        std::cout << "\n ****************** Motion Planner: sm_avoidance_destination.-> Reached light source ***************\n" << std::endl;
-        continue_running = false;
-    } else {
-
-        for (size_t i=1; i<light_values.size(); i++) {
-            if (light_values[i] > light_values[sensor_max_value]) 
-                sensor_max_value = i;
-        }
-        if (sensor_max_value > 4) {
-            sensor_max_value = - (8 - sensor_max_value);
-        }
+    Direction light_direction = light_data.light_direction;
+    Direction obstacle_direction = laser_data.obstacle_direction;
     
-        movement->twist   = sensor_max_value * M_PI / 16;
-        movement->advance = max_advance;
-        continue_running = true;
+
+    std::cout << "______________________________________________: SM STATE->" << state << std::endl;
+    
+    switch(state) {
+
+        case 0: // SM STATE: CHECK FOR GOAL 
+            if (intensity > THRESHOLD) {
+                *movement = generate_movement(NONE, *params);
+                std::cout << "\n ****************** MOTION PLANNER: sm_avoidance_destination.-> LIGHT SOURCE REACHED ***************\n" << std::endl;
+                params->state = 0;                
+                return false; // CONTINUE RUNNING: FALSE
+            } else {
+                *movement = generate_movement(FORWARD, *params);
+                params->state = 1;
+            }
+            break;
+
+        case 1: // SM STATE: CHECK FOR OBSTACLES
+            if (obstacle_direction == NONE) {
+                *movement = generate_movement(FORWARD, *params);
+                params->state = 7;
+            } else {
+                *movement = generate_movement(NONE, *params);
+                if (obstacle_direction == FORWARD_RIGHT) params->state = 4;
+                else if (obstacle_direction == FORWARD_LEFT) params->state = 2;
+                else if (obstacle_direction == FORWARD) params->state = 6;
+            }
+            break;
+
+        case 2: // SM STATE: GO BACKWARD, OBSTACLE IN FRONT ON THE LEFT
+            *movement = generate_movement(BACKWARD, *params);
+            params->state = 3;
+            break;
+
+        case 3: // SM STATE: TURN RIGHT
+            *movement = generate_movement(RIGHT, *params);
+            params->state = 0;
+            break;
+
+        case 4: // SM STATE: GO BACKWARD, OBSTACLE IN FRONT ON THE RIGHT
+            *movement = generate_movement(BACKWARD, *params);
+            params->state = 5;
+            break;
+
+        case 5: // SM STATE: TURN LEFT
+            *movement = generate_movement(LEFT, *params);
+            params->state = 0;
+            break;
+
+        case 6: // SM STATE: GO BACKWARD, OBSTACLE IN FRONT
+            *movement = generate_movement(BACKWARD, *params);
+            params->state = 0;
+            break;
+
+        case 7: // SM STATE: CHECK FOR DESTINATION
+            if (light_direction == BACKWARD_RIGHT) {
+                *movement = generate_movement(RIGHT, *params);
+                params->state = 3;
+            } else if (light_direction == BACKWARD_LEFT) {
+                *movement = generate_movement(LEFT, *params);
+                params->state = 5;
+            } else if (light_direction == FORWARD) {
+                *movement = generate_movement(FORWARD, *params);
+                params->state = 1;
+            } else if (light_direction == FORWARD_RIGHT) {
+                *movement = generate_movement(FORWARD, *params);
+                params->state = 3;
+            } else if (light_direction == FORWARD_LEFT) {
+                *movement = generate_movement(FORWARD, *params);
+                params->state = 5;
+            }
+            break;
+
+        default:
+            *movement = generate_movement(NONE, *params);
+            params->state = 0;
+            break;
     }
 
-    return continue_running;
+    return true; // CONTINUE RUNNING: TRUE
 }

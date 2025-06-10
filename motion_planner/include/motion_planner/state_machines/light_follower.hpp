@@ -22,11 +22,10 @@ bool light_follower(LightSensorsData light_data, MovementParams params, Movement
     std::array<float, 8> light_values = light_data.light_readings;
     float max_advance = params.max_advance;
 
-
     if(intensity > THRESHOLD_FOLLOWER) {
         movement->twist   = 0.0;
         movement->advance = 0.0;
-        std::cout << "\n ****************** Motion Planner: light_follower.-> Reached light source ***************\n" << std::endl;
+        std::cout << "\n ****************** MOTION PLANNER: light_follower.-> LIGHT SOURCE REACHED ***************\n" << std::endl;
         return false; // CONTINUE RUNNING: FALSE
     }
 

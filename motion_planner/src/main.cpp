@@ -16,6 +16,7 @@ int main(int argc, char *argv[]) {
     
     bool behavior_runnig = node->behavior_is_running();
 
+
     if(behavior_runnig) {
       Movement movement;
       RCLCPP_INFO(node->get_logger(), "\n \n  MOTION PLANNER \n____________________________\n");
@@ -49,27 +50,27 @@ int main(int argc, char *argv[]) {
         break;
         
         case SM_AVOIDANCE_DESTINATION:
-          behavior_runnig = sm_avoidance_destination(light_data, laser_data, movement_params, &movement);
+          behavior_runnig = sm_avoidance_destination(light_data, laser_data, &movement_params, &movement);
           valid_behavior = true;
         break;
 
         case USER_SM:
-          behavior_runnig = user_sm(light_data, laser_data, movement_params, &movement);
+          behavior_runnig = user_sm(light_data, laser_data, &movement_params, &movement);
           valid_behavior = true;
         break;
         
         default:
-          RCLCPP_ERROR(node->get_logger(), "************* BEHAVIOR NO RECOGNIZED *************");
+          RCLCPP_ERROR(node->get_logger(), "BEHAVIOR NO RECOGNIZED");
           valid_behavior = false;
         break;
       }
 
       if (behavior_runnig && valid_behavior) {
-        // RCLCPP_INFO(node->get_logger(), "MOVEMENT: TWIST->%.2f ADVANCE->%.2f", movement.twist, movement.advance);
+        RCLCPP_INFO(node->get_logger(), "MOVEMENT: TWIST->%.2f, ADVANCE->%.2f", movement.twist, movement.advance);
         node->set_next_state(movement_params.state);
         node->move_robot(movement);
       } else {
-        RCLCPP_INFO(node->get_logger(), "\n \n  STOPPED BEHAVIOR  \n____________________________\n");
+        RCLCPP_WARN(node->get_logger(), "\n \n  BEHAVIOR STOPPED  \n____________________________\n");
         node->stop_behavior();
       }
     }
