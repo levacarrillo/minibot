@@ -3,11 +3,16 @@
 
 # But these files
 !.gitignore
+!package.xml
+!setup.cfg
+!setup.py
 
 # And these subdirectories
-!controller/
 !gui/
-!hardware/
-!interfaces/
-!mobile_base/
-!motion_planner/
+!gui/*.py
+
+!resource/
+# !resource/
+
+!test/
+!test/*.py
