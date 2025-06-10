@@ -6,11 +6,12 @@ MotionPlanner::MotionPlanner() : Node("motion_planner") {
 
   RCLCPP_INFO(this->get_logger(), "INITIALIZING MOTION_PLANNER NODE...");
 
-  this->declare_parameter("behavior", this->selected_behavior);
+  this->declare_parameter("behavior",     this->selected_behavior);
   this->declare_parameter("run_behavior", this->behavior_running);
   this->declare_parameter("behavior_list", get_behavior_list());
-  this->declare_parameter("max_advance", this->movement_params.max_advance);
-  this->declare_parameter("max_turn_angle", this->movement_params.max_turn_angle);
+  this->declare_parameter("max_advance",  this->movement_params.max_advance);
+  this->declare_parameter("current_state", this->movement_params.state);
+  this->declare_parameter("max_turn_angle",  this->movement_params.max_turn_angle);
   this->declare_parameter("light_threshold", this->light_sensors_data.light_threshold);
   this->declare_parameter("laser_threshold", this->laser_sensor_data.laser_threshold);
   
@@ -33,6 +34,12 @@ void MotionPlanner::timer_callback() {
 
 bool MotionPlanner::behavior_is_running() {
   return this->behavior_running;
+}
+
+void MotionPlanner::set_next_state(int state) {
+  this->set_parameter(rclcpp::Parameter("current_state", state));
+  this->movement_params.state =  state;
+  RCLCPP_WARN(this->get_logger(), "NEXT STATE: %d", this->movement_params.state);
 }
 
 void MotionPlanner::stop_behavior() {

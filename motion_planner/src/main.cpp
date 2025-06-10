@@ -66,6 +66,7 @@ int main(int argc, char *argv[]) {
 
       if (behavior_runnig && valid_behavior) {
         // RCLCPP_INFO(node->get_logger(), "MOVEMENT: TWIST->%.2f ADVANCE->%.2f", movement.twist, movement.advance);
+        node->set_next_state(movement_params.state);
         node->move_robot(movement);
       } else {
         RCLCPP_INFO(node->get_logger(), "\n \n  STOPPED BEHAVIOR  \n____________________________\n");

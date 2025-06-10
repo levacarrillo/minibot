@@ -53,9 +53,10 @@ typedef struct LaserSensorData_ {
 } LaserSensorData;
 
 typedef struct MovementParams_ {
+    int step;
+    int state;
     float max_advance;
     float max_turn_angle;
-    int state;
 } MovementParams;
 
 #endif

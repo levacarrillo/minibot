@@ -20,8 +20,9 @@ class MotionPlanner : public rclcpp::Node {
 
     MotionPlanner();
     void stop_behavior();
-    bool behavior_is_running();
+    void set_next_state(int);
     void move_robot(Movement);
+    bool behavior_is_running();
     void print_selected_behavior();
     
     Behaviors get_selected_behavior();
