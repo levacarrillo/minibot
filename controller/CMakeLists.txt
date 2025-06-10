@@ -17,14 +17,14 @@ ament_target_dependencies(line_follower rclcpp geometry_msgs)
 add_executable(move_in_circles src/move_in_circles.cpp)
 ament_target_dependencies(move_in_circles rclcpp geometry_msgs)
 
-add_executable(pose_commander_action_server src/pose_commander_action_server.cpp)
-ament_target_dependencies(pose_commander_action_server rclcpp geometry_msgs interfaces rclcpp_action)
+add_executable(pose_commander src/pose_commander.cpp)
+ament_target_dependencies(pose_commander rclcpp geometry_msgs interfaces rclcpp_action)
 
 
 install(TARGETS
   line_follower
   move_in_circles
-  pose_commander_action_server
+  pose_commander
   DESTINATION lib/${PROJECT_NAME}
 )
 

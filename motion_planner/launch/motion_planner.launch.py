@@ -29,7 +29,7 @@ def generate_launch_description():
                 PathJoinSubstitution([
                     FindPackageShare('controller'),
                     'launch',
-                    'pose_commander_action_server.launch.py'
+                    'pose_commander.launch.py'
                 ])
             ]),
             launch_arguments={'use_sim': use_sim}.items()

@@ -28,8 +28,8 @@ def generate_launch_description():
         ),
         Node(
             package='controller',
-            executable='pose_commander_action_server',
-            name='pose_commander_action_server',
+            executable='pose_commander',
+            name='pose_commander',
             output='screen',
             arguments=['--feedback']
         ),

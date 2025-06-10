@@ -7,19 +7,19 @@ using namespace std::placeholders;
 using GoToPose = interfaces::action::GoToPose;
 using GoalHandleGoToPose = rclcpp_action::ServerGoalHandle<GoToPose>;
 
-class PoseCommanderActionServer : public rclcpp::Node {
+class PoseCommander : public rclcpp::Node {
 public:
-    PoseCommanderActionServer() : Node("pose_commander_action_server") {
+    PoseCommander() : Node("pose_commander") {
         cmd_vel_pub_ = this->create_publisher<geometry_msgs::msg::Twist>("/cmd_vel", 10);
 
         action_server_ = rclcpp_action::create_server<GoToPose>(
             this,
             "go_to_pose",
-            std::bind(&PoseCommanderActionServer::handle_goal, this, _1, _2),
-            std::bind(&PoseCommanderActionServer::handle_cancel, this, _1),
-            std::bind(&PoseCommanderActionServer::handle_accepted, this, _1)
+            std::bind(&PoseCommander::handle_goal, this, _1, _2),
+            std::bind(&PoseCommander::handle_cancel, this, _1),
+            std::bind(&PoseCommander::handle_accepted, this, _1)
         );
-        RCLCPP_INFO(this->get_logger(), "INTITIALITZING pose_commander_action_server NODE...");
+        RCLCPP_INFO(this->get_logger(), "INTITIALITZING pose_commander NODE...");
     }
 
 private:
@@ -35,7 +35,7 @@ private:
 
     void handle_accepted(const std::shared_ptr<GoalHandleGoToPose> goal_handle) {
         // RCLCPP_INFO(this->get_logger(), "GOAL ACCEPTED");
-        std::thread{std::bind(&PoseCommanderActionServer::execute, this, _1), goal_handle}.detach();
+        std::thread{std::bind(&PoseCommander::execute, this, _1), goal_handle}.detach();
     }
 
     rclcpp_action::CancelResponse handle_cancel(const std::shared_ptr<GoalHandleGoToPose> /*goal_handle*/) {
@@ -78,7 +78,7 @@ private:
 int main(int argc, char **argv) {
     rclcpp::init(argc, argv);
 
-    auto node = std::make_shared<PoseCommanderActionServer>();
+    auto node = std::make_shared<PoseCommander>();
     rclcpp::spin(node);
 
     rclcpp::shutdown();
