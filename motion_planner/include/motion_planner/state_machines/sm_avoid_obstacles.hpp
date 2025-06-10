@@ -13,34 +13,55 @@
 ************************************************/
 
 
-void sm_avoid_obstacles(LightSensorsData light_data, LaserSensorData laser_data, MovementParams m, Movement *movement) {
-    int sensor_max_value = 0;
+void sm_avoid_obstacles(LaserSensorData laser_data, MovementParams *params, Movement *movement) {
     
-    bool continue_running;
+    int state = params->state;
+    Direction obstacle_direction = laser_data.obstacle_direction;
 
-    float intensity = light_data.light_sensor_max;
-    float THRESHOLD_DEST = light_data.light_threshold;
-    std::array<float, 8> light_values = light_data.light_readings;
-    float max_advance = m.max_advance;
+    std::cout << "______________________________________________  SM_AVOID_OBSTACLES: STATE->" << state << std::endl;
+    switch(state) {
 
+        case 0: // SM STATE: CHECK FOR DESTINATION
+            if (obstacle_direction == NONE) {
+                *movement = generate_movement(FORWARD, *params);
+                params->state = 0;
+            } else {
+                *movement = generate_movement(NONE, *params);
 
-    if(intensity > THRESHOLD_DEST) {
-        movement->twist   = 0.0;
-        movement->advance = 0.0;
-        std::cout << "\n ****************** Motion Planner: sm_avoid_obstacles.-> Reached light source ***************\n" << std::endl;
-        continue_running = false;
-    } else {
+                if (obstacle_direction == FORWARD_RIGHT) params->state = 1;
+                else if (obstacle_direction == FORWARD_LEFT) params->state = 3;
+                else if (obstacle_direction == FORWARD) params->state = 5;
+            }
+            break;
 
-        for (size_t i=1; i<light_values.size(); i++) {
-            if (light_values[i] > light_values[sensor_max_value]) 
-                sensor_max_value = i;
-        }
-        if (sensor_max_value > 4) {
-            sensor_max_value = - (8 - sensor_max_value);
-        }
-    
-        movement->twist   = sensor_max_value * M_PI / 16;
-        movement->advance = max_advance;
-        continue_running = true;
+        case 1: // SM STATE: GO BACKWARD, OBSTACLE IN FRONT ON THE RIGHT
+            *movement = generate_movement(BACKWARD, *params);
+            params->state = 2;
+            break;
+
+        case 2: // SM STATE: TURN LEFT
+            *movement = generate_movement(LEFT, *params);
+            params->state = 0;
+            break;
+        
+        case 3: // SM STATE: GO BACKWARD, OBSTACLE IN FRONT ON THE LEFT
+            *movement = generate_movement(BACKWARD, *params);
+            params->state = 4;
+            break;
+
+        case 4: // SM STATE: TURN RIGHT
+            *movement = generate_movement(RIGHT, *params);
+            params->state = 0;
+            break;
+
+        case 5: // SM STATE: BACKWARD, OBSTACLE IN FRONT
+            *movement = generate_movement(BACKWARD, *params);
+            params->state = 0;
+            break;
+
+        default:
+            *movement = generate_movement(NONE, *params);
+            params->state = 0;
+            break;
     }
 }

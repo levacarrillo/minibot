@@ -39,7 +39,6 @@ bool MotionPlanner::behavior_is_running() {
 void MotionPlanner::set_next_state(int state) {
   this->set_parameter(rclcpp::Parameter("current_state", state));
   this->movement_params.state =  state;
-  RCLCPP_WARN(this->get_logger(), "NEXT STATE: %d", this->movement_params.state);
 }
 
 void MotionPlanner::stop_behavior() {

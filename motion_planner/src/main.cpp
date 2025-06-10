@@ -44,7 +44,7 @@ int main(int argc, char *argv[]) {
         break;
         
         case SM_AVOID_OBSTACLES:
-          sm_avoid_obstacles(light_data, laser_data, movement_params, &movement);
+          sm_avoid_obstacles(laser_data, &movement_params, &movement);
           valid_behavior = true;
         break;
         

@@ -20,7 +20,7 @@ bool sm_destination(LightSensorsData light_data, MovementParams *params, Movemen
     float THRESHOLD_DEST = light_data.light_threshold;
     Direction light_direction = light_data.light_direction;
 
-    std::cout << "SM_DESTINATION: STATE.->" << state << std::endl;
+    std::cout << "______________________________________________  SM_DESTINATION: STATE->" << state << std::endl;
     switch (state) {
         case 1: // SM STATE: CHECK FOR THRESHOLD REACHED
             if (intensity > THRESHOLD_DEST) {
