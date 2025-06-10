@@ -20,6 +20,8 @@ class MotionPlanner : public rclcpp::Node {
 
     MotionPlanner();
     void stop_behavior();
+    bool steps_exceeded();
+    int get_current_step();
     void set_next_state(int);
     void move_robot(Movement);
     bool behavior_is_running();
@@ -29,8 +31,8 @@ class MotionPlanner : public rclcpp::Node {
     MovementParams get_movement_params();
     LightSensorsData get_light_sensors_data();
     LaserSensorData  get_laser_sensor_data();
-
-  private:
+    
+    private:
     Movement stop;
     bool behavior_running;
     std::string selected_behavior;    
@@ -42,6 +44,7 @@ class MotionPlanner : public rclcpp::Node {
     rclcpp_action::Client<GoToPose>::SharedPtr go_to_pose_client;
     rclcpp::Client<GetLightReadings>::SharedPtr light_readings_client;
     
+    void increase_steps();
     void timer_callback();
 };
 

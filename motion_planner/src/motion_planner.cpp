@@ -9,9 +9,11 @@ MotionPlanner::MotionPlanner() : Node("motion_planner") {
   this->declare_parameter("behavior",     this->selected_behavior);
   this->declare_parameter("run_behavior", this->behavior_running);
   this->declare_parameter("behavior_list", get_behavior_list());
-  this->declare_parameter("max_advance",  this->movement_params.max_advance);
-  this->declare_parameter("current_state", this->movement_params.state);
-  this->declare_parameter("max_turn_angle",  this->movement_params.max_turn_angle);
+  this->declare_parameter("current_state",  this->movement_params.state);
+  this->declare_parameter("step",           this->movement_params.step);
+  this->declare_parameter("max_steps",      this->movement_params.max_steps);
+  this->declare_parameter("max_advance",    this->movement_params.max_advance);
+  this->declare_parameter("max_turn_angle", this->movement_params.max_turn_angle);
   this->declare_parameter("light_threshold", this->light_sensors_data.light_threshold);
   this->declare_parameter("laser_threshold", this->laser_sensor_data.laser_threshold);
   
@@ -26,6 +28,7 @@ MotionPlanner::MotionPlanner() : Node("motion_planner") {
 void MotionPlanner::timer_callback() {
   this->selected_behavior = this->get_parameter("behavior").as_string();
   this->behavior_running  = this->get_parameter("run_behavior").as_bool();
+  this->movement_params.max_steps   = this->get_parameter("max_steps").as_int();
   this->movement_params.max_advance = this->get_parameter("max_advance").as_double();
   this->movement_params.max_turn_angle = this->get_parameter("max_turn_angle").as_double();
   this->light_sensors_data.light_threshold = this->get_parameter("light_threshold").as_double();
@@ -45,6 +48,23 @@ void MotionPlanner::stop_behavior() {
   this->behavior_running = false;
   this->set_parameter(rclcpp::Parameter("run_behavior", this->behavior_running));
   this->move_robot(this->stop);
+}
+
+int MotionPlanner::get_current_step() {
+  return this->movement_params.step;
+}
+
+bool MotionPlanner::steps_exceeded() {
+  if (this->movement_params.step >= this->movement_params.max_steps) {
+    RCLCPP_WARN(this->get_logger(), "STEPS NUMBER HAS REACHED ITS MAXIMUN VALUE->%d", this->movement_params.max_steps);
+    this->stop_behavior();
+    return true;
+  }
+  return false;
+}
+
+void MotionPlanner::increase_steps() {
+  this->movement_params.step++;
 }
 
 void MotionPlanner::print_selected_behavior() {
@@ -127,7 +147,7 @@ void MotionPlanner::move_robot(Movement movement) {
 
   auto result_future = this->go_to_pose_client->async_get_result(goal_handle);
   if (rclcpp::spin_until_future_complete(this->get_node_base_interface(), result_future) != rclcpp::FutureReturnCode::SUCCESS) {
-    RCLCPP_ERROR(this->get_logger(), "MOVEMENT RESULT COULDN'T BEEN FOUND");
+    RCLCPP_ERROR(this->get_logger(), "MOVEMENT RESULT COULDN'T BE FOUND");
     return;
   }
 
@@ -137,4 +157,5 @@ void MotionPlanner::move_robot(Movement movement) {
   } else {
     RCLCPP_ERROR(this->get_logger(), "MOVEMENT FINISHED WITH AN ERROR");
   }
+  this->increase_steps();
 }

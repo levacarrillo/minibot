@@ -29,7 +29,7 @@ private:
     rclcpp_action::GoalResponse handle_goal(
         const rclcpp_action::GoalUUID &/*uuid*/,
         std::shared_ptr<const GoToPose::Goal> goal) {
-        RCLCPP_INFO(this->get_logger(), "GOAL RECEIVED: TWIST->%.2f rad, ADVANCE->%.2f m", goal->angle, goal->distance);
+        // RCLCPP_INFO(this->get_logger(), "GOAL RECEIVED: TWIST->%.2f rad, ADVANCE->%.2f m", goal->angle, goal->distance);
         return rclcpp_action::GoalResponse::ACCEPT_AND_EXECUTE;
     }
 

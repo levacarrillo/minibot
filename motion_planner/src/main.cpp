@@ -16,11 +16,11 @@ int main(int argc, char *argv[]) {
     
     bool behavior_runnig = node->behavior_is_running();
 
-
     if(behavior_runnig) {
       Movement movement;
       RCLCPP_INFO(node->get_logger(), "\n \n  MOTION PLANNER \n____________________________\n");
       node->print_selected_behavior();
+      if(node->steps_exceeded()) continue;
       Behaviors behavior = node->get_selected_behavior();
       MovementParams movement_params = node->get_movement_params();
       LightSensorsData light_data = node->get_light_sensors_data();
@@ -66,8 +66,9 @@ int main(int argc, char *argv[]) {
       }
 
       if (behavior_runnig && valid_behavior) {
-        RCLCPP_INFO(node->get_logger(), "MOVEMENT: TWIST->%.2f, ADVANCE->%.2f", movement.twist, movement.advance);
         node->set_next_state(movement_params.state);
+        RCLCPP_INFO(node->get_logger(), "CURRENT STEP->%d", node->get_current_step());  
+        RCLCPP_INFO(node->get_logger(), "MOVEMENT: TWIST->%.2f, ADVANCE->%.2f", movement.twist, movement.advance);
         node->move_robot(movement);
       } else {
         RCLCPP_WARN(node->get_logger(), "\n \n  BEHAVIOR STOPPED  \n____________________________\n");
