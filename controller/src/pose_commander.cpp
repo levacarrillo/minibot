@@ -10,6 +10,10 @@ using GoalHandleGoToPose = rclcpp_action::ServerGoalHandle<GoToPose>;
 class PoseCommander : public rclcpp::Node {
 public:
     PoseCommander() : Node("pose_commander") {
+        RCLCPP_INFO(this->get_logger(), "INTITIALITZING POSE_COMMANDER NODE...");
+
+        this->declare_parameter("linear_velocity", this->linear_velocity);
+        this->declare_parameter("angular_velocity", this->angular_velocity);
         cmd_vel_pub_ = this->create_publisher<geometry_msgs::msg::Twist>("/cmd_vel", 10);
 
         action_server_ = rclcpp_action::create_server<GoToPose>(
@@ -19,10 +23,11 @@ public:
             std::bind(&PoseCommander::handle_cancel, this, _1),
             std::bind(&PoseCommander::handle_accepted, this, _1)
         );
-        RCLCPP_INFO(this->get_logger(), "INTITIALITZING pose_commander NODE...");
     }
 
 private:
+    float linear_velocity;
+    float angular_velocity;
     rclcpp::Publisher<geometry_msgs::msg::Twist>::SharedPtr cmd_vel_pub_;
     rclcpp_action::Server<GoToPose>::SharedPtr action_server_;
 
@@ -45,6 +50,9 @@ private:
 
 
     void execute(const std::shared_ptr<GoalHandleGoToPose> goal_handle) {
+        this->linear_velocity  = this->get_parameter("linear_velocity").as_double();
+        this->angular_velocity = this->get_parameter("angular_velocity").as_double();
+
         auto feedback = std::make_shared<GoToPose::Feedback>();
         auto result = std::make_shared<GoToPose::Result>();
 
@@ -54,7 +62,7 @@ private:
 
         feedback->feedback = "Twisting...";
         goal_handle->publish_feedback(feedback);
-        cmd.angular.z = (goal->angle > 0 ? 0.5 : -0.5);
+        cmd.angular.z = (goal->angle > 0 ? this->angular_velocity : - this->angular_velocity);
         cmd_vel_pub_->publish(cmd);
         rclcpp::sleep_for(std::chrono::milliseconds(int(1000 * std::abs(goal->angle) / 0.5)));
 
@@ -62,7 +70,7 @@ private:
         feedback->feedback = "Moving...";
         goal_handle->publish_feedback(feedback);
         cmd.angular.z = 0.0;
-        cmd.linear.x = (goal->distance > 0 ? 0.2 : -0.2);
+        cmd.linear.x = (goal->distance > 0 ? this->linear_velocity : - this->linear_velocity);
         cmd_vel_pub_->publish(cmd);
         rclcpp::sleep_for(std::chrono::milliseconds(int(1000 * std::abs(goal->distance) / 0.2)));
 
