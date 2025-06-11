@@ -20,7 +20,7 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'simulator = gui.simulator:main',
+            'simulator = gui.main:main',
         ],
     },
 )

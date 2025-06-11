@@ -10,9 +10,15 @@
 # And these subdirectories
 !gui/
 !gui/*.py
+!gui/app/
+!gui/app/*.py
+!gui/config/
+!gui/config/*.yaml
+!gui/domain/
+!gui/domain/*.py
 
 !resource/
-# !resource/
+!resource/gui
 
 !test/
 !test/*.py
