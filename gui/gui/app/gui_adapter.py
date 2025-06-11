@@ -7,12 +7,16 @@ class GUIAdapter:
         self.root = Tk()
         self.root.title('Mobile Robot Simulator')
 
-        self.canvas_x = 500
-        self.canvas_y = 500
+        self.canvas_size_x = 500 # PIXELS
+        self.canvas_size_y = 500 # PIXELS
+
+        self.scale_x = 1
+        self.scale_y = 1
+        self.grid = []
 
         self.content    = Frame(self.root)
-        self.frame      = Frame(self.content, borderwidth = 5, relief = "flat", width = 900, height = 900)
-        self.w = Canvas(self.frame, width = self.canvas_x, height = self.canvas_y, bg="#FFFFFF")
+        self.frame      = Frame(self.content, borderwidth = 5, relief = "flat", width = 900, height = 900, bg='#EDEDED')
+        self.w = Canvas(self.frame, width = self.canvas_size_x, height = self.canvas_size_y, bg="#FFFFFF")
 
         # MENU WIDGETS
         self.main_bar       = Menu(self.root)
@@ -156,10 +160,22 @@ class GUIAdapter:
         self.label_velocity	         .grid(column = 4, row = 15, sticky = (N, W), padx = (5, 0))
         self.slider_velocity         .grid(column = 4, row = 16, columnspan = 2, rowspan = 1, sticky = (N, W), padx = 5)
 
-    def run(self):
-        self.root.mainloop()
+    def print_grid(self, line_per_meters = 10):
+        for i in self.grid:
+            self.w.delete(i)
+        self.grid =[]
+
+        for i in range(0, int(self.scale_x) * line_per_meters):
+            self.grid.append(self.w.create_line(i * self.canvas_size_x / (self.scale_x * line_per_meters), 0, i * self.canvas_size_x / (self.scale_x * line_per_meters), self.canvas_size_y,  dash=(4, 4), fill="#D1D2D4"))
+        for i in range(0, int(self.scale_y)*line_per_meters):
+            self.grid.append(self.w.create_line(0, i * self.canvas_size_y / (self.scale_y * line_per_meters), self.canvas_size_x, i * self.canvas_size_y / (self.scale_y * line_per_meters),   dash=(4, 4), fill="#D1D2D4"))
 
     def resize_canvas(self, x, y):
-        self.canvasX = x
-        self.canvasY = y
-        self.w.configure(width = self.canvas_x, height = self.canvas_y)
+        self.canvas_size_x = x
+        self.canvas_size_y = y
+        self.print_grid()
+        self.w.configure(width = self.canvas_size_x, height = self.canvas_size_y)
+
+    def run(self):
+        self.print_grid()
+        self.root.mainloop()
