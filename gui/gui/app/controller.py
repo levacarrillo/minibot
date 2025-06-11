@@ -5,7 +5,7 @@ class Controller:
         self.service = service
 
     def get_enviroments(self):
-        enviroments = ["Empty", "Home", "Stage"]
+        enviroments = ["EMPTY", "HOME", "ARENA 1", "ARENA 2"]
         return enviroments
 
     def get_behavior_list(self):
