@@ -12,9 +12,9 @@ class CanvasPanel:
         self.grid = []
         self.scale_x = 1
         self.scale_y = 1
-        self.canvas_size_x = 500 # PIXELS
-        self.canvas_size_y = 500 # PIXELS
-        self.canvas = Canvas(app.frame, width = self.canvas_size_x, height = self.canvas_size_y, bg=self.color.canvas)
+        self.size_x = 500 # PIXELS
+        self.size_y = 500 # PIXELS
+        self.canvas = Canvas(app.frame, width = self.size_x, height = self.size_y, bg=self.color.canvas)
         self.light_img = PhotoImage( file = self.controller.get_file_path('light'))
         self.light_img.zoom(50, 50)
 
@@ -35,17 +35,17 @@ class CanvasPanel:
         self.grid =[]
 
         for i in range(0, int(self.scale_x) * line_per_meters):
-            self.grid.append(self.canvas.create_line(i * self.canvas_size_x / (self.scale_x * line_per_meters), 0, i * self.canvas_size_x / (self.scale_x * line_per_meters), self.canvas_size_y,  dash=(4, 4), fill=self.color.grid))
+            self.grid.append(self.canvas.create_line(i * self.size_x / (self.scale_x * line_per_meters), 0, i * self.size_x / (self.scale_x * line_per_meters), self.size_y,  dash=(4, 4), fill=self.color.grid))
         for i in range(0, int(self.scale_y) * line_per_meters):
-            self.grid.append(self.canvas.create_line(0, i * self.canvas_size_y / (self.scale_y * line_per_meters), self.canvas_size_x, i * self.canvas_size_y / (self.scale_y * line_per_meters),   dash=(4, 4), fill=self.color.grid))
+            self.grid.append(self.canvas.create_line(0, i * self.size_y / (self.scale_y * line_per_meters), self.size_x, i * self.size_y / (self.scale_y * line_per_meters),   dash=(4, 4), fill=self.color.grid))
 
     def right_click(self, e_point):
         if self.light:
             self.canvas.delete(self.light)
         self.light = self.canvas.create_image(e_point.x, e_point.y, image = self.light_img)
 
-        self.light_pose_x = self.scale_x * e_point.x / self.canvas_size_x
-        self.light_pose_y = self.scale_y - (( self.scale_y * e_point.y ) / self.canvas_size_y)
+        self.light_pose_x = self.scale_x * e_point.x / self.size_x
+        self.light_pose_y = self.scale_y - (( self.scale_y * e_point.y ) / self.size_y)
 
         # self.label_light_x_var.config(text=str(self.light_pose_x)[:4])
         # self.label_light_y_var.config(text=str(self.light_pose_y)[:4])

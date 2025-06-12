@@ -12,6 +12,10 @@
 !gui/*.py
 !gui/app/
 !gui/app/*.py
+
+!gui/app/canvas/
+!gui/app/canvas/*.py
+
 !gui/app/side_panel/
 !gui/app/side_panel/*.py
 

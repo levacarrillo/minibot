@@ -3,7 +3,7 @@ from tkinter import Frame, BOTH
 from gui.app.colors import Colors
 from gui.app.menu_bar import MenuBar
 from gui.app.controller import Controller
-from gui.app.canvas_panel import CanvasPanel
+from gui.app.canvas.canvas_panel import CanvasPanel
 from gui.app.side_panel.side_panel import SidePanel
 
 
@@ -16,10 +16,10 @@ class App(tk.Tk):
         self.controller = Controller()
         self.content = Frame(self)
 
-        self.menu_bar = MenuBar(self)
         self.canvas_panel = CanvasPanel(self)
         self.side_panel = SidePanel(self)
         self.content.pack(fill=BOTH, expand=True)
+        self.menu_bar = MenuBar(self)
     
     def run(self):
         self.canvas_panel.print_grid()

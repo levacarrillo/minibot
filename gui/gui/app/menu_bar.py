@@ -2,7 +2,8 @@ from tkinter import Menu
 
 class MenuBar:
     def __init__(self, app):
-        self.app = app
+        self.canvas_panel = app.canvas_panel
+
         menu_bar = Menu(app)
         settings       = Menu(menu_bar, tearoff = 0)
         help           = Menu(menu_bar, tearoff = 0)
@@ -24,8 +25,8 @@ class MenuBar:
         settings.add_command(label = " Exit", command     = app.quit)
         app.config(menu=menu_bar)
 
-    def resize_canvas(self, x, y):
-        self.app.canvas_size_x = x
-        self.app.canvas_size_y = y
-        self.app.canvas_panel.canvas.configure(width = self.app.canvas_size_x, height = self.app.canvas_size_y)
-        self.app.canvas_panel.print_grid()
+    def resize_canvas(self, size_x, size_y):
+        self.canvas_panel.size_x = size_x
+        self.canvas_panel.size_y = size_y
+        self.canvas_panel.canvas.configure(width = size_x, height = size_y)
+        self.canvas_panel.print_grid()
