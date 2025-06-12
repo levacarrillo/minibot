@@ -16,8 +16,8 @@ class App(tk.Tk):
         self.controller = Controller()
         self.content = Frame(self)
 
-        self.canvas_panel = CanvasPanel(self)
         self.side_panel = SidePanel(self)
+        self.canvas_panel = CanvasPanel(self)
         self.content.pack(fill=BOTH, expand=True)
         self.menu_bar = MenuBar(self)
     
