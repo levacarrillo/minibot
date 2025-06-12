@@ -12,8 +12,8 @@
 !gui/*.py
 !gui/app/
 !gui/app/*.py
-!gui/app/right_panel/
-!gui/app/right_panel/*.py
+!gui/app/side_panel/
+!gui/app/side_panel/*.py
 
 !gui/config/
 !gui/config/*.yaml

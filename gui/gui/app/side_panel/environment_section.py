@@ -2,27 +2,30 @@ from tkinter import *
 from tkinter import ttk
 
 class EnvironmentSection:
-    def __init__(self, right_menu, controller):
-        self.label_settings      = Label(right_menu, text = "Settings")
-        self.label_enviroments   = Label(right_menu, text = "Environment:")
-        self.label_behavior		 = Label(right_menu, text = "Behavior:")
-        self.label_max_steps     = Label(right_menu, text = "Max steps:")
-        self.label_light_x       = Label(right_menu, text = "Light X:")
-        self.label_light_t       = Label(right_menu, text = "Light Y:")
-        self.label_curr_step     = Label(right_menu, text = "Current step:")
-        self.label_configuration = Label(right_menu, text = "Configurations:")
-        self.label_light_x_var   = Label(right_menu ,text = "Click Right", justify='center')
-        self.label_light_y_var   = Label(right_menu ,text = "Click Right",  justify='center')
-        self.label_steps_var     = Label(right_menu ,text = "0", justify='center')
-        
-        self.steps_entry = Entry(right_menu, validate = 'key', textvariable = StringVar(value="100"), width = 5)
-        self.enviroment_combox = ttk.Combobox(right_menu, textvariable = StringVar(value="EMPTY"),       values = controller.get_enviroments(), width = 16)
-        self.behavior_combox   = ttk.Combobox(right_menu, textvariable = StringVar(value="NO SELECTED"), values = controller.get_behavior_list(), width = 16)
+    def __init__(self, parent_panel):
+        side_panel = parent_panel.side_panel
+        controller = parent_panel.controller
 
-        self.ck_button_fast    = Checkbutton(right_menu, text="Fast mode")
-        self.ck_button_sensors = Checkbutton(right_menu, text="Show sensors")
-        self.ck_add_noise      = Checkbutton(right_menu, text="Add Noise")
-        self.ck_button_load    = Checkbutton(right_menu, text="Load Objects")
+        self.label_settings      = Label(side_panel, text = "Settings")
+        self.label_enviroments   = Label(side_panel, text = "Environment:")
+        self.label_behavior		 = Label(side_panel, text = "Behavior:")
+        self.label_max_steps     = Label(side_panel, text = "Max steps:")
+        self.label_light_x       = Label(side_panel, text = "Light X:")
+        self.label_light_t       = Label(side_panel, text = "Light Y:")
+        self.label_curr_step     = Label(side_panel, text = "Current step:")
+        self.label_configuration = Label(side_panel, text = "Configurations:")
+        self.label_light_x_var   = Label(side_panel ,text = "Click Right", justify='center')
+        self.label_light_y_var   = Label(side_panel ,text = "Click Right",  justify='center')
+        self.label_steps_var     = Label(side_panel ,text = "0", justify='center')
+        
+        self.steps_entry = Entry(side_panel, validate = 'key', textvariable = StringVar(value="100"), width = 5)
+        self.enviroment_combox = ttk.Combobox(side_panel, textvariable = StringVar(value="EMPTY"),       values = controller.get_enviroments(), width = 16)
+        self.behavior_combox   = ttk.Combobox(side_panel, textvariable = StringVar(value="NO SELECTED"), values = controller.get_behavior_list(), width = 16)
+
+        self.ck_button_fast    = Checkbutton(side_panel, text="Fast mode")
+        self.ck_button_sensors = Checkbutton(side_panel, text="Show sensors")
+        self.ck_add_noise      = Checkbutton(side_panel, text="Add Noise")
+        self.ck_button_load    = Checkbutton(side_panel, text="Load Objects")
 
         self.label_settings      .grid(column = 0, row = 0,  sticky = (N, W), padx = (5, 0))
         self.label_enviroments   .grid(column = 0, row = 1,  sticky = (N, W), padx = (5, 0))

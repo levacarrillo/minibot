@@ -3,7 +3,9 @@ from PIL import ImageTk
 
 class CanvasPanel:
     def __init__(self, app):
-        self.color = app.colors
+        self.color      = app.colors
+        self.controller = app.controller
+    
         app.frame = Frame(app.content)
         app.frame = Frame(app.content, borderwidth = 5, relief = "flat", width = 900, height = 900, bg=self.color.background)
 
@@ -12,9 +14,8 @@ class CanvasPanel:
         self.scale_y = 1
         self.canvas_size_x = 500 # PIXELS
         self.canvas_size_y = 500 # PIXELS
-
         self.canvas = Canvas(app.frame, width = self.canvas_size_x, height = self.canvas_size_y, bg=self.color.canvas)
-        self.light_img = PhotoImage( file = '/home/knight/ros2_ws/src/minibot/gui/gui/resources/light.png')
+        self.light_img = PhotoImage( file = self.controller.get_file_path('light'))
         self.light_img.zoom(50, 50)
 
         self.light = False
@@ -27,6 +28,16 @@ class CanvasPanel:
         
         self.canvas.pack()
         app.frame.grid(column = 0, row = 0, columnspan = 3, rowspan = 2, sticky = (N, S, E, W))
+
+    def print_grid(self, line_per_meters = 10):
+        for i in self.grid:
+            self.canvas.delete(i)
+        self.grid =[]
+
+        for i in range(0, int(self.scale_x) * line_per_meters):
+            self.grid.append(self.canvas.create_line(i * self.canvas_size_x / (self.scale_x * line_per_meters), 0, i * self.canvas_size_x / (self.scale_x * line_per_meters), self.canvas_size_y,  dash=(4, 4), fill=self.color.grid))
+        for i in range(0, int(self.scale_y) * line_per_meters):
+            self.grid.append(self.canvas.create_line(0, i * self.canvas_size_y / (self.scale_y * line_per_meters), self.canvas_size_x, i * self.canvas_size_y / (self.scale_y * line_per_meters),   dash=(4, 4), fill=self.color.grid))
 
     def right_click(self, e_point):
         if self.light:
@@ -41,13 +52,3 @@ class CanvasPanel:
 
     def left_click(self, e_point):
         print('Clicked left')
-
-    def print_grid(self, line_per_meters = 10):
-        for i in self.grid:
-            self.canvas.delete(i)
-        self.grid =[]
-
-        for i in range(0, int(self.scale_x) * line_per_meters):
-            self.grid.append(self.canvas.create_line(i * self.canvas_size_x / (self.scale_x * line_per_meters), 0, i * self.canvas_size_x / (self.scale_x * line_per_meters), self.canvas_size_y,  dash=(4, 4), fill=self.color.grid))
-        for i in range(0, int(self.scale_y) * line_per_meters):
-            self.grid.append(self.canvas.create_line(0, i * self.canvas_size_y / (self.scale_y * line_per_meters), self.canvas_size_x, i * self.canvas_size_y / (self.scale_y * line_per_meters),   dash=(4, 4), fill=self.color.grid))
