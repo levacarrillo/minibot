@@ -16,6 +16,8 @@
 !gui/config/*.yaml
 !gui/domain/
 !gui/domain/*.py
+!gui/resources/
+!gui/resources/*.png
 
 !resource/
 !resource/gui
