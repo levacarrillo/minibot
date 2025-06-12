@@ -80,6 +80,7 @@ class GUIAdapter:
         self.label_light_t       .grid(column = 0, row = 5,  sticky = (N, W), padx = (5, 0))
         self.label_curr_step     .grid(column = 0, row = 6,  sticky = (N, W), padx = (5, 0))
         self.label_configuration .grid(column = 0, row = 7,  sticky = (N, W), padx = (5, 0))
+
         self.enviroment_combox   .grid(column = 1, row = 1,  sticky = (N, W), padx = (5, 0))
         self.behavior_combox     .grid(column = 1, row = 2,  sticky = (N, W), padx = (5, 0))
         self.label_light_x_var   .grid(column = 1, row = 4,  sticky = (N, W), padx = (5, 0))

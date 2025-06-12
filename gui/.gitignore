@@ -12,10 +12,15 @@
 !gui/*.py
 !gui/app/
 !gui/app/*.py
+!gui/app/right_panel/
+!gui/app/right_panel/*.py
+
 !gui/config/
 !gui/config/*.yaml
+
 !gui/domain/
 !gui/domain/*.py
+
 !gui/resources/
 !gui/resources/*.png
 
