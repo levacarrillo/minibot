@@ -1,5 +1,6 @@
 from tkinter import *
 from tkinter import ttk
+from PIL import ImageTk
 from gui.app.controller import Controller
 
 class GUIAdapter:
@@ -160,6 +161,21 @@ class GUIAdapter:
         self.label_velocity	         .grid(column = 4, row = 15, sticky = (N, W), padx = (5, 0))
         self.slider_velocity         .grid(column = 4, row = 16, columnspan = 2, rowspan = 1, sticky = (N, W), padx = 5)
 
+        self.light_img = PhotoImage( file = '/home/knight/ros2_ws/src/minibot/gui/gui/resources/light.png')
+        self.light_img.zoom(50, 50)
+        
+        self.light = False
+        self.light_pose_x = 0
+        self.light_pose_y = 0
+
+        self.robot = False
+        self.robot_pose_x = 0
+        self.robot_pose_y = 0
+        self.robot_angle  = 0
+
+        self.w.bind("<Button-3>", self.right_click)
+        self.w.bind("<Button-1>", self.left_click)
+
     def print_grid(self, line_per_meters = 10):
         for i in self.grid:
             self.w.delete(i)
@@ -167,8 +183,80 @@ class GUIAdapter:
 
         for i in range(0, int(self.scale_x) * line_per_meters):
             self.grid.append(self.w.create_line(i * self.canvas_size_x / (self.scale_x * line_per_meters), 0, i * self.canvas_size_x / (self.scale_x * line_per_meters), self.canvas_size_y,  dash=(4, 4), fill="#D1D2D4"))
-        for i in range(0, int(self.scale_y)*line_per_meters):
+        for i in range(0, int(self.scale_y) * line_per_meters):
             self.grid.append(self.w.create_line(0, i * self.canvas_size_y / (self.scale_y * line_per_meters), self.canvas_size_x, i * self.canvas_size_y / (self.scale_y * line_per_meters),   dash=(4, 4), fill="#D1D2D4"))
+
+    def rotate_point(self,theta,ox,oy, x, y): 
+        # It rotates a point (x,y) from another point (ox,oy)
+        nx = (x - ox ) - (y - oy) + ox
+        ny = (x - ox ) - (y -oy) + oy
+        return nx, ny
+        # rotate = -theta
+        # nx = ( x - ox ) * math.cos( rotate ) - ( y - oy ) * math.sin(rotate) + ox
+        # ny = ( x - ox ) * math.sin( rotate ) + ( y - oy ) * math.cos(rotate) + oy
+        # return nx,ny
+
+    def plot_robot(self):
+        self.entry_pose_x.delete(0, END)
+        self.entry_pose_y.delete(0, END)
+        self.entry_angle .delete(0, END)
+
+        self.entry_pose_x  .insert(0, str(float(self.robot_pose_x) * self.scale_x / self.canvas_size_x))
+        self.entry_pose_y  .insert(0, str(self.scale_y - (float(self.robot_pose_y) * self.scale_y / self.canvas_size_y)))  
+        self.entry_angle .insert(0, str(self.robot_angle))
+
+
+        radio = (float(self.entry_radio.get()) * self.canvas_size_x ) / self.scale_x
+        self.robot  = self.w.create_oval(self.robot_pose_x - radio, self.robot_pose_y - radio, self.robot_pose_x + radio, self.robot_pose_y + radio, outline='#F7CE3F', fill='#F7CE3F', width=1)
+        self.hokuyo = self.w.create_oval(self.robot_pose_x - radio / 5, self.robot_pose_y - radio / 5, self.robot_pose_x + radio / 5, self.robot_pose_y + radio / 5, outline = '#4F58DB', fill='#4F58DB', width=1)
+
+        wheel1x1 = self.robot_pose_x - ( radio / 2 )
+        wheel1y1 = self.robot_pose_y - ( 5 * radio /6 )
+        wheel1x2 = self.robot_pose_x + radio / 2
+        wheel1y2 = self.robot_pose_y - ( 3 * radio / 6 )
+        wheel2y1 = self.robot_pose_y + ( 3 * radio / 6 )
+        wheel2y2 = self.robot_pose_y + ( 5 * radio / 6 )
+        wh1= []
+        wh2= []
+        wh1.append(self.rotate_point (self.robot_angle, self.robot_pose_x, self.robot_pose_y, wheel1x1, wheel1y1))
+        wh1.append(self.rotate_point (self.robot_angle, self.robot_pose_x, self.robot_pose_y, wheel1x2, wheel1y1))
+        wh1.append(self.rotate_point (self.robot_angle, self.robot_pose_x, self.robot_pose_y, wheel1x2, wheel1y2))
+        wh1.append(self.rotate_point (self.robot_angle, self.robot_pose_x, self.robot_pose_y, wheel1x1, wheel1y2))
+        wh2.append(self.rotate_point (self.robot_angle, self.robot_pose_x, self.robot_pose_y, wheel1x1, wheel2y1))
+        wh2.append(self.rotate_point (self.robot_angle, self.robot_pose_x, self.robot_pose_y, wheel1x2, wheel2y1))
+        wh2.append(self.rotate_point (self.robot_angle, self.robot_pose_x, self.robot_pose_y, wheel1x2, wheel2y2))
+        wh2.append(self.rotate_point (self.robot_angle, self.robot_pose_x, self.robot_pose_y, wheel1x1, wheel2y2))
+
+        self.wheelL=self.w.create_polygon( wh1 ,outline = '#404000', fill = '#404000', width=1)
+        self.wheelR=self.w.create_polygon( wh2 ,outline = '#404000', fill = '#404000', width=1)
+
+        head = []
+        head.append(self.rotate_point(self.robot_angle, self.robot_pose_x, self.robot_pose_y, self.robot_pose_x + ( 2 * radio / 3 ), self.robot_pose_y - (radio / 3 )))
+        head.append(self.rotate_point(self.robot_angle, self.robot_pose_x, self.robot_pose_y, self.robot_pose_x + ( 2 * radio / 3 ), self.robot_pose_y + (radio / 3 )))
+        head.append(self.rotate_point(self.robot_angle, self.robot_pose_x, self.robot_pose_y, self.robot_pose_x + ( 5 * radio / 6 ), self.robot_pose_y))
+
+        self.arrow=self.w.create_polygon( head , outline = '#1AAB4A' , fill = '#1AAB4A' , width = 1 )
+        self.w.update()
+
+    def right_click(self, e_point): 
+        if self.light:
+            self.w.delete(self.light)
+        self.light = self.w.create_image(e_point.x, e_point.y, image = self.light_img)
+
+        self.light_pose_x = self.scale_x * e_point.x / self.canvas_size_x
+        self.light_pose_y = self.scale_y - (( self.scale_y * e_point.y ) / self.canvas_size_y)
+
+        self.label_light_x_var.config(text=str(self.light_pose_x)[:4])
+        self.label_light_y_var.config(text=str(self.light_pose_y)[:4])
+
+
+    def left_click(self, e_point): # It plot the robot in the field
+        if self.robot:
+            self.w.delete(self.robot)
+        self.robot_pose_x = e_point.x
+        self.robot_pose_y = e_point.y
+        self.plot_robot()
+
 
     def resize_canvas(self, x, y):
         self.canvas_size_x = x
