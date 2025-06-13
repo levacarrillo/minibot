@@ -20,10 +20,8 @@ class EnvironmentSection:
         
         self.steps_entry = Entry(side, validate = 'key', textvariable = StringVar(value="100"),
                                         width = 5)
-        self.enviroment_combox = ttk.Combobox(side, textvariable = StringVar(value="EMPTY"),
-                                        values = controller.get_environment_list(), width = 16)
-        self.behavior_combox   = ttk.Combobox(side, textvariable = StringVar(value="NO SELECTED"),
-                                        values = controller.get_behavior_list(), width = 16)
+        self.env_cb = ttk.Combobox(side,  values = controller.get_environment_list(), width = 16)
+        self.bh_cb   = ttk.Combobox(side, values = controller.get_behavior_list(),    width = 16)
 
         self.ck_button_fast    = Checkbutton(side, text="Fast mode")
         self.ck_button_sensors = Checkbutton(side, text="Show sensors")
@@ -43,10 +41,13 @@ class EnvironmentSection:
         self.label_steps_var     .grid(column = 1, row = 6,  sticky = (N, W), padx = (5, 0))
 
         self.steps_entry         .grid(column = 1, row = 3,  sticky = (N, W), padx = (5, 0))
-        self.enviroment_combox   .grid(column = 1, row = 1,  sticky = (N, W), padx = (5, 0))
-        self.behavior_combox     .grid(column = 1, row = 2,  sticky = (N, W), padx = (5, 0))
+        self.env_cb              .grid(column = 1, row = 1,  sticky = (N, W), padx = (5, 0))
+        self.bh_cb               .grid(column = 1, row = 2,  sticky = (N, W), padx = (5, 0))
 
         self.ck_button_fast      .grid(column = 1, row = 7,  sticky = (N, W), padx = (5, 0))
         self.ck_button_sensors   .grid(column = 1, row = 8,  sticky = (N, W), padx = (5, 0))
         self.ck_add_noise        .grid(column = 1, row = 9,  sticky = (N, W), padx = (5, 0))
         self.ck_button_load      .grid(column = 1, row = 10, sticky = (N, W), padx = (5, 0))
+
+        self.env_cb.current(0)
+        self.bh_cb.current(0)

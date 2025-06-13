@@ -14,7 +14,7 @@ class Controller:
         return self.ros.get_environment_list()
 
     def get_behavior_list(self):
-        self.ros.get_behavior_list()
+        return self.ros.get_behavior_list()
 
     def get_current_step(self):
         return self.ros.get_current_step()
