@@ -7,7 +7,7 @@ class Light:
         controller  = parent_panel.controller        
 
         self.image = False
-        self.img = PhotoImage( file = controller.get_file_path('light'))
+        self.img = PhotoImage( file = controller.get_file_path('light.png'))
         self.img.zoom(50, 50)
 
     def plot(self, pose_x, pose_y):

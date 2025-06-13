@@ -17,6 +17,10 @@ setup(
     maintainer_email='levacarrillo@gmail.com',
     description='TODO: Package description',
     license='TODO: License declaration',
+    package_data={
+        'gui': ['resources/*.png'],
+    },
+    include_package_data=True,
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [

@@ -2,9 +2,13 @@ class Robot:
     def __init__(self, parent_panel):
         self.color   = parent_panel.color
         self.canvas  = parent_panel.canvas
-        service      = parent_panel.service
+
+        scale_x      = parent_panel.scale_x
+        size_x       = parent_panel.size_x
+        controller   = parent_panel.controller
         entry_radio  = parent_panel.robot_section.entry_radio
-        self.radio   =  service.m_to_pixels(parent_panel.scale_x, parent_panel.size_x, entry_radio.get())
+
+        self.radio   =  controller.m_to_pixels(scale_x, size_x, entry_radio.get())
         self.canva   = False
 
 

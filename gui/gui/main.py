@@ -1,12 +1,14 @@
 import rclpy
 from gui.app.app import App
+from gui.controllers.controller import Controller
 from gui.infraestructure.simulator_node import SimulatorNode
 
 
 def main(args=None):
     rclpy.init(args=args)
     node = SimulatorNode()
-    app = App()
+    controller = Controller()
+    app = App(controller)
 
     def ros_spin():
         rclpy.spin_once(node, timeout_sec=0.1)
