@@ -26,6 +26,9 @@
 !gui/config/*.py
 !gui/config/*.yaml
 
+!gui/controllers/
+!gui/controllers/*.py
+
 !gui/domain/
 !gui/domain/*.py
 

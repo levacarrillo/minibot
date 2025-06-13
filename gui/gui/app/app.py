@@ -3,7 +3,7 @@ from tkinter import Frame, BOTH
 from gui.config.colors import colors
 from gui.app.menu.menu_bar import MenuBar
 from gui.domain.service import Service
-from gui.app.controller import Controller
+from gui.controllers.controller import Controller
 from gui.app.canvas.canvas_panel import CanvasPanel
 from gui.app.side_panel.side_panel import SidePanel
 
