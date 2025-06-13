@@ -5,23 +5,26 @@ class Robot:
         self.robot_section = canvas_panel.robot_section
         self.controller    = canvas_panel.controller
 
-        radius       = self.robot_section.entry_radius.get()
+        self.radius_px    = self.robot_section.entry_radius.get()
         self.entry_angle  = self.robot_section.entry_angle .get()
         self.pose_x  = self.robot_section.entry_pose_x.get()
         self.pose_y  = self.robot_section.entry_pose_y.get()
         self.angle   = self.controller.normalize_angle(self.entry_angle)
 
-        scale_x      = canvas_panel.scale_x
-        size_x       = canvas_panel.size_x
+        self.scale_x      = canvas_panel.scale_x
+        self.size_x       = canvas_panel.size_x
 
-        self.radius =  self.controller.m_to_pixels(scale_x, size_x, radius)
-        self.body  = False
+        self.radius =  self.controller.m_to_pixels(self.scale_x, self.size_x, self.radius_px)
+        self.body   = False
         self.hokuyo = False
         self.head   = False
 
 
     def plot(self, pose_x, pose_y):
+        self.radius_px    = self.robot_section.entry_radius.get()
         self.entry_angle  = self.robot_section.entry_angle.get()
+        
+        self.radius =  self.controller.m_to_pixels(self.scale_x, self.size_x, self.radius_px)
         self.angle   = self.controller.normalize_angle(self.entry_angle)
 
         if self.body:
