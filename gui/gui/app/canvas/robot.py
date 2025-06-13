@@ -24,6 +24,8 @@ class Robot:
             self.canvas.delete(self.robot)
             self.canvas.delete(self.hokuyo)
             self.canvas.delete(self.head)
+            self.canvas.delete(self.wheelL)
+            self.canvas.delete(self.wheelR)
 
         self.robot = self.canvas.create_oval(
             pose_x - self.radius,
@@ -48,6 +50,25 @@ class Robot:
         head.append(self.controller.rotate_point(self.angle, pose_x, pose_y, pose_x + (2 * self.radius / 3), pose_y - ( self.radius / 3)))
         head.append(self.controller.rotate_point(self.angle, pose_x, pose_y, pose_x + (2 * self.radius / 3), pose_y + ( self.radius / 3)))
         head.append(self.controller.rotate_point(self.angle, pose_x, pose_y, pose_x + (5 * self.radius / 6), pose_y))
+
+        wheel1x1 = pose_x - (self.radius / 2)
+        wheel1y1 = pose_y - (5 * self.radius /6)
+        wheel1x2 = pose_x + self.radius / 2
+        wheel1y2 = pose_y - (3 * self.radius / 6)
+        wheel2y1 = pose_y + (3 * self.radius / 6)
+        wheel2y2 = pose_y + (5 * self.radius / 6)
+        wh1= []
+        wh2= []
+        wh1.append(self.controller.rotate_point(self.angle, pose_x, pose_y, wheel1x1, wheel1y1))
+        wh1.append(self.controller.rotate_point(self.angle, pose_x, pose_y, wheel1x2, wheel1y1))
+        wh1.append(self.controller.rotate_point(self.angle, pose_x, pose_y, wheel1x2, wheel1y2))
+        wh1.append(self.controller.rotate_point(self.angle, pose_x, pose_y, wheel1x1, wheel1y2))
+        wh2.append(self.controller.rotate_point(self.angle, pose_x, pose_y, wheel1x1, wheel2y1))
+        wh2.append(self.controller.rotate_point(self.angle, pose_x, pose_y, wheel1x2, wheel2y1))
+        wh2.append(self.controller.rotate_point(self.angle, pose_x, pose_y, wheel1x2, wheel2y2))
+        wh2.append(self.controller.rotate_point(self.angle, pose_x, pose_y, wheel1x1, wheel2y2))
+        self.wheelL = self.canvas.create_polygon(wh1, outline = self.color['wheel'], fill = self.color['wheel'], width=1)
+        self.wheelR = self.canvas.create_polygon(wh2, outline = self.color['wheel'], fill = self.color['wheel'], width=1)
 
         self.head = self.canvas.create_polygon(
             head,
