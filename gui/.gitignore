@@ -23,6 +23,7 @@
 !gui/app/side_panel/*.py
 
 !gui/config/
+!gui/config/*.py
 !gui/config/*.yaml
 
 !gui/domain/
