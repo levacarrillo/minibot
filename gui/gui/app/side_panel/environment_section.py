@@ -21,9 +21,9 @@ class EnvironmentSection:
         self.steps_entry = Entry(side, validate = 'key', textvariable = StringVar(value="100"),
                                         width = 5)
         self.enviroment_combox = ttk.Combobox(side, textvariable = StringVar(value="EMPTY"),
-                                            values = controller.get_enviroments(), width = 16)
+                                        values = controller.get_environment_list(), width = 16)
         self.behavior_combox   = ttk.Combobox(side, textvariable = StringVar(value="NO SELECTED"),
-                                            values = controller.get_behavior_list(), width = 16)
+                                        values = controller.get_behavior_list(), width = 16)
 
         self.ck_button_fast    = Checkbutton(side, text="Fast mode")
         self.ck_button_sensors = Checkbutton(side, text="Show sensors")

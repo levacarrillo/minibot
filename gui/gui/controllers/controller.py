@@ -2,24 +2,22 @@ from gui.domain.service import Service
 from gui.infraestructure.file_manager import FileManager
 
 class Controller:
-    def __init__(self, service = Service):
+    def __init__(self, ros, service = Service):
+        self.ros = ros
         self.service = service
         self.file_manager = FileManager()
 
     def get_file_path(self, file_name):
         return self.file_manager.get_file_path(file_name)
 
-    def get_enviroments(self):
-        enviroments = ["EMPTY", "HOME", "ARENA 1", "ARENA 2"]
-        return enviroments
-
+    def get_environment_list(self):
+        return self.ros.get_environment_list()
 
     def get_behavior_list(self):
-        behavior_list = ["LIGHT_FOLLOWER", "SM_DESTINATION", "SM_AVOID_OBSTACLES"]
-        return behavior_list
+        self.ros.get_behavior_list()
 
     def get_current_step(self):
-        return '0'
+        return self.ros.get_current_step()
 
     def get_edge(self, size, scale, line_per_meters):
         return self.service.get_edge(self, size, scale, line_per_meters)
