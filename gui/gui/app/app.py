@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter import Frame, BOTH
 from gui.app.colors import colors
-from gui.app.menu_bar import MenuBar
+from gui.app.menu.menu_bar import MenuBar
 from gui.domain.service import Service
 from gui.app.controller import Controller
 from gui.app.canvas.canvas_panel import CanvasPanel
