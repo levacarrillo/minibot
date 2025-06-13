@@ -27,3 +27,9 @@ class Controller:
 
     def m_to_pixels(self, scale, size, length):
         return self.service.m_to_pixels(self, scale, size, length)
+
+    def normalize_angle(self, angle):
+        return self.service.normalize_angle(self, angle)
+
+    def rotate_point(self, angle, ox, oy, x, y):
+        return self.service.rotate_point(self, angle, ox, oy, x, y)

@@ -63,18 +63,37 @@ class CanvasPanel:
         self.light.plot(e_point.x, e_point.y)
         e_point.y = self.size_y - e_point.y # CHANGING REFERENCE SYSTEM
 
-        self.env_section.label_light_pose_x.config(text=self.controller.pixels_to_m(self.scale_x, self.size_x, e_point.x))
-        self.env_section.label_light_pose_y.config(text=self.controller.pixels_to_m(self.scale_y, self.size_y, e_point.y))
+        self.env_section.label_light_pose_x.config(text=self.controller.pixels_to_m(
+                                                                            self.scale_x,
+                                                                            self.size_x,
+                                                                            e_point.x
+                                                                            )
+                                                                        )
+        self.env_section.label_light_pose_y.config(text=self.controller.pixels_to_m(
+                                                                            self.scale_y,
+                                                                            self.size_y,
+                                                                            e_point.y
+                                                                            )
+                                                                        )
 
 
     def left_click(self, e_point):
-        self.robot.plot(e_point.x, e_point.y);
+        self.robot.plot(e_point.x, e_point.y)
         e_point.y = self.size_y - e_point.y # CHANGING REFERENCE SYSTEM
 
         self.robot_section.entry_pose_x.delete(0, END)
         self.robot_section.entry_pose_y.delete(0, END)
-        self.robot_section.entry_angle.delete(0, END)
 
-        self.robot_section.entry_pose_x.insert(0, self.controller.pixels_to_m(self.scale_x, self.size_x, e_point.x))
-        self.robot_section.entry_pose_y.insert(0, self.controller.pixels_to_m(self.scale_y, self.size_y, e_point.y))
-        self.robot_section.entry_angle .insert(0, '0')
+        self.robot_section.entry_pose_x.insert(0, self.controller.pixels_to_m(
+                                                                    self.scale_x,
+                                                                    self.size_x,
+                                                                    e_point.x
+                                                                    )
+                                                                )
+        self.robot_section.entry_pose_y.insert(0, self.controller.pixels_to_m(
+                                                                    self.scale_y,
+                                                                    self.size_y,
+                                                                    e_point.y
+                                                                    )
+                                                                )
+

@@ -1,29 +1,57 @@
 class Robot:
-    def __init__(self, parent_panel):
-        self.color   = parent_panel.color
-        self.canvas  = parent_panel.canvas
+    def __init__(self, canvas_panel):
+        self.color         = canvas_panel.color
+        self.canvas        = canvas_panel.canvas
+        self.robot_section = canvas_panel.robot_section
+        self.controller    = canvas_panel.controller
 
-        scale_x      = parent_panel.scale_x
-        size_x       = parent_panel.size_x
-        controller   = parent_panel.controller
-        entry_radio  = parent_panel.robot_section.entry_radio
+        radius       = self.robot_section.entry_radius.get()
+        self.pose_x  = self.robot_section.entry_pose_x.get()
+        self.pose_y  = self.robot_section.entry_pose_y.get()
+        self.angle   = self.controller.normalize_angle(float(self.robot_section.entry_angle.get()))
 
-        self.radio   =  controller.m_to_pixels(scale_x, size_x, entry_radio.get())
-        self.canva   = False
+        scale_x      = canvas_panel.scale_x
+        size_x       = canvas_panel.size_x
+
+        self.radius =  self.controller.m_to_pixels(scale_x, size_x, radius)
+        self.robot  = False
+        self.hokuyo = False
+        self.head   = False
 
 
     def plot(self, pose_x, pose_y):
-        if self.canva:
-            self.canvas.delete(self.canva)
-        self.canva = self.canvas.create_oval(
-            pose_x - self.radio,
-            pose_y - self.radio,
-            pose_x + self.radio,
-            pose_y + self.radio,
+        if self.robot:
+            self.canvas.delete(self.robot)
+            self.canvas.delete(self.hokuyo)
+            self.canvas.delete(self.head)
+
+        self.robot = self.canvas.create_oval(
+            pose_x - self.radius,
+            pose_y - self.radius,
+            pose_x + self.radius,
+            pose_y + self.radius,
             outline = self.color['robot'],
-            fill = self.color['robot'],
-            width=1
+            fill    = self.color['robot'],
+            width   = 1
         )
 
-    def delete(self):
-        self.canvas.delete(self.canva)
+        self.hokuyo = self.canvas.create_oval(
+            pose_x - (self.radius / 5),
+            pose_y - (self.radius / 5),
+            pose_x + (self.radius / 5),
+            pose_y + (self.radius / 5),
+            outline = self.color['hokuyo'],
+            fill    = self.color['hokuyo'],
+            width   = 1
+        )
+        head = []
+        head.append(self.controller.rotate_point(self.angle, pose_x, pose_y, pose_x + (2 * self.radius / 3), pose_y - ( self.radius / 3)))
+        head.append(self.controller.rotate_point(self.angle, pose_x, pose_y, pose_x + (2 * self.radius / 3), pose_y + ( self.radius / 3)))
+        head.append(self.controller.rotate_point(self.angle, pose_x, pose_y, pose_x + (5 * self.radius / 6), pose_y))
+
+        self.head = self.canvas.create_polygon(
+            head,
+            outline = self.color['head'],
+            fill    =  self.color['head'],
+            width   = 1
+        )
