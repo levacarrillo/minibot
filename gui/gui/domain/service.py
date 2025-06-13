@@ -14,6 +14,7 @@ class Service():
         return (float(length) * size) / scale
 
     def normalize_angle(self, angle):
+        angle = float(angle)
         if angle > math.pi * 2:
             return angle % (math.pi * 2)
         elif angle < 0:

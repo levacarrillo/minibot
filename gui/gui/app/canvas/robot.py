@@ -6,28 +6,32 @@ class Robot:
         self.controller    = canvas_panel.controller
 
         radius       = self.robot_section.entry_radius.get()
+        self.entry_angle  = self.robot_section.entry_angle .get()
         self.pose_x  = self.robot_section.entry_pose_x.get()
         self.pose_y  = self.robot_section.entry_pose_y.get()
-        self.angle   = self.controller.normalize_angle(float(self.robot_section.entry_angle.get()))
+        self.angle   = self.controller.normalize_angle(self.entry_angle)
 
         scale_x      = canvas_panel.scale_x
         size_x       = canvas_panel.size_x
 
         self.radius =  self.controller.m_to_pixels(scale_x, size_x, radius)
-        self.robot  = False
+        self.body  = False
         self.hokuyo = False
         self.head   = False
 
 
     def plot(self, pose_x, pose_y):
-        if self.robot:
-            self.canvas.delete(self.robot)
+        self.entry_angle  = self.robot_section.entry_angle.get()
+        self.angle   = self.controller.normalize_angle(self.entry_angle)
+
+        if self.body:
+            self.canvas.delete(self.body)
             self.canvas.delete(self.hokuyo)
             self.canvas.delete(self.head)
             self.canvas.delete(self.wheelL)
             self.canvas.delete(self.wheelR)
 
-        self.robot = self.canvas.create_oval(
+        self.body = self.canvas.create_oval(
             pose_x - self.radius,
             pose_y - self.radius,
             pose_x + self.radius,
@@ -76,3 +80,10 @@ class Robot:
             fill    =  self.color['head'],
             width   = 1
         )
+
+    def delete(self):
+        self.canvas.delete(self.body)
+        self.canvas.delete(self.hokuyo)
+        self.canvas.delete(self.head)
+        self.canvas.delete(self.wheelL)
+        self.canvas.delete(self.wheelR)
