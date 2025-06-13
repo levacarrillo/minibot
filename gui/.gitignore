@@ -35,6 +35,9 @@
 !gui/resources/
 !gui/resources/*.png
 
+!gui/infraestructure/
+!gui/infraestructure/*.py
+
 !resource/
 !resource/gui
 

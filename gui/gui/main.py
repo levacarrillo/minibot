@@ -1,6 +1,6 @@
 import rclpy
 from gui.app.app import App
-from gui.app.simulator_node import SimulatorNode
+from gui.infraestructure.simulator_node import SimulatorNode
 
 
 def main(args=None):
