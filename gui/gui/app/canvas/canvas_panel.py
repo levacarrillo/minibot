@@ -4,7 +4,7 @@ from gui.app.canvas.light import Light
 
 class CanvasPanel:
     def __init__(self, app):
-        self.color      = app.colors
+        self.color      = app.color
         self.service    = app.service
         self.controller = app.controller
         self.env_section   = app.side_panel.env_section
@@ -17,7 +17,7 @@ class CanvasPanel:
             relief = "flat",
             width = 900,
             height = 900,
-            bg=self.color.background
+            bg=self.color['background']
         )
 
 
@@ -31,7 +31,7 @@ class CanvasPanel:
             app.frame,
             width = self.size_x,
             height = self.size_y,
-            bg=self.color.canvas
+            bg=self.color['canvas']
         )
 
         self.light = Light(self)
@@ -62,7 +62,7 @@ class CanvasPanel:
                     i * self.service.get_edge(self.size_x, self.scale_x, line_per_meters),
                     self.size_y,
                     dash=(4, 4),
-                    fill=self.color.grid
+                    fill=self.color['grid']
                 )
             )
         for i in range(0, int(self.scale_y) * line_per_meters):
@@ -73,7 +73,7 @@ class CanvasPanel:
                     self.size_x,
                     i * self.service.get_edge(self.size_y, self.scale_y, line_per_meters),
                     dash=(4, 4),
-                    fill=self.color.grid
+                    fill=self.color['grid']
                 )
             )
 

@@ -16,8 +16,8 @@ class Robot:
             pose_y - self.radio,
             pose_x + self.radio,
             pose_y + self.radio,
-            outline = self.color.robot,
-            fill = self.color.robot,
+            outline = self.color['robot'],
+            fill = self.color['robot'],
             width=1
         )
 

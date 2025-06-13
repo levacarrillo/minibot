@@ -1,6 +1,6 @@
 import tkinter as tk
 from tkinter import Frame, BOTH
-from gui.app.colors import Colors
+from gui.app.colors import colors
 from gui.app.menu_bar import MenuBar
 from gui.domain.service import Service
 from gui.app.controller import Controller
@@ -13,7 +13,7 @@ class App(tk.Tk):
         super().__init__()
         self.title("Mobile Robot 2D Simulator v.2")
 
-        self.colors = Colors()
+        self.color = colors
         self.service = Service()
         self.controller = Controller()
         self.content = Frame(self)
