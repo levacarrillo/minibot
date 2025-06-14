@@ -4,15 +4,15 @@ from PIL import ImageTk
 class Light:
     def __init__(self, parent_panel):
         self.canvas = parent_panel.canvas
-        controller  = parent_panel.controller
+        self.controller  = parent_panel.controller
   
-        self.pose = { 'x': 0, 'y': 0 }
+        self.pose = self.controller.set_dymension(0, 0)
         self.image = False
-        self.img = PhotoImage(file = controller.get_file_path('light.png'))
+        self.img = PhotoImage(file = self.controller.get_file_path('light.png'))
         self.img.zoom(50, 50)
 
     def plot(self, pose_x, pose_y):
-        self.pose = { 'x': pose_x, 'y': pose_y }
+        self.pose = self.controller.set_dymension(pose_x, pose_y)
         if self.image:
             self.canvas.delete(self.image)
         self.image = self.canvas.create_image(pose_x, pose_y, image = self.img)

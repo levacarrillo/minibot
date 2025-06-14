@@ -4,6 +4,12 @@ class Service():
     def __init__(self):
         self.simulation_runnning = False
 
+    def set_dymension(x, y):
+        return { 'x': x, 'y':y }
+    
+    def set_pose(x, y, angle):
+        return { 'x': x, 'y': y, 'angle': angle }
+
     def get_edge(size, scale, line_per_meters):
         return size / (scale * line_per_meters)
 

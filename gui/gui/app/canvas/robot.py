@@ -10,7 +10,7 @@ class Robot:
         self.scale         = canvas_panel.scale
         self.size          = canvas_panel.size
 
-        self.pose   = { 'x': 0, 'y': 0, 'angle': 0}
+        self.pose   = self.controller.set_pose(0, 0, 0)
         self.radius = 0
         self.angle  = 0
 

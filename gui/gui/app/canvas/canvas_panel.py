@@ -14,8 +14,8 @@ class CanvasPanel:
                                         height = 900, bg=self.color['background'])
 
         self.grid = []
-        self.scale = { 'x': 1, 'y': 1 }
-        self.size  = { 'x': 500, 'y': 500 } # PIXELS
+        self.scale = self.controller.set_dymension(1, 1)
+        self.size  = self.controller.set_dymension(500, 500) # PIXELS
 
         self.canvas = Canvas(app.frame, width = self.size['x'], height = self.size['y'],
                                         bg=self.color['canvas'])

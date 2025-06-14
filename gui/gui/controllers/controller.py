@@ -7,6 +7,12 @@ class Controller:
         self.service = service
         self.file_manager = FileManager()
 
+    def set_dymension(self, x, y):
+        return self.service.set_dymension(x, y)
+
+    def set_pose(self, x, y, angle):
+        return self.service.set_pose(x, y, angle)
+
     def radians_to_degrees(self, radians):
         return self.service.radians_to_degrees(radians)
 
