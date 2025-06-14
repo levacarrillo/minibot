@@ -10,7 +10,7 @@ class Service():
     def set_pose(x, y, angle):
         return { 'x': x, 'y': y, 'angle': angle }
 
-    def scale_pose(old_size, new_size, pose):
+    def remap_pose(old_size, new_size, pose):
         pose['x'] = new_size['x'] * pose['x'] / old_size['x']
         pose['y'] = new_size['y'] * pose['y'] / old_size['y']
         return pose
