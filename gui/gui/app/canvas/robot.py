@@ -2,11 +2,11 @@ from gui.app.canvas.polygon import Polygon
 
 class Robot:
     def __init__(self, canvas_panel):
+        self.canvas_panel  = canvas_panel
         self.color         = canvas_panel.color
         self.canvas        = canvas_panel.canvas
         self.robot_section = canvas_panel.robot_section
         self.controller    = canvas_panel.controller
-
         self.scale         = canvas_panel.scale
         self.size          = canvas_panel.size
 
@@ -18,14 +18,25 @@ class Robot:
         self.polygon = Polygon(self)
 
 
-    def plot(self, pose_x, pose_y):
+    def plot(self, pose_x = None , pose_y = None):
+        if (pose_x and pose_y) is None:
+            size = self.canvas_panel.size
+
+            pose_x = size['x'] * self.pose['x'] / self.size['x']
+            pose_y = size['y'] * self.pose['y'] / self.size['y']
+            self.pose = { 'x': pose_x, 'y': pose_y, 'angle': self.angle }
+        else:
+            self.pose = { 'x': pose_x, 'y': pose_y, 'angle': self.angle }
+
+        self.size = self.canvas_panel.size
         self.angle  = self.controller.normalize_angle(self.robot_section.entry_angle.get())
         self.radius = self.controller.m_to_pixels(
                                                     self.scale['x'],
                                                     self.size['x'],
                                                     self.robot_section.entry_radius.get()
                                                 )
-        self.pose = { 'x': pose_x, 'y': pose_y, 'angle': self.angle }
+
+
 
         if self.body:
             self.canvas.delete(self.head)

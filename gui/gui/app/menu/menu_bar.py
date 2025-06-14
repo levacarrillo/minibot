@@ -32,3 +32,4 @@ class MenuBar:
         self.canvas.size = { 'x': size_x, 'y': size_y }
         self.canvas.canvas.configure(width = size_x, height = size_y)
         self.canvas.print_grid()
+        self.canvas.robot.plot()
