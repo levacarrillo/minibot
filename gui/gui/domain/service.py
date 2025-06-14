@@ -27,8 +27,3 @@ class Service():
         x = radius * (portion['x'] * cosT - portion['y'] * sinT) + pose['x']
         y = radius * (portion['x'] * sinT + portion['y'] * cosT) + pose['y']
         return x, y
-
-    def rotate_point(angle, ox, oy, x, y):
-        nx = (x - ox ) * math.cos(-angle) - (y - oy) * math.sin(-angle) + ox
-        ny = ( x - ox ) * math.sin(-angle) + (y - oy) * math.cos(-angle) + oy
-        return nx, ny

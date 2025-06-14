@@ -33,6 +33,3 @@ class Controller:
 
     def set_point_in_robot(self, pose, radius, portion_radius):
         return self.service.set_point_in_robot(pose, radius, portion_radius)
-
-    def rotate_point(self, angle, ox, oy, x, y):
-        return self.service.rotate_point(angle, ox, oy, x, y)
