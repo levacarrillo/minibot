@@ -13,6 +13,9 @@ class Controller:
     def set_pose(self, x, y, angle):
         return self.service.set_pose(x, y, angle)
 
+    def scale_pose(self, old_size, new_size, pose):
+        return self.service.scale_pose(old_size, new_size, pose)
+
     def radians_to_degrees(self, radians):
         return self.service.radians_to_degrees(radians)
 

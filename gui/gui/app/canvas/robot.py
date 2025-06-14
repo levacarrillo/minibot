@@ -10,7 +10,7 @@ class Robot:
         self.scale         = canvas_panel.scale
         self.size          = canvas_panel.size
 
-        self.pose   = self.controller.set_pose(0, 0, 0)
+        self.pose   = self.controller.set_pose(-10, -10, 0) # OUT OF CANVAS
         self.radius = 0
         self.angle  = 0
 
@@ -20,13 +20,10 @@ class Robot:
 
     def plot(self, pose_x = None , pose_y = None):
         if (pose_x and pose_y) is None:
-            size = self.canvas_panel.size
-
-            pose_x = size['x'] * self.pose['x'] / self.size['x']
-            pose_y = size['y'] * self.pose['y'] / self.size['y']
-            self.pose = { 'x': pose_x, 'y': pose_y, 'angle': self.angle }
+            new_size = self.canvas_panel.size
+            self.pose = self.controller.scale_pose(self.size, new_size, self.pose)
         else:
-            self.pose = { 'x': pose_x, 'y': pose_y, 'angle': self.angle }
+            self.pose = self.controller.set_pose(pose_x, pose_y, self.angle)
 
         self.size = self.canvas_panel.size
         self.angle  = self.controller.normalize_angle(self.robot_section.entry_angle.get())
