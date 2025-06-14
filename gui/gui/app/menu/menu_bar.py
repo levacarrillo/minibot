@@ -29,7 +29,6 @@ class MenuBar:
         app.config(menu=menu_bar)
 
     def resize_canvas(self, size_x, size_y):
-        self.canvas.size_x = size_x
-        self.canvas.size_y = size_y
+        self.canvas.size = { 'x': size_x, 'y': size_y }
         self.canvas.canvas.configure(width = size_x, height = size_y)
         self.canvas.print_grid()

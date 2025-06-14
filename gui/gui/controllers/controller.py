@@ -20,16 +20,19 @@ class Controller:
         return self.ros.get_current_step()
 
     def get_edge(self, size, scale, line_per_meters):
-        return self.service.get_edge(self, size, scale, line_per_meters)
+        return self.service.get_edge(size, scale, line_per_meters)
 
     def pixels_to_m(self, scale, size, point):
-        return self.service.pixels_to_m(self, scale, size, point)
+        return self.service.pixels_to_m(scale, size, point)
 
     def m_to_pixels(self, scale, size, length):
-        return self.service.m_to_pixels(self, scale, size, length)
+        return self.service.m_to_pixels(scale, size, length)
 
     def normalize_angle(self, angle):
-        return self.service.normalize_angle(self, angle)
+        return self.service.normalize_angle(angle)
+
+    def set_point_in_robot(self, pose, radius, portion_radius):
+        return self.service.set_point_in_robot(pose, radius, portion_radius)
 
     def rotate_point(self, angle, ox, oy, x, y):
-        return self.service.rotate_point(self, angle, ox, oy, x, y)
+        return self.service.rotate_point(angle, ox, oy, x, y)

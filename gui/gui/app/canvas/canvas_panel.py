@@ -14,12 +14,10 @@ class CanvasPanel:
                                         height = 900, bg=self.color['background'])
 
         self.grid = []
-        self.scale_x = 1
-        self.scale_y = 1
-        self.size_x = 500 # PIXELS
-        self.size_y = 500 # PIXELS
+        self.scale = { 'x': 1, 'y': 1 }
+        self.size  = { 'x': 500, 'y': 500 } # PIXELS
 
-        self.canvas = Canvas(app.frame, width = self.size_x, height = self.size_y,
+        self.canvas = Canvas(app.frame, width = self.size['x'], height = self.size['y'],
                                         bg=self.color['canvas'])
 
         self.light = Light(self)
@@ -36,42 +34,33 @@ class CanvasPanel:
             self.canvas.delete(i)
         self.grid =[]
 
-        for i in range(0, int(self.scale_x) * line_per_meters):
-            self.grid.append(
-                self.canvas.create_line(
-                    i * self.controller.get_edge(self.size_x, self.scale_x, line_per_meters),
-                    0,
-                    i * self.controller.get_edge(self.size_x, self.scale_x, line_per_meters),
-                    self.size_y,
-                    dash=(4, 4),
-                    fill=self.color['grid']
+        for X in self.scale:
+            edge = self.controller.get_edge(self.size[X], self.scale[X], line_per_meters)
+            for i in range(0, int(self.scale[X]) * line_per_meters):
+                self.grid.append(
+                    self.canvas.create_line(
+                        i * edge if X == 'x' else 0,
+                        i * edge if X != 'x' else 0,
+                        i * edge if X == 'x' else self.size[X],
+                        i * edge if X != 'x' else self.size[X],
+                        dash=(4, 4),
+                        fill=self.color['grid']
+                    )
                 )
-            )
-        for i in range(0, int(self.scale_y) * line_per_meters):
-            self.grid.append(
-                self.canvas.create_line(
-                    0,
-                    i * self.controller.get_edge(self.size_y, self.scale_y, line_per_meters),
-                    self.size_x,
-                    i * self.controller.get_edge(self.size_y, self.scale_y, line_per_meters),
-                    dash=(4, 4),
-                    fill=self.color['grid']
-                )
-            )
 
     def right_click(self, e_point):
         self.light.plot(e_point.x, e_point.y)
-        e_point.y = self.size_y - e_point.y # CHANGING REFERENCE SYSTEM
+        e_point.y = self.size['y'] - e_point.y # CHANGING REFERENCE SYSTEM
 
         self.env_section.label_light_pose_x.config(text=self.controller.pixels_to_m(
-                                                                            self.scale_x,
-                                                                            self.size_x,
+                                                                            self.scale['x'],
+                                                                            self.size ['x'],
                                                                             e_point.x
                                                                             )
                                                                         )
         self.env_section.label_light_pose_y.config(text=self.controller.pixels_to_m(
-                                                                            self.scale_y,
-                                                                            self.size_y,
+                                                                            self.scale['y'],
+                                                                            self.size['y'],
                                                                             e_point.y
                                                                             )
                                                                         )
@@ -79,20 +68,20 @@ class CanvasPanel:
 
     def left_click(self, e_point):
         self.robot.plot(e_point.x, e_point.y)
-        e_point.y = self.size_y - e_point.y # CHANGING REFERENCE SYSTEM
+        e_point.y = self.size['y'] - e_point.y # CHANGING REFERENCE SYSTEM
 
         self.robot_section.entry_pose_x.delete(0, END)
         self.robot_section.entry_pose_y.delete(0, END)
 
         self.robot_section.entry_pose_x.insert(0, self.controller.pixels_to_m(
-                                                                    self.scale_x,
-                                                                    self.size_x,
+                                                                    self.scale['x'],
+                                                                    self.size['x'],
                                                                     e_point.x
                                                                     )
                                                                 )
         self.robot_section.entry_pose_y.insert(0, self.controller.pixels_to_m(
-                                                                    self.scale_y,
-                                                                    self.size_y,
+                                                                    self.scale['y'],
+                                                                    self.size['y'],
                                                                     e_point.y
                                                                     )
                                                                 )
