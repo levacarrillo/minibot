@@ -7,6 +7,12 @@ class Controller:
         self.service = service
         self.file_manager = FileManager()
 
+    def radians_to_degrees(self, radians):
+        return self.service.radians_to_degrees(radians)
+
+    def degrees_to_radians(self, degrees):
+        return self.service.degrees_to_radians(degrees)
+
     def get_file_path(self, file_name):
         return self.file_manager.get_file_path(file_name)
 

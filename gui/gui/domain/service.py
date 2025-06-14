@@ -13,6 +13,12 @@ class Service():
     def m_to_pixels(scale, size, length):
         return (float(length) * size) / scale
 
+    def radians_to_degrees(radians):
+        return math.degrees(radians)
+
+    def degrees_to_radians(degrees):
+        return math.radians(degrees)        
+
     def normalize_angle(angle):
         angle = float(angle)
         if angle > math.pi * 2:
