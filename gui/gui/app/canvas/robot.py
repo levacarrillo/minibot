@@ -23,10 +23,10 @@ class Robot:
             new_size = self.canvas_panel.size
             self.pose = self.controller.scale_pose(self.size, new_size, self.pose)
         else:
+            self.angle  = self.controller.normalize_angle(self.robot_section.entry_angle.get())
             self.pose = self.controller.set_pose(pose_x, pose_y, self.angle)
 
         self.size = self.canvas_panel.size
-        self.angle  = self.controller.normalize_angle(self.robot_section.entry_angle.get())
         self.radius = self.controller.m_to_pixels(
                                                     self.scale['x'],
                                                     self.size['x'],
