@@ -1,3 +1,5 @@
+from gui.app.canvas.polygon import Polygon
+
 class Robot:
     def __init__(self, canvas_panel):
         self.color         = canvas_panel.color
@@ -13,6 +15,7 @@ class Robot:
         self.angle  = 0
 
         self.body   = False
+        self.polygon = Polygon(self)
 
 
     def plot(self, pose_x, pose_y):
@@ -52,45 +55,30 @@ class Robot:
             width   = 1
         )
 
-        head = []
-        head_points = [ # LENGHTS RELATIVE TO ROBOT'S RADIUS
+        # POINTS MAGNITUDES RELATIVE TO ROBOT'S RADIUS
+        head_points = [ 
             { 'x': 2/3, 'y': - 1/3 },
             { 'x': 2/3, 'y':   1/3 },
             { 'x': 5/6, 'y':    0  }
         ]
 
-        for point in head_points:
-            head.append(self.controller.set_point_in_robot(self.pose, self.radius, point))
-
-        self.head = self.canvas.create_polygon(head, outline = self.color['head'],
-                                                        fill =  self.color['head'], width = 1)
-        left_wheel = []
-        left_wheel_points = [ # LENGHTS RELATIVE TO ROBOT'S RADIUS
+        left_wheel_points = [
             {'x': -1/2, 'y': -5/6 },
             {'x':  1/2, 'y': -5/6 },
             {'x':  1/2, 'y': -3/6 },
             {'x': -1/2, 'y': -3/6 }
         ]
 
-        right_wheel = []
-        right_wheel_points = [ # LENGHTS RELATIVE TO ROBOT'S RADIUS
+        right_wheel_points = [ 
             {'x': -1/2, 'y':  3/6 },
             {'x':  1/2, 'y':  3/6 },
             {'x':  1/2, 'y':  5/6 },
             {'x': -1/2, 'y':  5/6 },
         ]
 
-        for point in left_wheel_points:
-            left_wheel.append(self.controller.set_point_in_robot(self.pose, self.radius, point))
-
-        for point in right_wheel_points:
-            right_wheel.append(self.controller.set_point_in_robot(self.pose, self.radius, point))
-
-        self.left_wheel  = self.canvas.create_polygon(left_wheel, outline = self.color['wheel'],
-                                                            fill = self.color['wheel'], width=1)
-        self.right_wheel = self.canvas.create_polygon(right_wheel, outline = self.color['wheel'],
-                                                            fill = self.color['wheel'], width=1)
-
+        self.head  = self.polygon.get(self.pose, self.radius, head_points, color_name = 'head')
+        self.left_wheel  = self.polygon.get(self.pose, self.radius, left_wheel_points,  'wheel')
+        self.right_wheel = self.polygon.get(self.pose, self.radius, right_wheel_points, 'wheel')
 
     def delete(self):
         self.canvas.delete(self.body)
