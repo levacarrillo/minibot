@@ -1,6 +1,7 @@
 from tkinter import *
 from gui.app.canvas.robot import Robot
 from gui.app.canvas.light import Light
+from gui.app.canvas.plot_animation import PlotAnimation
 
 class CanvasPanel:
     def __init__(self, app):
@@ -22,6 +23,7 @@ class CanvasPanel:
 
         self.light = Light(self)
         self.robot = Robot(self)
+        self.plot_animation = PlotAnimation(self)
 
         self.canvas.bind("<Button-3>", self.right_click)
         self.canvas.bind("<Button-1>", self.left_click)
@@ -64,6 +66,8 @@ class CanvasPanel:
                                                                             e_point.y
                                                                             )
                                                                         )
+        self.plot_animation.run()
+       
 
 
     def left_click(self, e_point):
@@ -86,3 +90,5 @@ class CanvasPanel:
                                                                     )
                                                                 )
 
+    def run_motion(self):
+        self.plot_animation.run()
