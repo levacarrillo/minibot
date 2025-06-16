@@ -10,7 +10,7 @@ class Controller:
     def set_dymension(self, x, y):
         return self.service.set_dymension(x, y)
 
-    def set_pose(self, x, y, angle):
+    def set_pose(self, x, y, angle = 0):
         return self.service.set_pose(x, y, angle)
 
     def remap_pose(self, old_size, new_size, pose):
