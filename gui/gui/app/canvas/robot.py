@@ -19,7 +19,6 @@ class Robot:
 
 
     def plot(self, pose_x = None , pose_y = None):
-        print('plotting')
         if (pose_x and pose_y) is None:
             new_size = self.canvas_panel.size
             self.pose = self.controller.remap_pose(self.canvas_size, new_size, self.pose)

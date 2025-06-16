@@ -16,3 +16,6 @@ class Ros(Node):
     def get_behavior_list(self):
         behavior_list = ["LIGHT_FOLLOWER", "SM_DESTINATION", "SM_AVOID_OBSTACLES"]
         return behavior_list
+
+    def get_goal_point(self):
+        return { 'x': 10, 'y': 10, 'angle': 1.0 }

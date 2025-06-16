@@ -48,3 +48,6 @@ class Controller:
 
     def set_point_in_robot(self, pose, radius, portion_radius):
         return self.service.set_point_in_robot(pose, radius, portion_radius)
+
+    def get_goal_point(self):
+        return self.ros.get_goal_point()
