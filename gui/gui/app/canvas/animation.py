@@ -1,6 +1,6 @@
 import time
 
-class PlotAnimation:
+class Animation:
     def __init__(self, canvas_panel):
         self.canvas  = canvas_panel
         self.robot   = canvas_panel.robot

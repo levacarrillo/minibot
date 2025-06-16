@@ -21,5 +21,5 @@ class App(tk.Tk):
         self.menu_bar = MenuBar(self)
     
     def run(self):
-        self.canvas_panel.print_grid()
+        self.canvas_panel.grid.plot()
         self.mainloop()

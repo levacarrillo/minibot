@@ -1,7 +1,8 @@
 from tkinter import *
+from gui.app.canvas.grid  import Grid
 from gui.app.canvas.robot import Robot
 from gui.app.canvas.light import Light
-from gui.app.canvas.plot_animation import PlotAnimation
+from gui.app.canvas.animation import Animation
 
 class CanvasPanel:
     def __init__(self, app):
@@ -14,16 +15,16 @@ class CanvasPanel:
         app.frame = Frame(app.content, borderwidth = 5, relief = "flat", width = 900,
                                         height = 900, bg=self.color['background'])
 
-        self.grid = []
         self.scale = self.controller.set_dymension(1, 1)
         self.size  = self.controller.set_dymension(500, 500) # PIXELS
 
         self.canvas = Canvas(app.frame, width = self.size['x'], height = self.size['y'],
                                         bg=self.color['canvas'])
 
+        self.grid  = Grid(self)
         self.light = Light(self)
         self.robot = Robot(self)
-        self.plot_animation = PlotAnimation(self)
+        self.animation = Animation(self)
 
         self.canvas.bind("<Button-3>", self.right_click)
         self.canvas.bind("<Button-1>", self.left_click)
@@ -31,25 +32,7 @@ class CanvasPanel:
         app.frame.grid(column = 0, row = 0, columnspan = 3, rowspan = 2, sticky = (N, S, E, W))
         self.canvas.pack()
 
-    def print_grid(self, line_per_meters = 10):
-        for i in self.grid:
-            self.canvas.delete(i)
-        self.grid =[]
-
-        for X in self.scale:
-            edge = self.controller.get_edge(self.size[X], self.scale[X], line_per_meters)
-            for i in range(0, int(self.scale[X]) * line_per_meters):
-                self.grid.append(
-                    self.canvas.create_line(
-                        i * edge if X == 'x' else 0,
-                        i * edge if X != 'x' else 0,
-                        i * edge if X == 'x' else self.size[X],
-                        i * edge if X != 'x' else self.size[X],
-                        dash=(4, 4),
-                        fill=self.color['grid']
-                    )
-                )
-
+ 
     def right_click(self, e_point):
         self.light.plot(e_point.x, e_point.y)
         e_point.y = self.size['y'] - e_point.y # CHANGING REFERENCE SYSTEM
@@ -66,7 +49,7 @@ class CanvasPanel:
                                                                             e_point.y
                                                                             )
                                                                         )
-        self.plot_animation.run()
+        self.animation.run()
        
 
 
@@ -91,4 +74,4 @@ class CanvasPanel:
                                                                 )
 
     def run_motion(self):
-        self.plot_animation.run()
+        self.animation.run()

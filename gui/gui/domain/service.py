@@ -5,7 +5,7 @@ class Service():
         self.simulation_runnning = False
 
     def set_dymension(x, y):
-        return { 'x': x, 'y':y }
+        return { 'x': x, 'y': y }
     
     def set_pose(x, y, angle):
         return { 'x': x, 'y': y, 'angle': angle }

@@ -3,6 +3,7 @@ from tkinter import Menu
 class MenuBar:
     def __init__(self, app):
         self.canvas = app.canvas_panel
+        self.controller = app.controller
 
         menu_bar = Menu(app)
         settings       = Menu(menu_bar, tearoff = 0)
@@ -28,9 +29,9 @@ class MenuBar:
         settings.add_command(label = " Exit", command     = app.quit)
         app.config(menu=menu_bar)
 
-    def resize_canvas(self, size_x, size_y):
-        self.canvas.size = { 'x': size_x, 'y': size_y }
-        self.canvas.canvas.configure(width = size_x, height = size_y)
-        self.canvas.print_grid()
+    def resize_canvas(self, new_size_x, new_size_y):
+        self.canvas.size = self.controller.set_dymension(new_size_x, new_size_y)
+        self.canvas.canvas.configure(width = new_size_x, height = new_size_y)
+        self.canvas.grid .plot()
         self.canvas.light.plot()
         self.canvas.robot.plot()
