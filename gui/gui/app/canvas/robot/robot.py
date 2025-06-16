@@ -1,4 +1,8 @@
 from gui.app.canvas.polygon import Polygon
+from gui.app.canvas.robot.body   import get_body
+from gui.app.canvas.robot.hokuyo import get_hokuyo
+from gui.app.canvas.robot.head import head_points
+from gui.app.canvas.robot.wheels import left_wheel_points, right_wheel_points
 
 class Robot:
     def __init__(self, canvas_panel):
@@ -42,51 +46,11 @@ class Robot:
             self.canvas.delete(self.left_wheel)
             self.canvas.delete(self.right_wheel)
 
-
-        self.body = self.canvas.create_oval(
-            self.pose['x'] - self.radius,
-            self.pose['y'] - self.radius,
-            self.pose['x'] + self.radius,
-            self.pose['y'] + self.radius,
-            outline = self.color['robot'],
-            fill    = self.color['robot'],
-            width   = 1
-        )
-
-        self.hokuyo = self.canvas.create_oval(
-            self.pose['x'] - (self.radius / 5),
-            self.pose['y'] - (self.radius / 5),
-            self.pose['x'] + (self.radius / 5),
-            self.pose['y'] + (self.radius / 5),
-            outline = self.color['hokuyo'],
-            fill    = self.color['hokuyo'],
-            width   = 1
-        )
-
-        # POINTS MAGNITUDES RELATIVE TO ROBOT'S RADIUS
-        head_points = [ 
-            { 'x': 2/3, 'y': - 1/3 },
-            { 'x': 2/3, 'y':   1/3 },
-            { 'x': 5/6, 'y':    0  }
-        ]
-
-        left_wheel_points = [
-            {'x': -1/2, 'y': -5/6 },
-            {'x':  1/2, 'y': -5/6 },
-            {'x':  1/2, 'y': -3/6 },
-            {'x': -1/2, 'y': -3/6 }
-        ]
-
-        right_wheel_points = [ 
-            {'x': -1/2, 'y':  3/6 },
-            {'x':  1/2, 'y':  3/6 },
-            {'x':  1/2, 'y':  5/6 },
-            {'x': -1/2, 'y':  5/6 },
-        ]
-
-        self.head  = self.polygon.get(self.pose, self.radius, head_points, color_name = 'head')
-        self.left_wheel  = self.polygon.get(self.pose, self.radius, left_wheel_points,  'wheel')
-        self.right_wheel = self.polygon.get(self.pose, self.radius, right_wheel_points, 'wheel')
+        self.head  = self.polygon.get(self.pose, self.radius, head_points(), color_name = 'head')
+        self.body = get_body(self.canvas, self.pose, self.radius, self.color)
+        self.hokuyo = get_hokuyo(self.canvas, self.pose, self.radius, self.color)
+        self.left_wheel  = self.polygon.get(self.pose, self.radius, left_wheel_points(),  'wheel')
+        self.right_wheel = self.polygon.get(self.pose, self.radius, right_wheel_points(), 'wheel')
 
     def delete(self):
         self.canvas.delete(self.body)

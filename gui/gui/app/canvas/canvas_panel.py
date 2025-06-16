@@ -1,7 +1,7 @@
 from tkinter import *
 from gui.app.canvas.grid  import Grid
-from gui.app.canvas.robot import Robot
 from gui.app.canvas.light import Light
+from gui.app.canvas.robot.robot import Robot
 from gui.app.canvas.animation import Animation
 
 class CanvasPanel:
