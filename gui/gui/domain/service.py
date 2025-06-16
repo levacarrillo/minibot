@@ -38,7 +38,7 @@ class Service():
             return math.pi * 2 - ((angle * -1) % (math.pi * 2))
         return angle
 
-    def set_point_in_robot(pose, radius, portion):
+    def set_polygon_point(pose, radius, portion):
         sinT = math.sin(-pose['angle'])
         cosT = math.cos(-pose['angle'])
         x = radius * (portion['x'] * cosT - portion['y'] * sinT) + pose['x']
