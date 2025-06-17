@@ -18,7 +18,9 @@ MotionPlanner::MotionPlanner() : Node("motion_planner") {
   this->declare_parameter("laser_threshold", this->laser_sensor_data.laser_threshold);
   
   this->laser_readings_client = this->create_client<GetScan>("get_scan");
-  this->go_to_pose_client = rclcpp_action::create_client<GoToPose>(this, "go_to_pose");
+  this->set_param_server      = this->create_service<SetParam>("set_param",
+                                std::bind(&MotionPlanner::set_param, this, _1, _2));
+  this->go_to_pose_client     = rclcpp_action::create_client<GoToPose>(this, "go_to_pose");
   this->light_readings_client = this->create_client<GetLightReadings>("get_light_readings");
 
   timer_ = this->create_wall_timer(
@@ -33,6 +35,7 @@ void MotionPlanner::timer_callback() {
   this->movement_params.max_turn_angle = this->get_parameter("max_turn_angle").as_double();
   this->light_sensors_data.light_threshold = this->get_parameter("light_threshold").as_double();
   this->laser_sensor_data.laser_threshold  = this->get_parameter("laser_threshold").as_double();
+
 }
 
 bool MotionPlanner::behavior_is_running() {
@@ -56,7 +59,8 @@ int MotionPlanner::get_current_step() {
 
 bool MotionPlanner::steps_exceeded() {
   if (this->movement_params.step >= this->movement_params.max_steps) {
-    RCLCPP_WARN(this->get_logger(), "STEPS NUMBER HAS REACHED ITS MAXIMUN VALUE->%d", this->movement_params.max_steps);
+    RCLCPP_WARN(this->get_logger(), "STEPS NUMBER HAS REACHED ITS MAXIMUN VALUE->%d",
+                                    this->movement_params.max_steps);
     this->stop_behavior();
     return true;
   }
@@ -82,6 +86,14 @@ MovementParams MotionPlanner::get_movement_params() {
   return this->movement_params;
 }
 
+void MotionPlanner::set_param(const std::shared_ptr<SetParam::Request> request,
+                                        std::shared_ptr<SetParam::Response> response) {
+  response->success = true;
+  RCLCPP_INFO(this->get_logger(), "SETTING A NEW PARAM: %s->%s", 
+                                  request->param.c_str(), request->value.c_str());
+
+}
+
 LightSensorsData MotionPlanner::get_light_sensors_data() {
   while(!this->light_readings_client->wait_for_service(1s)) {
     RCLCPP_WARN(this->get_logger(), "SERVICE /get_light_readings NOT AVAILABLE, WAITING AGAIN...");
@@ -90,7 +102,8 @@ LightSensorsData MotionPlanner::get_light_sensors_data() {
   auto request = std::make_shared<GetLightReadings::Request>();
   auto result = this->light_readings_client->async_send_request(request);
   
-  if (rclcpp::spin_until_future_complete(this->get_node_base_interface(), result) == rclcpp::FutureReturnCode::SUCCESS) {
+  if (rclcpp::spin_until_future_complete(this->get_node_base_interface(), result)
+                                                      == rclcpp::FutureReturnCode::SUCCESS) {
     auto response = result.get();
     
     this->light_sensors_data.light_readings      = response->readings;
@@ -111,7 +124,8 @@ LaserSensorData MotionPlanner::get_laser_sensor_data() {
   }
   auto request = std::make_shared<GetScan::Request>();
   auto result = this->laser_readings_client->async_send_request(request);
-  if (rclcpp::spin_until_future_complete(this->get_node_base_interface(), result) == rclcpp::FutureReturnCode::SUCCESS) {
+  if (rclcpp::spin_until_future_complete(this->get_node_base_interface(), result)
+                                                        == rclcpp::FutureReturnCode::SUCCESS) {
     auto response = result.get();
     this->laser_sensor_data.laser_readings = response->scan;
     this->laser_sensor_data.obstacle_direction = get_obstacle_direction(this->laser_sensor_data);
@@ -124,7 +138,8 @@ LaserSensorData MotionPlanner::get_laser_sensor_data() {
 
 void MotionPlanner::move_robot(Movement movement) {
   while(!this->go_to_pose_client->wait_for_action_server(1s)) {
-    RCLCPP_WARN(this->get_logger(), "ACTION SERVER /go_to_pose NOT AVAILABLE AFTER WAITING, RETRYING...");
+    RCLCPP_WARN(this->get_logger(),
+                            "ACTION SERVER /go_to_pose NOT AVAILABLE AFTER WAITING, RETRYING...");
   }
   auto goal_msg = GoToPose::Goal();
   goal_msg.angle = movement.twist;
@@ -132,7 +147,8 @@ void MotionPlanner::move_robot(Movement movement) {
   
   auto goal_handle_future = this->go_to_pose_client->async_send_goal(goal_msg);
 
-  if (rclcpp::spin_until_future_complete(this->get_node_base_interface(), goal_handle_future) != rclcpp::FutureReturnCode::SUCCESS) {
+  if (rclcpp::spin_until_future_complete(this->get_node_base_interface(), goal_handle_future)
+                                                          != rclcpp::FutureReturnCode::SUCCESS) {
     RCLCPP_ERROR(this->get_logger(), "FAILED TO SEND MOVEMENT");
     return;
   }
@@ -146,7 +162,8 @@ void MotionPlanner::move_robot(Movement movement) {
   // RCLCPP_INFO(this->get_logger(), "MOVEMENT ACCEPTED, WAITING FOR RESULT...");
 
   auto result_future = this->go_to_pose_client->async_get_result(goal_handle);
-  if (rclcpp::spin_until_future_complete(this->get_node_base_interface(), result_future) != rclcpp::FutureReturnCode::SUCCESS) {
+  if (rclcpp::spin_until_future_complete(this->get_node_base_interface(), result_future)
+                                                          != rclcpp::FutureReturnCode::SUCCESS) {
     RCLCPP_ERROR(this->get_logger(), "MOVEMENT RESULT COULDN'T BE FOUND");
     return;
   }
