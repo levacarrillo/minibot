@@ -12,6 +12,7 @@ colors = {
     'button_font': '#FFFFFF',
     'canvas': '#FFFFFF',
     'grid': '#D1D2D4',
+    'trace': '#AB1111',
     'wheel': '#404000',
     'robot': '#F7CE3F',
     'hokuyo': '#4F58DB',

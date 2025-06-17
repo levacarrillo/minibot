@@ -66,7 +66,7 @@ class CanvasPanel:
                                                                             )
                                                                         )
 
-        # self.robot.move(-100, 0.5)
+        self.robot.move(-100, 0.5)
        
 
 
