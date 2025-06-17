@@ -18,8 +18,8 @@ MotionPlanner::MotionPlanner() : Node("motion_planner") {
   this->declare_parameter("laser_threshold", this->laser_sensor_data.laser_threshold);
   
   this->laser_readings_client = this->create_client<GetScan>("get_scan");
-  this->get_param_server      = this->create_service<GetParam>("get_param",
-                                std::bind(&MotionPlanner::get_param, this, _1, _2));
+  this->get_params_server      = this->create_service<GetParams>("get_params",
+                                std::bind(&MotionPlanner::get_params, this, _1, _2));
   this->set_param_server      = this->create_service<SetParam>("set_param",
                                 std::bind(&MotionPlanner::set_param, this, _1, _2));
   this->go_to_pose_client     = rclcpp_action::create_client<GoToPose>(this, "go_to_pose");
@@ -88,36 +88,20 @@ MovementParams MotionPlanner::get_movement_params() {
   return this->movement_params;
 }
 
-void MotionPlanner::get_param(const std::shared_ptr<GetParam::Request> request,
-                                        std::shared_ptr<GetParam::Response> response)
+void MotionPlanner::get_params(const std::shared_ptr<GetParams::Request> /*request*/,
+                                        std::shared_ptr<GetParams::Response> response)
                                         {
-  // RCLCPP_INFO(this->get_logger(), "GETTING PARAM: %s", request->param.c_str());
-  std::stringstream ss;
-  if (request->param == "behavior")
-    ss << this->selected_behavior;
-  else if (request->param == "run_behavior")
-    ss << this->behavior_running;
-  else if (request->param == "behavior_list")
-    ss << get_behavior_list_str();
-  else if (request->param == "current_state")
-    ss << this->movement_params.state;
-  else if (request->param == "step")
-    ss << this->movement_params.step;
-  else if (request->param == "max_steps")
-    ss << this->movement_params.max_steps;
-  else if (request->param == "max_advance")
-    ss << this->movement_params.max_advance;
-  else if (request->param == "max_turn_angle")
-    ss << this->movement_params.max_turn_angle;
-  else if (request->param == "light_threshold")
-    ss << this->light_sensors_data.light_threshold;
-  else if (request->param == "laser_threshold")
-    ss << this->laser_sensor_data.laser_threshold;
-  else
-    ss << "NOT FOUND";
-
-  std::string str_param = ss.str();
-  response->value = str_param;
+  RCLCPP_INFO(this->get_logger(), "SENDING MOTION_PLANNER PARAMS");
+  response->behavior        = this->selected_behavior;
+  response->run_behavior    = this->behavior_running;
+  response->behavior_list   = get_behavior_list();
+  response->current_state   = this->movement_params.state;
+  response->step            = this->movement_params.step;
+  response->max_steps       = this->movement_params.max_steps;
+  response->max_advance     = this->movement_params.max_advance;
+  response->max_turn_angle  = this->movement_params.max_turn_angle;
+  response->light_threshold = this->light_sensors_data.light_threshold;
+  response->laser_threshold = this->laser_sensor_data.laser_threshold;
 }
 
 void MotionPlanner::set_param(const std::shared_ptr<SetParam::Request> request,

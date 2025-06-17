@@ -1,0 +1,11 @@
+---
+string behavior
+bool run_behavior
+string[] behavior_list
+int32 current_state
+int32 step
+int32 max_steps
+float32 max_advance
+float32 max_turn_angle
+float32 light_threshold
+float32 laser_threshold
