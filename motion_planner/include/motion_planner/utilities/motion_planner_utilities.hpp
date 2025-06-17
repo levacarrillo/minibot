@@ -20,7 +20,7 @@ std::vector<std::string> get_behavior_list() {
   return behavior_list;
 }
 
-Direction get_obstacle_direction(LaserSensorData scan_data) {
+Direction get_obstacle_direction(Sensors scan_data) {
   bool obstacle_right = false;
   bool obstacle_left  = false;
 

@@ -18,9 +18,9 @@ MotionPlanner::MotionPlanner() : Node("motion_planner") {
   this->declare_parameter("laser_threshold", this->laser_sensor_data.laser_threshold);
   
   this->laser_readings_client = this->create_client<GetScan>("get_scan");
-  this->get_params_server      = this->create_service<GetParams>("get_params",
+  this->get_params_server     = this->create_service<GetParams>("get_params",
                                 std::bind(&MotionPlanner::get_params, this, _1, _2));
-  this->set_params_server      = this->create_service<SetParams>("set_params",
+  this->set_params_server     = this->create_service<SetParams>("set_params",
                                 std::bind(&MotionPlanner::set_params, this, _1, _2));
   this->go_to_pose_client     = rclcpp_action::create_client<GoToPose>(this, "go_to_pose");
   this->light_readings_client = this->create_client<GetLightReadings>("get_light_readings");
@@ -117,7 +117,7 @@ void MotionPlanner::set_params(const std::shared_ptr<SetParams::Request> request
   response->success = true;
 }
 
-LightSensorsData MotionPlanner::get_light_sensors_data() {
+Sensors MotionPlanner::get_light_sensors_data() {
   while(!this->light_readings_client->wait_for_service(1s)) {
     RCLCPP_WARN(this->get_logger(), "SERVICE /get_light_readings NOT AVAILABLE, WAITING AGAIN...");
   }
@@ -141,7 +141,7 @@ LightSensorsData MotionPlanner::get_light_sensors_data() {
   return this->light_sensors_data;
 }
 
-LaserSensorData MotionPlanner::get_laser_sensor_data() {
+Sensors MotionPlanner::get_laser_sensor_data() {
   while(!this->laser_readings_client->wait_for_service(1s)) {
     RCLCPP_WARN(this->get_logger(), "SERVICE /get_scan NOT AVAILABLE, WAITING AGAIN...");   
   }

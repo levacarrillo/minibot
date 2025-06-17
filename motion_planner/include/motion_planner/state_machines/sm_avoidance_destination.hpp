@@ -13,7 +13,7 @@
 ************************************************/
 
 
-bool sm_avoidance_destination(LightSensorsData light_data, LaserSensorData laser_data, MovementParams *params, Movement *movement) {
+bool sm_avoidance_destination(Sensors light_data, Sensors laser_data, MovementParams *params, Movement *movement) {
 
     float THRESHOLD = light_data.light_threshold;
 

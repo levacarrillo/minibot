@@ -13,7 +13,7 @@
 ************************************************/
 
 
-bool user_sm(LightSensorsData light_data, LaserSensorData laser_data, MovementParams *params, Movement *movement) {
+bool user_sm(Sensors light_data, Sensors laser_data, MovementParams *params, Movement *movement) {
 
     float THRESHOLD = light_data.light_threshold;
 

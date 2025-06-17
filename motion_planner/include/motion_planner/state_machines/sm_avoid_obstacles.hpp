@@ -13,7 +13,7 @@
 ************************************************/
 
 
-void sm_avoid_obstacles(LaserSensorData laser_data, MovementParams *params, Movement *movement) {
+void sm_avoid_obstacles(Sensors laser_data, MovementParams *params, Movement *movement) {
     
     int state = params->state;
     Direction obstacle_direction = laser_data.obstacle_direction;

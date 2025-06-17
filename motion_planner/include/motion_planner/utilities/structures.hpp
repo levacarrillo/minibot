@@ -38,19 +38,30 @@ typedef struct Movement_ {
     float advance;
 } Movement;
 
-typedef struct LightSensorsData_ {
-    std::array<float, 8> light_readings;
+typedef struct Sensors_ {
+    float light_threshold;
+    float laser_threshold;
+    float light_sensor_max;
     Direction light_direction;
     int light_sensor_max_id;
-    float light_sensor_max;
-    float light_threshold;
-} LightSensorsData;
-
-typedef struct LaserSensorData_ {
-    std::vector<float> laser_readings;
     Direction obstacle_direction;
-    float laser_threshold;
-} LaserSensorData;
+    std::vector<float>   laser_readings;
+    std::array<float, 8> light_readings;
+} Sensors;
+
+// typedef struct LightSensorsData_ {
+//     std::array<float, 8> light_readings;
+//     Direction light_direction;
+//     int light_sensor_max_id;
+//     float light_sensor_max;
+//     float light_threshold;
+// } LightSensorsData;
+
+// typedef struct LaserSensorData_ {
+//     std::vector<float> laser_readings;
+//     Direction obstacle_direction;
+//     float laser_threshold;
+// } LaserSensorData;
 
 typedef struct MovementParams_ {
     float max_advance;
