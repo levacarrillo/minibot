@@ -12,7 +12,7 @@ find_package(rosidl_default_generators REQUIRED)
 rosidl_generate_interfaces(${PROJECT_NAME}
   "srv/GetScan.srv"
   "srv/GetParams.srv"
-  "srv/SetParam.srv"
+  "srv/SetParams.srv"
   "srv/GetLightReadings.srv"
   "action/GoToPose.action"
   DEPENDENCIES

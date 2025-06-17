@@ -20,8 +20,8 @@ MotionPlanner::MotionPlanner() : Node("motion_planner") {
   this->laser_readings_client = this->create_client<GetScan>("get_scan");
   this->get_params_server      = this->create_service<GetParams>("get_params",
                                 std::bind(&MotionPlanner::get_params, this, _1, _2));
-  this->set_param_server      = this->create_service<SetParam>("set_param",
-                                std::bind(&MotionPlanner::set_param, this, _1, _2));
+  this->set_params_server      = this->create_service<SetParams>("set_params",
+                                std::bind(&MotionPlanner::set_params, this, _1, _2));
   this->go_to_pose_client     = rclcpp_action::create_client<GoToPose>(this, "go_to_pose");
   this->light_readings_client = this->create_client<GetLightReadings>("get_light_readings");
 
@@ -91,7 +91,6 @@ MovementParams MotionPlanner::get_movement_params() {
 void MotionPlanner::get_params(const std::shared_ptr<GetParams::Request> /*request*/,
                                         std::shared_ptr<GetParams::Response> response)
                                         {
-  RCLCPP_INFO(this->get_logger(), "SENDING MOTION_PLANNER PARAMS");
   response->behavior        = this->selected_behavior;
   response->run_behavior    = this->behavior_running;
   response->behavior_list   = get_behavior_list();
@@ -104,12 +103,18 @@ void MotionPlanner::get_params(const std::shared_ptr<GetParams::Request> /*reque
   response->laser_threshold = this->laser_sensor_data.laser_threshold;
 }
 
-void MotionPlanner::set_param(const std::shared_ptr<SetParam::Request> request,
-                                        std::shared_ptr<SetParam::Response> response) {
-  response->success = true;
-  RCLCPP_INFO(this->get_logger(), "SETTING A NEW PARAM: %s->%s", 
-                                  request->param.c_str(), request->value.c_str());
+void MotionPlanner::set_params(const std::shared_ptr<SetParams::Request> request,
+                                        std::shared_ptr<SetParams::Response> response) {
 
+  this->selected_behavior                  = request->behavior;
+  this->behavior_running                   = request->run_behavior;
+  this->movement_params.max_steps          = request->max_steps;
+  this->movement_params.max_advance        = request->max_advance ;
+  this->movement_params.max_turn_angle     = request->max_turn_angle;
+  this->light_sensors_data.light_threshold = request->light_threshold;
+  this->laser_sensor_data.laser_threshold  = request->laser_threshold;
+  
+  response->success = true;
 }
 
 LightSensorsData MotionPlanner::get_light_sensors_data() {
