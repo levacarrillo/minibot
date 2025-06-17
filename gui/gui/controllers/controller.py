@@ -58,6 +58,9 @@ class Controller:
     def get_max_advance(self):
         return self.ros.get_max_advance()
 
+    def get_lidar_threshold(self):
+        return self.ros.get_lidar_threshold()
+
     def get_max_turn_angle(self):
         return self.ros.get_max_turn_angle()
 

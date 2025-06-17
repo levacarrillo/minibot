@@ -54,6 +54,9 @@ class Ros(Node):
 
     def get_max_steps(self):
         return str(100)
+    
+    def get_lidar_threshold(self):
+        return str(0.51)
 
     def get_environment_list(self):
         enviroments = ["EMPTY", "HOME", "ARENA 1", "ARENA 2"]

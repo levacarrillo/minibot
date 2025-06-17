@@ -3,6 +3,7 @@ from tkinter import *
 class RobotSection:
     def __init__(self, parent_panel):
         side = parent_panel.side_panel
+        controller = parent_panel.controller
         
         self.label_robot      = Label(side, text = "Robot")
         self.label_pose_x     = Label(side, text = "Pose X:")
@@ -19,11 +20,13 @@ class RobotSection:
         self.entry_angle      = Entry(side, validate = 'key',
                                         textvariable = StringVar(value = "0.0"),    width = 9)
         self.entry_radius      = Entry(side, validate = 'key',
-                                        textvariable = StringVar(value = "0.03"),   width = 9)
-        self.entry_advance    = Entry(side, validate = 'key',
                                         textvariable = StringVar(value = "0.04"),   width = 9)
+        self.entry_advance    = Entry(side, validate = 'key',
+                                    textvariable = StringVar(value = controller.get_max_advance()),
+                                    width = 9)
         self.entry_turn_angle = Entry(side, validate = 'key',
-                                        textvariable = StringVar(value = "0.7857"), width = 9)
+                                    textvariable = StringVar(value = controller.get_max_turn_angle()),
+                                    width = 9)
         self.button_set_zero  = Button(side, width = 8, text = "Angle Zero")
 
         self.label_robot      .grid(column = 4, row = 0, sticky = (N, W), padx = (5, 0))     
