@@ -2,6 +2,7 @@ import rclpy
 import threading
 from rclpy.node import Node
 from rclpy.action import ActionServer
+from interfaces.srv import GetParam
 from interfaces.action import GoToPose
 
 class Ros(Node):
@@ -12,19 +13,28 @@ class Ros(Node):
         self.goal_distance = 0.0
         self.movement_executing = False
         self.timer = threading.Timer(10, self.stop_movement)
+        self.client = self.create_client(GetParam, 'get_param')
         self._action_server = ActionServer(
             self,
             GoToPose,
             'go_to_pose',
             self.execute_callback
         )
+        while not self.client.wait_for_service(timeout_sec=1.0):
+            self.get_logger().info('SERVICE /go_to_pose NOT AVAILABLE, WAITING AGAIN...')
+        self.request = GetParam.Request()
+
+    def get_param(self, param):
+        self.request.param = param
+        self.future = self.client.call_async(self.request)
+        rclpy.spin_until_future_complete(self, self.future)
+        return self.future.result()
 
     def stop_movement(self):
         self.movement_executing = False
     
     def movement_executing(self):
         return self.movement_executing
-
 
     def execute_callback(self, goal_handle):
         self.get_logger().info('EXECUTING GOAL...')
@@ -43,9 +53,6 @@ class Ros(Node):
         result.success = True
         return result
 
-    def get_max_advance(self):
-        return str(0.04)
-
     def get_max_turn_angle(self):
         return str(0.7857)
 
@@ -54,17 +61,6 @@ class Ros(Node):
 
     def get_max_steps(self):
         return str(100)
-    
-    def get_lidar_threshold(self):
-        return str(0.51)
-
-    def get_environment_list(self):
-        enviroments = ["EMPTY", "HOME", "ARENA 1", "ARENA 2"]
-        return enviroments
-
-    def get_behavior_list(self):
-        behavior_list = ["LIGHT_FOLLOWER", "SM_DESTINATION", "SM_AVOID_OBSTACLES"]
-        return behavior_list
 
     def get_goal_point(self):
         return { 'x': 10, 'y': 10, 'angle': 1.0 }

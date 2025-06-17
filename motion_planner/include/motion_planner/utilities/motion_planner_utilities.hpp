@@ -20,6 +20,17 @@ std::vector<std::string> get_behavior_list() {
   return behavior_list;
 }
 
+std::string get_behavior_list_str() {
+  std::stringstream ss;
+  ss << "[";
+  for(const auto& pair : behavior_names) {
+    ss << pair.first <<  ", ";
+  }
+  ss << "]";
+  std::string list = ss.str();
+  return list;
+}
+
 Direction get_obstacle_direction(LaserSensorData scan_data) {
   bool obstacle_right = false;
   bool obstacle_left  = false;
