@@ -44,9 +44,9 @@ class CanvasPanel:
         self.canvas.size = self.controller.set_dymension(new_size_x, new_size_y)
         self.canvas.configure(width = new_size_x, height = new_size_y)
 
-        self.grid  .plot()
-        self.light .plot(light_pose)
-        self.robot .plot(robot_pose, robot_radius)
+        self.grid .plot()
+        self.light.plot(light_pose)
+        self.robot.plot(robot_pose, robot_radius)
  
     def right_click(self, e_point):
         light_pose = self.controller.set_pose(e_point.x, e_point.y)
@@ -95,6 +95,3 @@ class CanvasPanel:
                                                                     e_point.y
                                                                     )
                                                                 )
-
-    def run_motion(self):
-        self.animation.run()

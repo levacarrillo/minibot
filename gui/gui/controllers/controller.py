@@ -7,6 +7,7 @@ class Controller:
         self.service = service
         self.file_manager = FileManager()
 
+    # SERVICE CONTROLLERS
     def set_dymension(self, x, y):
         return self.service.set_dymension(x, y)
 
@@ -21,18 +22,6 @@ class Controller:
 
     def degrees_to_radians(self, degrees):
         return self.service.degrees_to_radians(degrees)
-
-    def get_file_path(self, file_name):
-        return self.file_manager.get_file_path(file_name)
-
-    def get_environment_list(self):
-        return self.ros.get_environment_list()
-
-    def get_behavior_list(self):
-        return self.ros.get_behavior_list()
-
-    def get_current_step(self):
-        return self.ros.get_current_step()
 
     def get_edge(self, size, scale, line_per_meters):
         return self.service.get_edge(size, scale, line_per_meters)
@@ -55,6 +44,25 @@ class Controller:
     def displace_point(self, initial_pose, distance, angle):
         return self.service.displace_point(initial_pose, distance, angle)
 
+    # FILE CONTROLLERS
+    def get_file_path(self, file_name):
+        return self.file_manager.get_file_path(file_name)
+
+    # ROS CONTROLLERS
+    def get_environment_list(self):
+        return self.ros.get_environment_list()
+
+    def get_behavior_list(self):
+        return self.ros.get_behavior_list()
+
+    def get_current_step(self):
+        return self.ros.get_current_step()
+
     def get_goal_point(self):
         return self.ros.get_goal_point()
 
+    def movement_executing(self):
+        return self.ros.movement_executing()
+
+    def stop_movement(self):
+        self.ros.stop_movement()
