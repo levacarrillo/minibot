@@ -2,7 +2,6 @@ from tkinter import *
 from gui.app.canvas.grid  import Grid
 from gui.app.canvas.light import Light
 from gui.app.canvas.robot.robot import Robot
-from gui.app.canvas.animation import Animation
 
 class CanvasPanel:
     def __init__(self, app):
@@ -24,7 +23,6 @@ class CanvasPanel:
         self.grid  = Grid(self)
         self.light = Light(self)
         self.robot = Robot(self)
-        self.animation = Animation(self)
 
         self.canvas.bind("<Button-3>", self.right_click)
         self.canvas.bind("<Button-1>", self.left_click)
@@ -67,7 +65,7 @@ class CanvasPanel:
                                                                             e_point.y
                                                                             )
                                                                         )
-        # self.animation.run()
+        self.robot.move(100, 1.5)
        
 
 
@@ -76,6 +74,9 @@ class CanvasPanel:
         robot_radius = self.controller.m_to_pixels(self.scale['x'], self.size['x'], self.robot_section.entry_radius.get())
         self.robot.plot(robot_pose, robot_radius)
         e_point.y = self.size['y'] - e_point.y # CHANGING REFERENCE SYSTEM
+
+        self.robot_section.entry_pose_x.delete(0, END)
+        self.robot_section.entry_pose_y.delete(0, END)
 
         self.robot_section.entry_pose_x.insert(0, self.controller.pixels_to_m(
                                                                     self.scale['x'],
@@ -89,10 +90,6 @@ class CanvasPanel:
                                                                     e_point.y
                                                                     )
                                                                 )
-
-        self.robot_section.entry_pose_x.delete(0, END)
-        self.robot_section.entry_pose_y.delete(0, END)
-
 
     def run_motion(self):
         self.animation.run()

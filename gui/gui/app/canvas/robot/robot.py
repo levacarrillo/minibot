@@ -1,3 +1,5 @@
+import time
+import math
 from gui.app.canvas.polygon import Polygon
 from gui.app.canvas.robot.body   import get_body
 from gui.app.canvas.robot.hokuyo import get_hokuyo
@@ -26,11 +28,32 @@ class Robot:
             self.canvas.delete(self.left_wheel)
             self.canvas.delete(self.right_wheel)
 
-        self.head   = self.polygon.get(pose, radius, head_points(), color_name = 'head')
         self.body        = get_body(self.canvas, pose, radius, self.color)
+        self.head   = self.polygon.get(pose, radius, head_points(), color_name = 'head')
         self.hokuyo      = get_hokuyo(self.canvas, pose, radius, self.color)
         self.left_wheel  = self.polygon.get(pose, radius, left_wheel_points(),  'wheel')
         self.right_wheel = self.polygon.get(pose, radius, right_wheel_points(), 'wheel')
+
+    def move(self, distance, angle):
+        i = 0
+        initial_pose = self.pose
+        print(initial_pose)
+        while(i < angle):
+            i += math.radians(1)
+            new_pose = self.controller.rotate_pose(initial_pose, i)
+            self.plot(new_pose, self.radius)
+            time.sleep(0.0001)
+            self.canvas.update()
+        i = 0
+        print(initial_pose)
+        while(i < distance):
+            i += 1
+            new_pose = self.controller.displace_point(initial_pose, i, angle)
+            self.plot(new_pose, self.radius)
+            time.sleep(0.0001)
+            self.canvas.update()
+        i = 0
+
 
     def get_pose(self):
         return self.pose
