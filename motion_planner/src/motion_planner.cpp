@@ -18,6 +18,8 @@ MotionPlanner::MotionPlanner() : Node("motion_planner") {
   this->declare_parameter("laser_threshold", this->laser_sensor_data.laser_threshold);
   
   this->laser_readings_client = this->create_client<GetScan>("get_scan");
+  this->get_param_server      = this->create_service<GetParam>("get_param",
+                                std::bind(&MotionPlanner::get_param, this, _1, _2));
   this->set_param_server      = this->create_service<SetParam>("set_param",
                                 std::bind(&MotionPlanner::set_param, this, _1, _2));
   this->go_to_pose_client     = rclcpp_action::create_client<GoToPose>(this, "go_to_pose");
@@ -84,6 +86,13 @@ Behaviors MotionPlanner::get_selected_behavior() {
 
 MovementParams MotionPlanner::get_movement_params() {
   return this->movement_params;
+}
+
+void MotionPlanner::get_param(const std::shared_ptr<GetParam::Request> request,
+                                        std::shared_ptr<GetParam::Response> response) {
+  response->value = "value";
+  RCLCPP_INFO(this->get_logger(), "GETTING PARAM: %s", request->param.c_str());  
+
 }
 
 void MotionPlanner::set_param(const std::shared_ptr<SetParam::Request> request,

@@ -3,6 +3,7 @@
 
 #include "rclcpp/rclcpp.hpp"
 #include "interfaces/srv/get_scan.hpp"
+#include "interfaces/srv/get_param.hpp"
 #include "interfaces/srv/set_param.hpp"
 #include "rclcpp_action/rclcpp_action.hpp"
 #include "interfaces/action/go_to_pose.hpp"
@@ -15,6 +16,7 @@ using namespace std::chrono_literals;
 class MotionPlanner : public rclcpp::Node {
   public:
     using GetScan  = interfaces::srv::GetScan;
+    using GetParam = interfaces::srv::GetParam;
     using SetParam = interfaces::srv::SetParam;
     using GoToPose = interfaces::action::GoToPose;
     using GetLightReadings   = interfaces::srv::GetLightReadings;
@@ -36,17 +38,19 @@ class MotionPlanner : public rclcpp::Node {
     
     private:
     Movement stop;
-    void set_param(const std::shared_ptr<SetParam::Request>, std::shared_ptr<SetParam::Response>);
     bool behavior_running;
     std::string selected_behavior;    
     MovementParams movement_params;
     LightSensorsData light_sensors_data;
     LaserSensorData laser_sensor_data;
     rclcpp::TimerBase::SharedPtr timer_;
+    rclcpp::Service<GetParam>::SharedPtr get_param_server;
     rclcpp::Service<SetParam>::SharedPtr set_param_server;
     rclcpp::Client<GetScan>::SharedPtr  laser_readings_client;
     rclcpp_action::Client<GoToPose>::SharedPtr go_to_pose_client;
     rclcpp::Client<GetLightReadings>::SharedPtr light_readings_client;
+    void set_param(const std::shared_ptr<SetParam::Request>, std::shared_ptr<SetParam::Response>);
+    void get_param(const std::shared_ptr<GetParam::Request>, std::shared_ptr<GetParam::Response>);
     
     void increase_steps();
     void timer_callback();
