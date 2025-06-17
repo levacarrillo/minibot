@@ -54,8 +54,8 @@ class Service():
 
     def displace_point(initial_pose, distance, angle):
         return {
-            'x': distance * math.cos(-angle) + initial_pose['x'],
-            'y': distance * math.sin(-angle) + initial_pose['y'],
-            'angle': angle
+            'x': distance * math.cos(-(angle + initial_pose['angle'])) + initial_pose['x'],
+            'y': distance * math.sin(-(angle + initial_pose['angle'])) + initial_pose['y'],
+            'angle': angle + initial_pose['angle']
             }
 

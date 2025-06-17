@@ -65,13 +65,18 @@ class CanvasPanel:
                                                                             e_point.y
                                                                             )
                                                                         )
-        self.robot.move(100, 1.5)
+
+        self.robot.move(-100, 0.5)
        
 
 
     def left_click(self, e_point):
         robot_pose   = self.controller.set_pose(e_point.x, e_point.y)
-        robot_radius = self.controller.m_to_pixels(self.scale['x'], self.size['x'], self.robot_section.entry_radius.get())
+        robot_radius = self.controller.m_to_pixels(
+                                                    self.scale['x'], 
+                                                    self.size['x'],
+                                                    self.robot_section.entry_radius.get()
+                                                    )
         self.robot.plot(robot_pose, robot_radius)
         e_point.y = self.size['y'] - e_point.y # CHANGING REFERENCE SYSTEM
 

@@ -35,24 +35,32 @@ class Robot:
         self.right_wheel = self.polygon.get(pose, radius, right_wheel_points(), 'wheel')
 
     def move(self, distance, angle):
-        i = 0
+        increment = 0
         initial_pose = self.pose
-        print(initial_pose)
-        while(i < angle):
-            i += math.radians(1)
-            new_pose = self.controller.rotate_pose(initial_pose, i)
+
+        while(increment < math.fabs(angle)):
+            increment += math.radians(1)
+            if angle < 0:
+                new_pose = self.controller.rotate_pose(initial_pose, -increment)
+            else:
+                new_pose = self.controller.rotate_pose(initial_pose,  increment)
+
             self.plot(new_pose, self.radius)
             time.sleep(0.0001)
             self.canvas.update()
-        i = 0
-        print(initial_pose)
-        while(i < distance):
-            i += 1
-            new_pose = self.controller.displace_point(initial_pose, i, angle)
+
+        increment = 0
+        while(increment < math.fabs(distance)):
+            increment += 1
+            if distance < 0:
+                new_pose = self.controller.displace_point(initial_pose, - increment, angle)
+            else:
+                new_pose = self.controller.displace_point(initial_pose,   increment, angle)
+
             self.plot(new_pose, self.radius)
             time.sleep(0.0001)
             self.canvas.update()
-        i = 0
+
 
 
     def get_pose(self):
