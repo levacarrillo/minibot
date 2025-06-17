@@ -48,18 +48,19 @@ class Controller:
     def get_file_path(self, file_name):
         return self.file_manager.get_file_path(file_name)
 
-    # ROS CONTROLLERS
     def get_environment_list(self):
-        return self.ros.get_environment_list()
+        return ["EMPTY", "HOME", "ARENA 1", "ARENA 2"]
 
+    # ROS CONTROLLERS
     def get_behavior_list(self):
-        return self.ros.get_behavior_list()
+        print(self.ros.get_param('behavior_list'))
+        return self.ros.get_param('behavior_list')
 
     def get_max_advance(self):
-        return self.ros.get_max_advance()
+        return "12"
 
     def get_lidar_threshold(self):
-        return self.ros.get_lidar_threshold()
+        return str("10")
 
     def get_max_turn_angle(self):
         return self.ros.get_max_turn_angle()
