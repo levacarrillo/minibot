@@ -66,12 +66,13 @@ class CanvasPanel:
                                                                             )
                                                                         )
 
-        self.robot.move(-100, 0.5)
+        # self.robot.move(-100, 0.5)
        
 
 
     def left_click(self, e_point):
-        robot_pose   = self.controller.set_pose(e_point.x, e_point.y)
+        angle = self.controller.normalize_angle(self.robot_section.entry_angle.get())
+        robot_pose   = self.controller.set_pose(e_point.x, e_point.y, angle)
         robot_radius = self.controller.m_to_pixels(
                                                     self.scale['x'], 
                                                     self.size['x'],

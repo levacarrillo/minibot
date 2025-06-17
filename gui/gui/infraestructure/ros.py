@@ -43,8 +43,17 @@ class Ros(Node):
         result.success = True
         return result
 
+    def get_max_advance(self):
+        return str(0.04)
+
+    def get_max_turn_angle(self):
+        return str(0.7857)
+
     def get_current_step(self):
         return str(0)
+
+    def get_max_steps(self):
+        return str(100)
 
     def get_environment_list(self):
         enviroments = ["EMPTY", "HOME", "ARENA 1", "ARENA 2"]

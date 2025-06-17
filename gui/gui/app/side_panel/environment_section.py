@@ -1,6 +1,7 @@
 from tkinter import *
 from tkinter import ttk
 
+
 class EnvironmentSection:
     def __init__(self, parent_panel):
         side       = parent_panel.side_panel
@@ -18,8 +19,10 @@ class EnvironmentSection:
         self.label_light_pose_y  = Label(side ,text = "Click Right",  justify='center')
         self.label_steps_var     = Label(side ,text = "0", justify='center')
         
-        self.steps_entry = Entry(side, validate = 'key', textvariable = StringVar(value="100"),
-                                        width = 5)
+        self.steps_entry = Entry(side, validate = 'key',
+                                    textvariable = StringVar(value = controller.get_max_steps()),
+                                    width = 5
+                                )
         self.env_cb = ttk.Combobox(side,  values = controller.get_environment_list(), width = 16)
         self.bh_cb   = ttk.Combobox(side, values = controller.get_behavior_list(),    width = 16)
 
