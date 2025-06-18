@@ -10,6 +10,8 @@ ToDo: Description
 2. Dependencies
     1. `xterm`
     2. `python3`
+    3. `navigation2`
+    4. `nav2-bringup`
 
 ## Build
 

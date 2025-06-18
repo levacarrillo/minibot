@@ -14,6 +14,10 @@
 !launch/*.py
 !launch/*.launch
 
+!maps/
+!maps/*.yaml
+!maps/*.png
+
 !rviz/
 !rviz/*.rviz
 
