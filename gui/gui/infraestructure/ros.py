@@ -31,6 +31,10 @@ class Ros(Node):
 
         time.sleep(0.5)
         params = self.req_params()
+        behavior_list = params.behavior_list
+        behavior_list.remove('')
+        behavior_list.remove('UNKNOWN')
+
         self.param_dict = {
             "behavior" : params.behavior,
             "run_behavior" : params.run_behavior,

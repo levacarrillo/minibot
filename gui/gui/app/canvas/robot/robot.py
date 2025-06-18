@@ -1,10 +1,8 @@
 import time
 import math
 from gui.app.canvas.polygon import Polygon
-from gui.app.canvas.robot.body   import get_body
-from gui.app.canvas.robot.hokuyo import get_hokuyo
-from gui.app.canvas.robot.head import head_points
-from gui.app.canvas.robot.wheels import left_wheel_points, right_wheel_points
+from gui.app.canvas.robot.parts import *
+
 
 class Robot:
     def __init__(self, canvas_panel):

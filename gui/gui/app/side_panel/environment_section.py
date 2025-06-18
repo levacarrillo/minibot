@@ -7,11 +7,9 @@ class EnvironmentSection:
         side       = parent_panel.side_panel
         controller = parent_panel.controller
 
-        max_steps        = StringVar(value = controller.get_param('max_steps'))
         environment_list = controller.get_environment_list()
         behavior_list    = controller.get_param('behavior_list')
-        behavior_list.remove('')
-        behavior_list.remove('UNKNOWN')
+        max_steps        = StringVar(value = controller.get_param('max_steps'))
 
         self.label_settings      = Label(side, text = "Settings")
         self.label_enviroments   = Label(side, text = "Environment:")
