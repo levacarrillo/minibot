@@ -34,6 +34,8 @@ class CanvasPanel:
         new_size   = self.controller.set_dymension(new_size_x, new_size_y)
         light_pose = self.controller.remap_pose(self.size, new_size, self.light.get_pose())
         robot_pose = self.controller.remap_pose(self.size, new_size, self.robot.get_pose())
+        trace_init_pose  = self.controller.remap_pose(self.size, new_size, self.robot.route.get_init_point())
+        trace_final_pose = self.controller.remap_pose(self.size, new_size, self.robot.route.get_init_point())
         robot_radius = self.controller.m_to_pixels(
                                                     self.scale['x'],
                                                     new_size['x'],
@@ -47,6 +49,7 @@ class CanvasPanel:
         self.grid .plot()
         self.light.plot(light_pose)
         self.robot.plot(robot_pose, robot_radius)
+        self.robot.route.trace(trace_init_pose, trace_final_pose)
  
     def right_click(self, e_point):
         light_pose = self.controller.set_pose(e_point.x, e_point.y)

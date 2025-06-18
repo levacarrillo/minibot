@@ -1,7 +1,8 @@
 import time
 import math
-from gui.app.canvas.polygon import Polygon
 from gui.app.canvas.robot.parts import *
+from gui.app.canvas.polygon import Polygon
+from gui.app.canvas.robot.route import Route
 
 
 class Robot:
@@ -14,7 +15,7 @@ class Robot:
         self.pose    = self.controller.set_pose(0, 0, 0)
         self.radius  = 0
         self.polygon = Polygon(self)
-        self.trace_route = []
+        self.route   = Route(self)
 
     def plot(self, pose, radius):
         self.pose = pose
@@ -32,6 +33,7 @@ class Robot:
         self.hokuyo      = get_hokuyo(self.canvas, pose, radius, self.color)
         self.left_wheel  = self.polygon.get(pose, radius, left_wheel_points(),  'wheel')
         self.right_wheel = self.polygon.get(pose, radius, right_wheel_points(), 'wheel')
+
 
     def move(self, distance, angle):
         increment = 0
@@ -60,17 +62,10 @@ class Robot:
             self.plot(new_pose, self.radius)
             time.sleep(0.0001)
             final_point = new_pose
-            self.canvas.update()
 
-        self.trace_route.append(self.canvas.create_line(
-                                                        initial_pose['x'],
-                                                        initial_pose['y'],
-                                                        final_point['x'],
-                                                        final_point['y'],
-                                                        dash = (4, 4),
-                                                        fill = self.color['trace']
-                                                        )
-                                                    )
+            self.route.trace(initial_pose, new_pose)
+
+            self.canvas.update()
 
 
     def get_pose(self):
