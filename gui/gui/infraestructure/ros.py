@@ -52,16 +52,16 @@ class Ros(Node):
         rclpy.spin_until_future_complete(self, future)
         return future.result()
 
-    def send_params(self):
+    def send_params(self, params):
         req    = SetParams.Request()
-        req.behavior        = "LIGHT_FOLLOWER"
-        req.run_behavior    = True
-        req.step            = 0
-        req.max_steps       = 100
-        req.max_advance     = 0.04
-        req.max_turn_angle  = 0.5
-        req.light_threshold = 0.1
-        req.laser_threshold = 0.2
+        req.behavior        = params['behavior']
+        req.run_behavior    = params['run_behavior']
+        req.step            = params['step']
+        req.max_steps       = params['max_steps']
+        req.max_advance     = params['max_advance']
+        req.max_turn_angle  = params['max_turn_angle']
+        req.light_threshold = params['light_threshold']
+        req.laser_threshold = params['laser_threshold']
         future = self.set_params_cli.call_async(req)
         rclpy.spin_until_future_complete(self, future)
         return future.result()
@@ -95,9 +95,9 @@ class Ros(Node):
     def get_goal_point(self):
         return { 'x': 10, 'y': 10, 'angle': 1.0 }
 
-    def run_simulation(self):
+    def run_simulation(self, params):
         print('RUNNING SIMULATION...')
-        self.send_params()
+        self.send_params(params)
         # updated_params = {
         #     "behavior" : behavior,
         #     "run_behavior" : run_behavior,

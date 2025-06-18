@@ -105,6 +105,7 @@ void MotionPlanner::get_params(const std::shared_ptr<GetParams::Request> /*reque
 
 void MotionPlanner::set_params(const std::shared_ptr<SetParams::Request> request,
                                         std::shared_ptr<SetParams::Response> response) {
+  this->movement_params.step = request->step;
   this->set_parameter(rclcpp::Parameter("behavior", request->behavior));
   this->set_parameter(rclcpp::Parameter("run_behavior", request->run_behavior));
   this->set_parameter(rclcpp::Parameter("step", request->step));

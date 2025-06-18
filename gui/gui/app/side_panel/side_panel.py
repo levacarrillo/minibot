@@ -9,7 +9,7 @@ class SidePanel:
         self.controller = app.controller
         self.side_panel = Frame(app.content, borderwidth = 5, relief = "flat", width = 300)
         self.env_section = EnvironmentSection(self)
-        SensorsSection(self)
+        self.sensors_section = SensorsSection(self)
         self.robot_section = RobotSection(self)
         ButtonsSection(self)
 
