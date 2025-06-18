@@ -1,4 +1,5 @@
 import rclpy
+import time
 import threading
 from rclpy.node import Node
 from rclpy.action import ActionServer
@@ -16,44 +17,34 @@ class Ros(Node):
         self.get_params_cli = self.create_client(GetParams, 'get_params')
         self.set_params_cli = self.create_client(SetParams, 'set_params')
 
-        # self._action_server = ActionServer(
-        #     self,
-        #     GoToPose,
-        #     'go_to_pose',
-        #     self.execute_callback
-        # )
-        # while not self.get_params_cli.wait_for_service(timeout_sec=1.0):
-        #     self.get_logger().warn('SERVICE /get_params NOT AVAILABLE, WAITING AGAIN...')
+        self._action_server = ActionServer(
+            self,
+            GoToPose,
+            'go_to_pose',
+            self.execute_callback
+        )
+        while not self.get_params_cli.wait_for_service(timeout_sec=1.0):
+            self.get_logger().warn('SERVICE /get_params NOT AVAILABLE, WAITING AGAIN...')
 
-        # while not self.set_params_cli.wait_for_service(timeout_sec=1.0):
-        #     self.get_logger().warn('SERVICE /set_params NOT AVAILABLE, WAITING AGAIN...')
+        while not self.set_params_cli.wait_for_service(timeout_sec=1.0):
+            self.get_logger().warn('SERVICE /set_params NOT AVAILABLE, WAITING AGAIN...')
 
+        time.sleep(0.5)
+        params = self.req_params()
         self.param_dict = {
-            "behavior" : "behavior",
-            "run_behavior" : True,
-            "behavior_list" : ['', 'UNKNOWN', 'hola', 'qwerty'],
-            "step" : 1,
-            "max_steps" : 100,
-            "max_advance" : 0.2,
-            "max_turn_angle" : 0.4,
-            "light_threshold" : 0.5,
-            "laser_threshold" : 0.1
+            "behavior" : params.behavior,
+            "run_behavior" : params.run_behavior,
+            "behavior_list" : params.behavior_list,
+            "step" : params.step,
+            "max_steps" : params.max_steps,
+            "max_advance" : params.max_advance,
+            "max_turn_angle" : params.max_turn_angle,
+            "light_threshold" : params.light_threshold,
+            "laser_threshold" : params.laser_threshold
         }
-        # params = self.req_params()
-        # self.param_dict = {
-        #     "behavior" : params.behavior,
-        #     "run_behavior" : params.run_behavior,
-        #     "behavior_list" : params.behavior_list,
-        #     "step" : params.step,
-        #     "max_steps" : params.max_steps,
-        #     "max_advance" : params.max_advance,
-        #     "max_turn_angle" : params.max_turn_angle,
-        #     "light_threshold" : params.light_threshold,
-        #     "laser_threshold" : params.laser_threshold
-        # }
 
-        # for key, value in self.param_dict.items():
-        #     print(key, value)
+        for key, value in self.param_dict.items():
+            print(key, value)
 
     def req_params(self):
         req = GetParams.Request()
@@ -63,9 +54,14 @@ class Ros(Node):
 
     def send_params(self):
         req    = SetParams.Request()
-        req.behavior     = "USER_SM"
-        req.run_behavior =  True
-        req.step         = 0
+        req.behavior        = "LIGHT_FOLLOWER"
+        req.run_behavior    = True
+        req.step            = 0
+        req.max_steps       = 100
+        req.max_advance     = 0.04
+        req.max_turn_angle  = 0.5
+        req.light_threshold = 0.1
+        req.laser_threshold = 0.2
         future = self.set_params_cli.call_async(req)
         rclpy.spin_until_future_complete(self, future)
         return future.result()
@@ -88,8 +84,8 @@ class Ros(Node):
         self.goal_angle    = goal_handle.request.angle
         self.goal_distance = goal_handle.request.distance
         # self.timer.start()
-        while(self.movement_executing):
-            pass
+        # while(self.movement_executing):
+        #     pass
         self.get_logger().info('MOVEMENT FINISHED')
         goal_handle.succeed()
         result = GoToPose.Result()
@@ -101,6 +97,7 @@ class Ros(Node):
 
     def run_simulation(self):
         print('RUNNING SIMULATION...')
+        self.send_params()
         # updated_params = {
         #     "behavior" : behavior,
         #     "run_behavior" : run_behavior,

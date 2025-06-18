@@ -105,16 +105,14 @@ void MotionPlanner::get_params(const std::shared_ptr<GetParams::Request> /*reque
 
 void MotionPlanner::set_params(const std::shared_ptr<SetParams::Request> request,
                                         std::shared_ptr<SetParams::Response> response) {
-
-  this->selected_behavior                  = request->behavior;
-  this->behavior_running                   = request->run_behavior;
-  this->movement_params.step               = request->step;
-  this->movement_params.max_steps          = request->max_steps;
-  this->movement_params.max_advance        = request->max_advance ;
-  this->movement_params.max_turn_angle     = request->max_turn_angle;
-  this->light_sensors_data.light_threshold = request->light_threshold;
-  this->laser_sensor_data.laser_threshold  = request->laser_threshold;
-  
+  this->set_parameter(rclcpp::Parameter("behavior", request->behavior));
+  this->set_parameter(rclcpp::Parameter("run_behavior", request->run_behavior));
+  this->set_parameter(rclcpp::Parameter("step", request->step));
+  this->set_parameter(rclcpp::Parameter("max_steps", request->max_steps));
+  this->set_parameter(rclcpp::Parameter("max_advance", request->max_advance));
+  this->set_parameter(rclcpp::Parameter("max_turn_angle", request->max_turn_angle));
+  this->set_parameter(rclcpp::Parameter("light_threshold", request->light_threshold));
+  this->set_parameter(rclcpp::Parameter("laser_threshold", request->laser_threshold));
   response->success = true;
 }
 
