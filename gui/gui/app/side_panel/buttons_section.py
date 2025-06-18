@@ -1,14 +1,17 @@
 from tkinter import *
 
+
 class ButtonsSection:
     def __init__(self, parent_panel):
-        side = parent_panel.side_panel
+        side       = parent_panel.side_panel
+        controller = parent_panel.controller
         self.label_simulator = Label (side, text = "Simulator")
         self.label_velocity  = Label(side,  text = "Execution velocity:")
         self.slider_velocity = Scale(side, from_= 1, to=3, orient = HORIZONTAL,
                                                 length = 162)
 
-        self.button_run      = Button(side, width = 17, text = "Run simulation")
+        self.button_run      = Button(side, width = 17, text = "Run simulation", 
+                                                command = controller.run_simulation)
         self.button_stop     = Button(side, width = 17, text = "Stop simulation")
 
         self.label_simulator  .grid(column = 4, row = 12, sticky = (N, W), padx = (5, 0))

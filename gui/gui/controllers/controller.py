@@ -52,6 +52,9 @@ class Controller:
         return ["EMPTY", "HOME", "ARENA 1", "ARENA 2"]
 
     # ROS CONTROLLERS
+    def run_simulation(self):
+        self.ros.run_simulation()
+
     def get_param(self, param_name):
         return self.ros.get_param(param_name)
 

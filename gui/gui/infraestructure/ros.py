@@ -1,5 +1,5 @@
 import rclpy
-# import threading
+import threading
 from rclpy.node import Node
 from rclpy.action import ActionServer
 from interfaces.action import GoToPose
@@ -13,35 +13,60 @@ class Ros(Node):
         self.goal_distance = 0.0
         self.movement_executing = False
         # self.timer = threading.Timer(10, self.stop_movement)
-        self.client = self.create_client(GetParams, 'get_params')
-        self._action_server = ActionServer(
-            self,
-            GoToPose,
-            'go_to_pose',
-            self.execute_callback
-        )
-        while not self.client.wait_for_service(timeout_sec=1.0):
-            self.get_logger().warn('SERVICE /get_params NOT AVAILABLE, WAITING AGAIN...')
+        self.get_params_cli = self.create_client(GetParams, 'get_params')
+        self.set_params_cli = self.create_client(SetParams, 'set_params')
 
-        params = self.req_params()
+        # self._action_server = ActionServer(
+        #     self,
+        #     GoToPose,
+        #     'go_to_pose',
+        #     self.execute_callback
+        # )
+        # while not self.get_params_cli.wait_for_service(timeout_sec=1.0):
+        #     self.get_logger().warn('SERVICE /get_params NOT AVAILABLE, WAITING AGAIN...')
+
+        # while not self.set_params_cli.wait_for_service(timeout_sec=1.0):
+        #     self.get_logger().warn('SERVICE /set_params NOT AVAILABLE, WAITING AGAIN...')
+
         self.param_dict = {
-            "behavior" : params.behavior,
-            "run_behavior" : params.run_behavior,
-            "behavior_list" : params.behavior_list,
-            "step" : params.step,
-            "max_steps" : params.max_steps,
-            "max_advance" : params.max_advance,
-            "max_turn_angle" : params.max_turn_angle,
-            "light_threshold" : params.light_threshold,
-            "laser_threshold" : params.laser_threshold
+            "behavior" : "behavior",
+            "run_behavior" : True,
+            "behavior_list" : ['', 'UNKNOWN', 'hola', 'qwerty'],
+            "step" : 1,
+            "max_steps" : 100,
+            "max_advance" : 0.2,
+            "max_turn_angle" : 0.4,
+            "light_threshold" : 0.5,
+            "laser_threshold" : 0.1
         }
+        # params = self.req_params()
+        # self.param_dict = {
+        #     "behavior" : params.behavior,
+        #     "run_behavior" : params.run_behavior,
+        #     "behavior_list" : params.behavior_list,
+        #     "step" : params.step,
+        #     "max_steps" : params.max_steps,
+        #     "max_advance" : params.max_advance,
+        #     "max_turn_angle" : params.max_turn_angle,
+        #     "light_threshold" : params.light_threshold,
+        #     "laser_threshold" : params.laser_threshold
+        # }
 
-        for key, value in self.param_dict.items():
-            print(key, value)
+        # for key, value in self.param_dict.items():
+        #     print(key, value)
 
     def req_params(self):
         req = GetParams.Request()
-        future = self.client.call_async(req)
+        future = self.get_params_cli.call_async(req)
+        rclpy.spin_until_future_complete(self, future)
+        return future.result()
+
+    def send_params(self):
+        req    = SetParams.Request()
+        req.behavior     = "USER_SM"
+        req.run_behavior =  True
+        req.step         = 0
+        future = self.set_params_cli.call_async(req)
         rclpy.spin_until_future_complete(self, future)
         return future.result()
 
@@ -73,3 +98,19 @@ class Ros(Node):
 
     def get_goal_point(self):
         return { 'x': 10, 'y': 10, 'angle': 1.0 }
+
+    def run_simulation(self):
+        print('RUNNING SIMULATION...')
+        # updated_params = {
+        #     "behavior" : behavior,
+        #     "run_behavior" : run_behavior,
+        #     "behavior_list" : behavior_list,
+        #     "step" : step,
+        #     "max_steps" : max_steps,
+        #     "max_advance" : max_advance,
+        #     "max_turn_angle" : max_turn_angle,
+        #     "light_threshold" : light_threshold,
+        #     "laser_threshold" : laser_threshold
+        # }
+        # x = threading.Thread(target=self.send_params, args = ())
+        # x.start()

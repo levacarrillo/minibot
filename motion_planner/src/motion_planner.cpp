@@ -108,6 +108,7 @@ void MotionPlanner::set_params(const std::shared_ptr<SetParams::Request> request
 
   this->selected_behavior                  = request->behavior;
   this->behavior_running                   = request->run_behavior;
+  this->movement_params.step               = request->step;
   this->movement_params.max_steps          = request->max_steps;
   this->movement_params.max_advance        = request->max_advance ;
   this->movement_params.max_turn_angle     = request->max_turn_angle;
