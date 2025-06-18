@@ -1,5 +1,5 @@
 import rclpy
-import threading
+# import threading
 from rclpy.node import Node
 from rclpy.action import ActionServer
 from interfaces.action import GoToPose
@@ -12,7 +12,7 @@ class Ros(Node):
         self.goal_angle    = 0.0
         self.goal_distance = 0.0
         self.movement_executing = False
-        self.timer = threading.Timer(10, self.stop_movement)
+        # self.timer = threading.Timer(10, self.stop_movement)
         self.client = self.create_client(GetParams, 'get_params')
         self._action_server = ActionServer(
             self,
@@ -62,7 +62,7 @@ class Ros(Node):
         self.movement_executing = True
         self.goal_angle    = goal_handle.request.angle
         self.goal_distance = goal_handle.request.distance
-        self.timer.start()
+        # self.timer.start()
         while(self.movement_executing):
             pass
         self.get_logger().info('MOVEMENT FINISHED')
@@ -70,15 +70,6 @@ class Ros(Node):
         result = GoToPose.Result()
         result.success = True
         return result
-
-    def get_max_turn_angle(self):
-        return str(0.7857)
-
-    def get_current_step(self):
-        return str(0)
-
-    def get_max_steps(self):
-        return str(100)
 
     def get_goal_point(self):
         return { 'x': 10, 'y': 10, 'angle': 1.0 }

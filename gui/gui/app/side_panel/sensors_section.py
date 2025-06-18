@@ -18,7 +18,7 @@ class SensorsSection:
         self.entry_range         = Entry(side, validate = 'key',
                                         textvariable = StringVar(value = "3.1416"),  width = 10)
         self.entry_threshold     = Entry(side, validate = 'key',
-                                    textvariable = StringVar(value = controller.get_lidar_threshold()),
+                                    textvariable = StringVar(value = controller.get_param('laser_threshold')),
                                     width = 10)
 
         self.label_sensors       .grid(column = 0, row = 12, sticky = (N, W), padx = (5, 0))     

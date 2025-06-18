@@ -52,24 +52,8 @@ class Controller:
         return ["EMPTY", "HOME", "ARENA 1", "ARENA 2"]
 
     # ROS CONTROLLERS
-    def get_behavior_list(self):
-        print(self.ros.get_param('behavior_list'))
-        return self.ros.get_param('behavior_list')
-
-    def get_max_advance(self):
-        return "12"
-
-    def get_lidar_threshold(self):
-        return str("10")
-
-    def get_max_turn_angle(self):
-        return self.ros.get_max_turn_angle()
-
-    def get_current_step(self):
-        return self.ros.get_current_step()
-    
-    def get_max_steps(self):
-        return self.ros.get_max_steps()
+    def get_param(self, param_name):
+        return self.ros.get_param(param_name)
 
     def get_goal_point(self):
         return self.ros.get_goal_point()

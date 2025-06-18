@@ -7,6 +7,12 @@ class EnvironmentSection:
         side       = parent_panel.side_panel
         controller = parent_panel.controller
 
+        max_steps        = StringVar(value = controller.get_param('max_steps'))
+        environment_list = controller.get_environment_list()
+        behavior_list    = controller.get_param('behavior_list')
+        behavior_list.remove('')
+        behavior_list.remove('UNKNOWN')
+
         self.label_settings      = Label(side, text = "Settings")
         self.label_enviroments   = Label(side, text = "Environment:")
         self.label_behavior		 = Label(side, text = "Behavior:")
@@ -19,12 +25,9 @@ class EnvironmentSection:
         self.label_light_pose_y  = Label(side ,text = "Click Right",  justify='center')
         self.label_steps_var     = Label(side ,text = "0", justify='center')
         
-        self.steps_entry = Entry(side, validate = 'key',
-                                    textvariable = StringVar(value = controller.get_max_steps()),
-                                    width = 5
-                                )
-        self.env_cb = ttk.Combobox(side,  values = controller.get_environment_list(), width = 16)
-        self.bh_cb   = ttk.Combobox(side, values = controller.get_behavior_list(),    width = 16)
+        self.steps_entry = Entry(side, validate = 'key', textvariable = max_steps, width = 5)
+        self.environment_cb    = ttk.Combobox(side,  values = environment_list, width = 16)
+        self.behavior_list_cb  = ttk.Combobox(side, values = behavior_list,  width = 16)
 
         self.ck_button_fast    = Checkbutton(side, text="Fast mode")
         self.ck_button_sensors = Checkbutton(side, text="Show sensors")
@@ -44,13 +47,13 @@ class EnvironmentSection:
         self.label_steps_var     .grid(column = 1, row = 6,  sticky = (N, W), padx = (5, 0))
 
         self.steps_entry         .grid(column = 1, row = 3,  sticky = (N, W), padx = (5, 0))
-        self.env_cb              .grid(column = 1, row = 1,  sticky = (N, W), padx = (5, 0))
-        self.bh_cb               .grid(column = 1, row = 2,  sticky = (N, W), padx = (5, 0))
+        self.environment_cb      .grid(column = 1, row = 1,  sticky = (N, W), padx = (5, 0))
+        self.behavior_list_cb    .grid(column = 1, row = 2,  sticky = (N, W), padx = (5, 0))
 
         self.ck_button_fast      .grid(column = 1, row = 7,  sticky = (N, W), padx = (5, 0))
         self.ck_button_sensors   .grid(column = 1, row = 8,  sticky = (N, W), padx = (5, 0))
         self.ck_add_noise        .grid(column = 1, row = 9,  sticky = (N, W), padx = (5, 0))
         self.ck_button_load      .grid(column = 1, row = 10, sticky = (N, W), padx = (5, 0))
 
-        self.env_cb.current(0)
-        self.bh_cb.current(0)
+        self.environment_cb.current(0)
+        self.behavior_list_cb.current(0)

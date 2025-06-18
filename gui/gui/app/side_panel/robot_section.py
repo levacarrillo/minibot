@@ -22,10 +22,10 @@ class RobotSection:
         self.entry_radius      = Entry(side, validate = 'key',
                                         textvariable = StringVar(value = "0.04"),   width = 9)
         self.entry_advance    = Entry(side, validate = 'key',
-                                    textvariable = StringVar(value = controller.get_max_advance()),
+                                    textvariable = StringVar(value = controller.get_param('max_advance')),
                                     width = 9)
         self.entry_turn_angle = Entry(side, validate = 'key',
-                                    textvariable = StringVar(value = controller.get_max_turn_angle()),
+                                    textvariable = StringVar(value = controller.get_param('max_turn_angle')),
                                     width = 9)
         self.button_set_zero  = Button(side, width = 8, text = "Angle Zero")
 
