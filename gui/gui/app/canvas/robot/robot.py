@@ -39,7 +39,7 @@ class Robot:
         increment = 0
         initial_pose = self.pose
         final_point = self.pose
-
+        print('Moving...')
         while(increment < math.fabs(angle)):
             increment += math.radians(1)
             if angle < 0:
@@ -48,7 +48,7 @@ class Robot:
                 new_pose = self.controller.rotate_pose(initial_pose,  increment)
 
             self.plot(new_pose, self.radius)
-            time.sleep(0.0001)
+            # time.sleep(1)
             self.canvas.update()
 
         increment = 0
@@ -60,12 +60,14 @@ class Robot:
                 new_pose = self.controller.displace_point(initial_pose,   increment, angle)
 
             self.plot(new_pose, self.radius)
-            time.sleep(0.0001)
+            # time.sleep(1)
             final_point = new_pose
 
             self.route.trace(initial_pose, new_pose)
 
             self.canvas.update()
+
+        # self.controller.stop_movement()
 
 
     def get_pose(self):

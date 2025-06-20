@@ -1,27 +1,27 @@
 import rclpy
 import time
-import threading
+from interfaces.srv import *
 from rclpy.node import Node
 from rclpy.action import ActionServer
 from interfaces.action import GoToPose
-from interfaces.srv import GetParams, SetParams
 
 class Ros(Node):
     def __init__(self):
         super().__init__('simulator')
         self.get_logger().info('INITIALIZING SIMULATOR NODE...')
-        self.goal_angle    = 0.0
-        self.goal_distance = 0.0
+        self.goal_pose = None
         self.movement_executing = False
-        # self.timer = threading.Timer(10, self.stop_movement)
         self.get_params_cli = self.create_client(GetParams, 'get_params')
         self.set_params_cli = self.create_client(SetParams, 'set_params')
-
+        self.get_lights_srv = self.create_service(GetLightReadings, 'get_light_readings', 
+                                                    self.update_light_readings)
+        self.get_scan_srv   = self.create_service(GetScan, 'get_scan', self.get_scan)
+        
         self._action_server = ActionServer(
             self,
             GoToPose,
             'go_to_pose',
-            self.execute_callback
+            self.execute_movement_callback
         )
         while not self.get_params_cli.wait_for_service(timeout_sec=1.0):
             self.get_logger().warn('SERVICE /get_params NOT AVAILABLE, WAITING AGAIN...')
@@ -74,27 +74,39 @@ class Ros(Node):
         return self.param_dict[param]
 
     def stop_movement(self):
+        self.get_logger().info('STOPPING MOVEMENTS...')
         self.movement_executing = False
-    
-    def movement_executing(self):
-        return self.movement_executing
 
-    def execute_callback(self, goal_handle):
+    def execute_movement_callback(self, goal_handle):
         self.get_logger().info('EXECUTING GOAL...')
+        feedback_msg = GoToPose.Feedback()
 
-        print(goal_handle.request.angle)
-        print(goal_handle.request.distance)
         self.movement_executing = True
-        self.goal_angle    = goal_handle.request.angle
-        self.goal_distance = goal_handle.request.distance
-        # self.timer.start()
-        # while(self.movement_executing):
-        #     pass
-        self.get_logger().info('MOVEMENT FINISHED')
+
+
+        while True:
+            if self.movement_executing == False:
+                goal_handle.succeed()
+                result = GoToPose.Result()
+                result.success = True
+                return result
+
+            # self.get_logger().info('WAITING UNTIL MOVEMENT IS DONE...')
+            feedback_msg.feedback = "looping"
+            goal_handle.publish_feedback(feedback_msg)
+
         goal_handle.succeed()
         result = GoToPose.Result()
         result.success = True
+        # await asyncio.sleep(1.0)
+        # self.goal_pose = {
+        #                     "angle": goal_handle.request.angle,
+        #                     "distance": goal_handle.request.distance
+        #                 }
+
+        self.get_logger().info('MOVEMENT FINISHED')
         return result
+
 
     def get_goal_point(self):
         return { 'x': 10, 'y': 10, 'angle': 1.0 }
@@ -102,16 +114,17 @@ class Ros(Node):
     def run_simulation(self, params):
         print('RUNNING SIMULATION...')
         self.send_params(params)
-        # updated_params = {
-        #     "behavior" : behavior,
-        #     "run_behavior" : run_behavior,
-        #     "behavior_list" : behavior_list,
-        #     "step" : step,
-        #     "max_steps" : max_steps,
-        #     "max_advance" : max_advance,
-        #     "max_turn_angle" : max_turn_angle,
-        #     "light_threshold" : light_threshold,
-        #     "laser_threshold" : laser_threshold
-        # }
-        # x = threading.Thread(target=self.send_params, args = ())
-        # x.start()
+
+    def get_goal_pose(self):
+        # self.get_logger().info(str(self.goal_pose))
+        return self.goal_pose
+
+    def update_light_readings(self, request, response):
+        response.readings  = [1, 0, 0, 0, 0, 0, 0, 0]
+        response.max_index = 0
+        response.max_value = 1.0
+        return response
+
+    def get_scan(self, request, response):
+        response.scan = [1, 1, 1]
+        return response

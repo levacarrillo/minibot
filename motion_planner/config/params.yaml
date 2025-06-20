@@ -1,7 +1,7 @@
 motion_planner:
   ros__parameters:
     behavior: "USER_SM"
-    run_behavior: true
+    run_behavior: false
     max_advance: 0.03 # METERS
     max_turn_angle: 0.5 # RADIANS
     light_threshold: 2.0

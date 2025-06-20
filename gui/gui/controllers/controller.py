@@ -66,3 +66,6 @@ class Controller:
 
     def stop_movement(self):
         self.ros.stop_movement()
+
+    def get_goal_pose(self):
+        return self.ros.get_goal_pose()

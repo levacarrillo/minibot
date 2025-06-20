@@ -8,6 +8,7 @@ class ButtonsSection:
         self.env_section   = parent_panel.env_section
         self.robot_section = parent_panel.robot_section
         self.sensors_section = parent_panel.sensors_section
+        self.running = False
 
         self.label_simulator = Label (side, text = "Simulator")
         self.label_velocity  = Label(side,  text = "Execution velocity:")
@@ -16,7 +17,8 @@ class ButtonsSection:
 
         self.button_run      = Button(side, width = 17, text = "Run simulation", 
                                                 command = self.run_simulation)
-        self.button_stop     = Button(side, width = 17, text = "Stop simulation")
+        self.button_stop     = Button(side, width = 17, text = "Stop simulation",
+                                                command = self.stop_simulation)
 
         self.label_simulator  .grid(column = 4, row = 12, sticky = (N, W), padx = (5, 0))
         self.label_velocity	  .grid(column = 4, row = 15, sticky = (N, W), padx = (5, 0))
@@ -26,6 +28,7 @@ class ButtonsSection:
                                                 sticky = (N, W), padx = 5)
     
     def run_simulation(self):
+        self.running = True
         params = {
             "behavior"       : self.env_section.behavior_list_cb.get(),
             "run_behavior"   : True,
@@ -37,3 +40,6 @@ class ButtonsSection:
             "laser_threshold": float(self.sensors_section.entry_laser.get())
         }
         self.controller.run_simulation(params)
+
+    def stop_simulation(self):
+        self.running = False
