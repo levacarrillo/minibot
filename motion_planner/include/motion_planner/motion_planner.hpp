@@ -31,18 +31,16 @@ class MotionPlanner : public rclcpp::Node {
     bool behavior_is_running();
     void print_selected_behavior();
     
+    Sensors get_sensors_data();
     Behaviors get_selected_behavior();
     MovementParams get_movement_params();
-    Sensors get_light_sensors_data();
-    Sensors get_laser_sensor_data();
     
   private:
     Movement stop;
     bool behavior_running;
+    Sensors sensors_data;
     std::string selected_behavior;    
     MovementParams movement_params;
-    Sensors light_sensors_data;
-    Sensors laser_sensor_data;
     rclcpp::TimerBase::SharedPtr timer_;
     rclcpp::Service<GetParams>::SharedPtr get_params_server;
     rclcpp::Service<SetParams>::SharedPtr set_params_server;

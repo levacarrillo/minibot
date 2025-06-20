@@ -14,8 +14,8 @@ MotionPlanner::MotionPlanner() : Node("motion_planner") {
   this->declare_parameter("max_steps",      this->movement_params.max_steps);
   this->declare_parameter("max_advance",    this->movement_params.max_advance);
   this->declare_parameter("max_turn_angle", this->movement_params.max_turn_angle);
-  this->declare_parameter("light_threshold", this->light_sensors_data.light_threshold);
-  this->declare_parameter("laser_threshold", this->laser_sensor_data.laser_threshold);
+  this->declare_parameter("light_threshold", this->sensors_data.light_threshold);
+  this->declare_parameter("laser_threshold", this->sensors_data.laser_threshold);
   
   this->laser_readings_client = this->create_client<GetScan>("get_scan");
   this->get_params_server     = this->create_service<GetParams>("get_params",
@@ -35,8 +35,8 @@ void MotionPlanner::timer_callback() {
   this->movement_params.max_steps   = this->get_parameter("max_steps").as_int();
   this->movement_params.max_advance = this->get_parameter("max_advance").as_double();
   this->movement_params.max_turn_angle = this->get_parameter("max_turn_angle").as_double();
-  this->light_sensors_data.light_threshold = this->get_parameter("light_threshold").as_double();
-  this->laser_sensor_data.laser_threshold  = this->get_parameter("laser_threshold").as_double();
+  this->sensors_data.light_threshold = this->get_parameter("light_threshold").as_double();
+  this->sensors_data.laser_threshold  = this->get_parameter("laser_threshold").as_double();
 
 }
 
@@ -99,8 +99,8 @@ void MotionPlanner::get_params(const std::shared_ptr<GetParams::Request> /*reque
   response->max_steps       = this->movement_params.max_steps;
   response->max_advance     = this->movement_params.max_advance;
   response->max_turn_angle  = this->movement_params.max_turn_angle;
-  response->light_threshold = this->light_sensors_data.light_threshold;
-  response->laser_threshold = this->laser_sensor_data.laser_threshold;
+  response->light_threshold = this->sensors_data.light_threshold;
+  response->laser_threshold = this->sensors_data.laser_threshold;
 }
 
 void MotionPlanner::set_params(const std::shared_ptr<SetParams::Request> request,
@@ -117,46 +117,43 @@ void MotionPlanner::set_params(const std::shared_ptr<SetParams::Request> request
   response->success = true;
 }
 
-Sensors MotionPlanner::get_light_sensors_data() {
+Sensors MotionPlanner::get_sensors_data() {
   while(!this->light_readings_client->wait_for_service(1s)) {
     RCLCPP_WARN(this->get_logger(), "SERVICE /get_light_readings NOT AVAILABLE, WAITING AGAIN...");
   }
 
-  auto request = std::make_shared<GetLightReadings::Request>();
-  auto result = this->light_readings_client->async_send_request(request);
+  while(!this->laser_readings_client->wait_for_service(1s)) {
+    RCLCPP_WARN(this->get_logger(), "SERVICE /get_scan NOT AVAILABLE, WAITING AGAIN...");   
+  }
+
+  auto light_request = std::make_shared<GetLightReadings::Request>();
+  auto light_result = this->light_readings_client->async_send_request(light_request);
   
-  if (rclcpp::spin_until_future_complete(this->get_node_base_interface(), result)
+  if (rclcpp::spin_until_future_complete(this->get_node_base_interface(), light_result)
                                                       == rclcpp::FutureReturnCode::SUCCESS) {
-    auto response = result.get();
+    auto light_response = light_result.get();
     
-    this->light_sensors_data.light_readings      = response->readings;
-    this->light_sensors_data.light_sensor_max_id = response->max_index;
-    this->light_sensors_data.light_sensor_max    = response->max_value;
-    this->light_sensors_data.light_direction = get_light_direction(response->readings);
+    this->sensors_data.light_readings      = light_response->readings;
+    this->sensors_data.light_sensor_max_id = light_response->max_index;
+    this->sensors_data.light_sensor_max    = light_response->max_value;
+    this->sensors_data.light_direction = get_light_direction(light_response->readings);
 
   } else {
     RCLCPP_ERROR(this->get_logger(), "FAILED TO CALL SERVICE /get_light_readings");
   }
 
-  return this->light_sensors_data;
-}
-
-Sensors MotionPlanner::get_laser_sensor_data() {
-  while(!this->laser_readings_client->wait_for_service(1s)) {
-    RCLCPP_WARN(this->get_logger(), "SERVICE /get_scan NOT AVAILABLE, WAITING AGAIN...");   
-  }
-  auto request = std::make_shared<GetScan::Request>();
-  auto result = this->laser_readings_client->async_send_request(request);
-  if (rclcpp::spin_until_future_complete(this->get_node_base_interface(), result)
+  auto laser_request = std::make_shared<GetScan::Request>();
+  auto laser_result = this->laser_readings_client->async_send_request(laser_request);
+  if (rclcpp::spin_until_future_complete(this->get_node_base_interface(), laser_result)
                                                         == rclcpp::FutureReturnCode::SUCCESS) {
-    auto response = result.get();
-    this->laser_sensor_data.laser_readings = response->scan;
-    this->laser_sensor_data.obstacle_direction = get_obstacle_direction(this->laser_sensor_data);
+    auto response = laser_result.get();
+    this->sensors_data.laser_readings = response->scan;
+    this->sensors_data.obstacle_direction = get_obstacle_direction(this->sensors_data);
   } else {
     RCLCPP_ERROR(this->get_logger(), "FAILED TO CALL SERVICE /get_scan");
   }
 
-  return this->laser_sensor_data;
+  return this->sensors_data;
 }
 
 void MotionPlanner::move_robot(Movement movement) {

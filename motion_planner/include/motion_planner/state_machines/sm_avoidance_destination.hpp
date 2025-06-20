@@ -13,17 +13,17 @@
 ************************************************/
 
 
-bool sm_avoidance_destination(Sensors light_data, Sensors laser_data, MovementParams *params, Movement *movement) {
+bool sm_avoidance_destination(Sensors sensors_data, MovementParams *params, Movement *movement) {
 
-    float THRESHOLD = light_data.light_threshold;
+    float THRESHOLD = sensors_data.light_threshold;
 
     int state = params->state;
     
-    float intensity = light_data.light_sensor_max;
-    std::array<float, 8> light_values = light_data.light_readings;
+    float intensity = sensors_data.light_sensor_max;
+    std::array<float, 8> light_values = sensors_data.light_readings;
 
-    Direction light_direction = light_data.light_direction;
-    Direction obstacle_direction = laser_data.obstacle_direction;
+    Direction light_direction = sensors_data.light_direction;
+    Direction obstacle_direction = sensors_data.obstacle_direction;
     
 
     std::cout << "______________________________________________: SM STATE->" << state << std::endl;
