@@ -34,12 +34,17 @@
 !gui/domain/
 !gui/domain/*.py
 
+
 !gui/resources/
 !gui/resources/*.png
 !gui/resources/*.py
 
 !gui/infraestructure/
 !gui/infraestructure/*.py
+
+!launch/
+!launch/*.launch
+!launch/*.launch.py
 
 !resource/
 !resource/gui

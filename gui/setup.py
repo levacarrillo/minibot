@@ -28,7 +28,6 @@ setup(
     entry_points={
         'console_scripts': [
             'simulator = gui.main:main',
-            'gui = gui.gui:main'
         ],
     },
 )
