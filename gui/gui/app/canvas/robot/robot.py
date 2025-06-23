@@ -39,7 +39,7 @@ class Robot:
         increment = 0
         initial_pose = self.pose
         final_point = self.pose
-        print('Moving...')
+        print(f'MOVING WITH: distance->{distance} angle->{angle}')
         while(increment < math.fabs(angle)):
             increment += math.radians(1)
             if angle < 0:
@@ -53,7 +53,7 @@ class Robot:
 
         increment = 0
         while(increment < math.fabs(distance)):
-            increment += 1
+            increment += 5
             if distance < 0:
                 new_pose = self.controller.displace_point(initial_pose, - increment, angle)
             else:

@@ -74,30 +74,29 @@ class Ros(Node):
         return self.param_dict[param]
 
     def stop_movement(self):
-        self.get_logger().info('STOPPING MOVEMENTS...')
+        # self.get_logger().info('STOPPING MOVEMENTS...')
         self.movement_executing = False
 
     def execute_movement_callback(self, goal_handle):
-        self.get_logger().info('EXECUTING GOAL...')
+        # self.get_logger().info('EXECUTING GOAL...')
         feedback_msg = GoToPose.Feedback()
 
         self.movement_executing = True
+        self.goal_pose = {
+                            "angle": goal_handle.request.angle,
+                            "distance": goal_handle.request.distance
+                        }
 
 
         while self.movement_executing:
-            self.get_logger().info('WAITING UNTIL MOVEMENT IS DONE...')
-            feedback_msg.feedback = "looping"
+            # self.get_logger().info('WAITING UNTIL MOVEMENT IS DONE...')
+            feedback_msg.feedback = "WAITING UNTIL MOVEMENT IS DONE..."
             goal_handle.publish_feedback(feedback_msg)
 
         goal_handle.succeed()
         result = GoToPose.Result()
         result.success = True
-        self.goal_pose = {
-                            "angle": goal_handle.request.angle,
-                            "distance": goal_handle.request.distance
-                        }
-        # await asyncio.sleep(1.0)
-
+        self.goal_pose = None
         self.get_logger().info('MOVEMENT FINISHED')
         return result
 
