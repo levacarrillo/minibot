@@ -1,4 +1,5 @@
 import rclpy
+import threading
 from gui.app.app import App
 from gui.controllers.controller import Controller
 from gui.infraestructure.ros import Ros
@@ -11,10 +12,11 @@ def main(args=None):
     app = App(controller)
 
     def ros_spin():
-        rclpy.spin_once(node, timeout_sec=0.1)
-        app.after(100, ros_spin)
+        while True:
+            rclpy.spin_once(node, timeout_sec=0.1)
 
-    app.after(100, ros_spin)
+    ros_thread = threading.Thread(target = ros_spin, daemon = True)
+    ros_thread.start()
     app.run()
 
     node.destroy_node()

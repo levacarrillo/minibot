@@ -67,7 +67,7 @@ class Robot:
 
             self.canvas.update()
 
-        # self.controller.stop_movement()
+        self.controller.stop_movement()
 
 
     def get_pose(self):

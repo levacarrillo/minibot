@@ -84,25 +84,19 @@ class Ros(Node):
         self.movement_executing = True
 
 
-        while True:
-            if self.movement_executing == False:
-                goal_handle.succeed()
-                result = GoToPose.Result()
-                result.success = True
-                return result
-
-            # self.get_logger().info('WAITING UNTIL MOVEMENT IS DONE...')
+        while self.movement_executing:
+            self.get_logger().info('WAITING UNTIL MOVEMENT IS DONE...')
             feedback_msg.feedback = "looping"
             goal_handle.publish_feedback(feedback_msg)
 
         goal_handle.succeed()
         result = GoToPose.Result()
         result.success = True
+        self.goal_pose = {
+                            "angle": goal_handle.request.angle,
+                            "distance": goal_handle.request.distance
+                        }
         # await asyncio.sleep(1.0)
-        # self.goal_pose = {
-        #                     "angle": goal_handle.request.angle,
-        #                     "distance": goal_handle.request.distance
-        #                 }
 
         self.get_logger().info('MOVEMENT FINISHED')
         return result
