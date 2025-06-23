@@ -2,9 +2,10 @@ from gui.domain.service import Service
 from gui.infraestructure.file_manager import FileManager
 
 class Controller:
-    def __init__(self, ros, service = Service):
+    def __init__(self, ros):
         self.ros = ros
-        self.service = service
+        self.ros_params = None
+        self.service = Service()
         self.file_manager = FileManager()
 
     # SERVICE CONTROLLERS
@@ -52,14 +53,15 @@ class Controller:
         return ["EMPTY", "HOME", "ARENA 1", "ARENA 2"]
 
     # ROS CONTROLLERS
+    def update_params(self):
+        params = self.ros.update_params()
+        self.ros_params = self.service.format_params(params)
+
     def run_simulation(self, params):
         self.ros.run_simulation(params)
 
     def get_param(self, param_name):
-        return self.ros.get_param(param_name)
-
-    def get_goal_point(self):
-        return self.ros.get_goal_point()
+        return self.ros_params[param_name]
 
     def movement_executing(self):
         return self.ros.movement_executing()

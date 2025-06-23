@@ -23,55 +23,21 @@ class Ros(Node):
             'go_to_pose',
             self.execute_movement_callback
         )
+
         while not self.get_params_cli.wait_for_service(timeout_sec=1.0):
             self.get_logger().warn('SERVICE /get_params NOT AVAILABLE, WAITING AGAIN...')
 
         while not self.set_params_cli.wait_for_service(timeout_sec=1.0):
             self.get_logger().warn('SERVICE /set_params NOT AVAILABLE, WAITING AGAIN...')
 
-        time.sleep(0.5)
-        params = self.req_params()
-        behavior_list = params.behavior_list
-        behavior_list.remove('')
-        behavior_list.remove('UNKNOWN')
+        time.sleep(0.1)
+        self.update_params()
 
-        self.param_dict = {
-            "behavior" : params.behavior,
-            "run_behavior" : params.run_behavior,
-            "behavior_list" : params.behavior_list,
-            "step" : params.step,
-            "max_steps" : params.max_steps,
-            "max_advance" : params.max_advance,
-            "max_turn_angle" : params.max_turn_angle,
-            "light_threshold" : params.light_threshold,
-            "laser_threshold" : params.laser_threshold
-        }
-
-        for key, value in self.param_dict.items():
-            print(key, value)
-
-    def req_params(self):
+    def update_params(self):
         req = GetParams.Request()
         future = self.get_params_cli.call_async(req)
         rclpy.spin_until_future_complete(self, future)
         return future.result()
-
-    def send_params(self, params):
-        req    = SetParams.Request()
-        req.behavior        = params['behavior']
-        req.run_behavior    = params['run_behavior']
-        req.step            = params['step']
-        req.max_steps       = params['max_steps']
-        req.max_advance     = params['max_advance']
-        req.max_turn_angle  = params['max_turn_angle']
-        req.light_threshold = params['light_threshold']
-        req.laser_threshold = params['laser_threshold']
-        future = self.set_params_cli.call_async(req)
-        rclpy.spin_until_future_complete(self, future)
-        return future.result()
-
-    def get_param(self, param):
-        return self.param_dict[param]
 
     def stop_movement(self):
         # self.get_logger().info('STOPPING MOVEMENTS...')
@@ -87,12 +53,12 @@ class Ros(Node):
                             "distance": goal_handle.request.distance
                         }
 
-
         while self.movement_executing:
             # self.get_logger().info('WAITING UNTIL MOVEMENT IS DONE...')
             feedback_msg.feedback = "WAITING UNTIL MOVEMENT IS DONE..."
             goal_handle.publish_feedback(feedback_msg)
 
+        feedback_msg.feedback = "MOVEMENT IS DONE"
         goal_handle.succeed()
         result = GoToPose.Result()
         result.success = True
@@ -100,16 +66,21 @@ class Ros(Node):
         self.get_logger().info('MOVEMENT FINISHED')
         return result
 
-
-    def get_goal_point(self):
-        return { 'x': 10, 'y': 10, 'angle': 1.0 }
-
     def run_simulation(self, params):
-        print('RUNNING SIMULATION...')
-        self.send_params(params)
+        req                 = SetParams.Request()
+        req.behavior        = params['behavior']
+        req.run_behavior    = params['run_behavior']
+        req.step            = params['step']
+        req.max_steps       = params['max_steps']
+        req.max_advance     = params['max_advance']
+        req.max_turn_angle  = params['max_turn_angle']
+        req.light_threshold = params['light_threshold']
+        req.laser_threshold = params['laser_threshold']
+        future = self.set_params_cli.call_async(req)
+        rclpy.spin_until_future_complete(self, future)
+        return future.result()
 
     def get_goal_pose(self):
-        # self.get_logger().info(str(self.goal_pose))
         return self.goal_pose
 
     def update_light_readings(self, request, response):
