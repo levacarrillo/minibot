@@ -46,6 +46,12 @@ class Controller:
         return self.service.displace_point(initial_pose, distance, angle)
 
     # FILE CONTROLLERS
+    def simulate_light_proximity(self, robot_pose, robot_radius, light_pose):
+        light_readings = self.service.get_lights_readings(robot_pose, robot_radius, light_pose)
+        max_index, max_value = self.service.get_max_reading(light_readings)
+        print(max_index)
+        self.ros.simulate_light_proximity(light_readings, max_index, max_value)
+
     def get_file_path(self, file_name):
         return self.file_manager.get_file_path(file_name)
 

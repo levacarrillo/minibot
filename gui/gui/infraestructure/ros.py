@@ -9,7 +9,11 @@ class Ros(Node):
     def __init__(self):
         super().__init__('simulator')
         self.get_logger().info('INITIALIZING SIMULATOR NODE...')
+
         self.goal_pose = None
+        self.light_readings = []
+        self.light_max_value = None
+        self.light_max_index = None
         self.movement_executing = False
         self.get_params_cli = self.create_client(GetParams, 'get_params')
         self.set_params_cli = self.create_client(SetParams, 'set_params')
@@ -83,10 +87,17 @@ class Ros(Node):
     def get_goal_pose(self):
         return self.goal_pose
 
+    def simulate_light_proximity(self, light_readings, max_index, max_value):
+        self.light_readings  = light_readings
+        self.light_max_index = max_index
+        self.light_max_value = max_value
+
+
     def update_light_readings(self, request, response):
-        response.readings  = [1, 0, 0, 0, 0, 0, 0, 0]
-        response.max_index = 0
-        response.max_value = 1.0
+        response.readings  = self.light_readings
+        response.max_index = self.light_max_index
+        response.max_value = self.light_max_value
+        print(response.readings)
         return response
 
     def get_scan(self, request, response):

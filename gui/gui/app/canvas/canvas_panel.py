@@ -69,7 +69,7 @@ class CanvasPanel:
                                                                             )
                                                                         )
 
-        # self.robot.move(-100, 0.5)
+        self.controller.simulate_light_proximity(self.robot.get_pose(), self.robot.radius, self.light.get_pose())
 
     def left_click(self, e_point):
         angle = self.controller.normalize_angle(self.robot_section.entry_angle.get())

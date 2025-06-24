@@ -79,3 +79,27 @@ class Service():
         }
 
         return param_dict
+
+    def get_lights_readings(self, robot_pose, robot_radius, light_pose):
+        light_readings = []
+        for i in range(8):
+            sensor_angle = robot_pose['angle'] + i * math.pi / 4
+            sensor_x = robot_pose['x'] + robot_radius * math.cos(-sensor_angle)
+            sensor_y = robot_pose['y'] + robot_radius * math.sin(-sensor_angle)
+            x_distance = sensor_x - light_pose['x']
+            y_distance = sensor_y - light_pose['y']
+
+            sensor_distance = math.sqrt(pow(x_distance, 2) + pow(y_distance, 2))
+            light_readings.append(1 / sensor_distance)
+            
+        return light_readings
+
+    def get_max_reading(self, list_values):
+        max_index = 0
+        max_value = 0.0
+        for i in range(len(list_values)):
+            if list_values[i] > max_value:
+                max_index = i
+                max_value = list_values[i]
+
+        return max_index, max_value

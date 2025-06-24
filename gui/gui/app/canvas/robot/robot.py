@@ -7,6 +7,7 @@ from gui.app.canvas.robot.route import Route
 
 class Robot:
     def __init__(self, canvas_panel):
+        self.light      = canvas_panel.light
         self.color      = canvas_panel.color
         self.canvas     = canvas_panel.canvas
         self.controller = canvas_panel.controller
@@ -40,6 +41,7 @@ class Robot:
         initial_pose = self.pose
         final_point = self.pose
         print(f'MOVING WITH: distance->{distance} angle->{angle}')
+        self.controller.simulate_light_proximity(self.get_pose(), self.radius, self.light.get_pose())
         while(increment < math.fabs(angle)):
             increment += math.radians(1)
             if angle < 0:

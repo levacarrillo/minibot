@@ -39,7 +39,9 @@ class ButtonsSection:
             "laser_threshold": float(self.sensors_section.entry_laser.get())
         }
         
-        self.simulation_running = self.controller.run_simulation(params)
+        self.simulation_running = True # CHECK AFTER
+        self.controller.run_simulation(params)
+        print(self.simulation_running)
 
     def stop_simulation(self):
         self.controller.stop_movement()
