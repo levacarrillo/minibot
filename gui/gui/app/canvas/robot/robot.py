@@ -19,12 +19,12 @@ class Robot:
         self.polygon = Polygon(context)
         self.route   = Route(context)
 
-    def plot(self, position = None):
+    def plot(self, position = None, rotation = 0):
         entry_angle  = self.context.robot_section.entry_angle .get()
         entry_radius = self.context.robot_section.entry_radius.get()
 
-        angle       = self.controller.normalize_angle(entry_angle)
-    
+        angle       = self.controller.normalize_angle(entry_angle) + rotation
+        print(f"angle->{angle}")
         self.radius = self.controller.m_to_pixels(entry_radius)
         if position is not None:
             self.pose   = self.controller.set_pose(position['x'], position['y'], angle)
@@ -48,8 +48,8 @@ class Robot:
 
     def rotate(self, direction):
         increment = self.controller.degrees_to_radians(1)
-        new_pose  = self.controller.rotate_pose(self.pose, direction * increment)
-        self.plot(new_pose, self.radius)
+        new_angle = self.pose['angle'] + direction * increment
+        self.plot(position = self.pose, rotation = new_angle)
 
     def displace(self, direction):
         x, y = self.controller.polar_to_cartesian(direction, self.pose['angle'])
@@ -60,8 +60,8 @@ class Robot:
                                                     # self.light.get_pose())
     #         self.route.trace(initial_pose, new_pose)
 
-    # def get_pose(self):
-    #     return self.pose
+    def get_pose(self):
+        return self.pose
 
     def delete(self):
         self.canvas.delete(self.body)

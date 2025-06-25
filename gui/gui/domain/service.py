@@ -80,12 +80,12 @@ class Service():
         y = radius * (portion['x'] * sinT + portion['y'] * cosT) + pose['y']
         return x, y
 
-    def rotate_pose(self, initial_pose, angle):
-        return {
-                'x': initial_pose['x'],
-                'y': initial_pose['y'],
-                'angle': initial_pose['angle'] + angle
-                }
+    # def rotate_pose(self, initial_pose, angle):
+    #     return {
+    #             'x': initial_pose['x'],
+    #             'y': initial_pose['y'],
+    #             'angle': initial_pose['angle'] + angle
+    #             }
 
     def displace_point(self, initial_pose, distance, angle):
         return {

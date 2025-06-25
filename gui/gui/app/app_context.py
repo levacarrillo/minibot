@@ -21,6 +21,8 @@ class AppContext:
         self.robot_section   = None 
         self.buttons_section = None 
 
+        self.simulation_running = False
+
     def set_canvas_panel(self, canvas_panel):
         self.canvas_panel = canvas_panel
         self.canvas = canvas_panel.canvas
@@ -47,7 +49,7 @@ class AppContext:
     def set_buttons_section(self, buttons_section):
         self.buttons_section = buttons_section
 
-    # SETTERS FOR CANVA'S PROPERTIES
+    # SETTERS FOR CANVA'S COMPONENTS
     def set_grid(self, grid):
         self.grid = grid
 

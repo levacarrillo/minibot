@@ -3,9 +3,9 @@ from tkinter import *
 
 class ButtonsSection:
     def __init__(self, context):
-        side               = context.side_frame
-        self.controller    = context.controller
-        self.simulation_running = False
+        self.context    = context
+        side            = context.side_frame
+        self.controller = context.controller
 
         self.label_simulator = Label (side, text = "Simulator")
         self.label_velocity  = Label(side,  text = "Execution velocity:")
@@ -36,9 +36,9 @@ class ButtonsSection:
         #     "laser_threshold": float(self.sensors_section.entry_laser.get())
         # }
         
-        self.simulation_running = True # CHECK AFTER
+        self.context.simulation_running = True # CHECK AFTER
         # self.controller.run_simulation(params)
 
     def stop_simulation(self):
         self.controller.finish_movement()
-        self.simulation_running = False
+        self.context.simulation_running = False

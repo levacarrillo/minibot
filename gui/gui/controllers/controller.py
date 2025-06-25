@@ -63,8 +63,8 @@ class Controller:
     def set_polygon_point(self, pose, radius, portion_radius):
         return self.service.set_polygon_point(pose, radius, portion_radius)
 
-    def rotate_pose(self, initial_pose, angle):
-        return self.service.rotate_pose(initial_pose, angle)
+    # def rotate_pose(self, initial_pose, angle):
+    #     return self.service.rotate_pose(initial_pose, angle)
 
     def displace_point(self, initial_pose, distance, angle):
         return self.service.displace_point(initial_pose, distance, angle)
