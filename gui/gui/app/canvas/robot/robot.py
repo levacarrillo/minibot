@@ -24,7 +24,6 @@ class Robot:
         entry_radius = self.context.robot_section.entry_radius.get()
 
         angle       = self.controller.normalize_angle(entry_angle) + rotation
-        print(f"angle->{angle}")
         self.radius = self.controller.m_to_pixels(entry_radius)
         if position is not None:
             self.pose   = self.controller.set_pose(position['x'], position['y'], angle)
@@ -42,9 +41,12 @@ class Robot:
         if self.pose is not None:
             self.body        = get_body(self.canvas, self.pose, self.radius, self.color)
             self.hokuyo      = get_hokuyo(self.canvas, self.pose, self.radius, self.color)
-            self.head        = self.polygon.get(self.pose, self.radius, head_points(), 'head', tag = "robot")
-            self.left_wheel  = self.polygon.get(self.pose, self.radius, l_wheel_points(),'wheel', tag = "robot")
-            self.right_wheel = self.polygon.get(self.pose, self.radius, r_wheel_points(),'wheel', tag = "robot")
+            self.head        = self.polygon.get(self.pose, self.radius, head_points(),
+                                                            'head', tag = "robot")
+            self.left_wheel  = self.polygon.get(self.pose, self.radius, l_wheel_points(),
+                                                            'wheel', tag = "robot")
+            self.right_wheel = self.polygon.get(self.pose, self.radius, r_wheel_points(),
+                                                            'wheel', tag = "robot")
 
     def rotate(self, direction):
         increment = self.controller.degrees_to_radians(1)

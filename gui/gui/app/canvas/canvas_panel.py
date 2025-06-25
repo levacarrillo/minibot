@@ -17,13 +17,13 @@ class CanvasPanel:
         self.buttons_section = context.buttons_section
 
         self.app.frame = Frame(content, borderwidth = 5, relief = "flat", width = 900,
-                                                        height = 900, bg=color['background'])
+                                        height = 900, bg=color['background'])
 
         self.scale = self.controller.set_canvas_scale(1, 1)
         self.size  = self.controller.set_canvas_size(500, 500) # PIXELS
 
-        self.canvas = Canvas(self.app.frame, width = self.size['x'], height = self.size['y'],
-                                                                            bg=color['canvas'])
+        self.canvas = Canvas(self.app.frame, width = self.size['x'], 
+                                        height = self.size['y'], bg=color['canvas'])
 
         context.set_canvas_panel(self)
 
@@ -34,7 +34,8 @@ class CanvasPanel:
         self.canvas.bind("<Button-3>", self.right_click)
         self.canvas.bind("<Button-1>", self.left_click)
         
-        self.app.frame.grid(column = 0, row = 0, columnspan = 3, rowspan = 2, sticky = (N, S, E, W))
+        self.app.frame.grid(column = 0, row = 0, columnspan = 3, rowspan = 2, 
+                                                        sticky = (N, S, E, W))
         self.canvas.pack()
 
         Animation(context)
@@ -56,9 +57,9 @@ class CanvasPanel:
 
         e_point.y = self.size['y'] - e_point.y # CHANGING REFERENCE SYSTEM
         
-        label_position_x, label_position_y = self.controller.px_point_to_m(e_point.x, e_point.y)
-        self.env_section.label_light_pose_x.config(text = label_position_x)
-        self.env_section.label_light_pose_y.config(text = label_position_y)
+        label_pos_x, label_pos_y = self.controller.px_point_to_m(e_point.x, e_point.y)
+        self.env_section.label_light_pose_x.config(text = label_pos_x)
+        self.env_section.label_light_pose_y.config(text = label_pos_y)
 
         # self.buttons_section.simulation_running = True
         # self.controller.simulate_light_proximity(self.robot.get_pose(), self.robot.radius, self.light.get_pose())
