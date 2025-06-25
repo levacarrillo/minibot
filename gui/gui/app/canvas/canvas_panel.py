@@ -80,11 +80,12 @@ class CanvasPanel:
     def right_click(self, e_point):
         light_position = self.controller.set_position(e_point.x, e_point.y)
         self.light.plot(light_position)
+
         e_point.y = self.size['y'] - e_point.y # CHANGING REFERENCE SYSTEM
         
-        label_pose_x, label_pose_y = self.controller.px_point_to_m(e_point.x, e_point.y)
-        self.env_section.label_light_pose_x.config(text = label_pose_x)
-        self.env_section.label_light_pose_y.config(text = label_pose_y)
+        label_position_x, label_position_y = self.controller.px_point_to_m(e_point.x, e_point.y)
+        self.env_section.label_light_pose_x.config(text = label_position_x)
+        self.env_section.label_light_pose_y.config(text = label_position_y)
 
         # self.buttons_section.simulation_running = True
         # self.controller.simulate_light_proximity(self.robot.get_pose(), self.robot.radius, self.light.get_pose())
@@ -92,20 +93,13 @@ class CanvasPanel:
     def left_click(self, e_point):
         robot_position = self.controller.set_position(e_point.x, e_point.y)
         self.robot.plot(robot_position)
-        # angle = self.controller.normalize_angle(self.robot_section.entry_angle.get())
-    #     robot_radius = self.controller.m_to_pixels(
-    #                                                 self.scale['x'], 
-    #                                                 self.size['x'],
-    #                                                 self.robot_section.entry_radius.get()
-    #                                                 )
-    #     self.robot.plot(robot_pose, robot_radius)
-    #     e_point.y = self.size['y'] - e_point.y # CHANGING REFERENCE SYSTEM
 
-    #     self.robot_section.entry_pose_x.delete(0, END)
-    #     self.robot_section.entry_pose_y.delete(0, END)
+        e_point.y = self.size['y'] - e_point.y # CHANGING REFERENCE SYSTEM
 
-    #     pose_x = self.controller.pixels_to_m(self.scale['x'], self.size['x'], e_point.x)
-    #     pose_y = self.controller.pixels_to_m(self.scale['y'], self.size['y'], e_point.y)
+        self.robot_section.entry_pose_x.delete(0, END)
+        self.robot_section.entry_pose_y.delete(0, END)
+        
+        pose_x, pose_y = self.controller.px_point_to_m(e_point.x, e_point.y)
 
-    #     self.robot_section.entry_pose_x.insert(0, pose_x)
-    #     self.robot_section.entry_pose_y.insert(0, pose_y)
+        self.robot_section.entry_pose_x.insert(0, pose_x)
+        self.robot_section.entry_pose_y.insert(0, pose_y)
