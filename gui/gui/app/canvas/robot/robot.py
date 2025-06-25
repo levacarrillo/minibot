@@ -50,6 +50,7 @@ class Robot:
         increment = self.controller.degrees_to_radians(1)
         new_angle = self.pose['angle'] + direction * increment
         self.plot(position = self.pose, rotation = new_angle)
+        return increment
 
     def displace(self, direction):
         x, y = self.controller.polar_to_cartesian(direction, self.pose['angle'])

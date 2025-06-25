@@ -4,13 +4,14 @@ from gui.app.canvas.light import Light
 from gui.app.canvas.robot.robot import Robot
 from gui.app.canvas.animation import Animation
 
+
 class CanvasPanel:
     def __init__(self, context):
         self.app = context.app
         content  = context.content
         color    = context.color
-        self.context = context
-        self.controller = context.controller
+        self.context         = context
+        self.controller      = context.controller
         self.env_section     = context.env_section
         self.robot_section   = context.robot_section
         self.buttons_section = context.buttons_section

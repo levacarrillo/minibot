@@ -9,8 +9,8 @@ class ButtonsSection:
 
         self.label_simulator = Label (side, text = "Simulator")
         self.label_velocity  = Label(side,  text = "Execution velocity:")
-        self.slider_velocity = Scale(side, from_= 1, to=3, orient = HORIZONTAL,
-                                                length = 162)
+        self.slider_velocity = Scale(side,  from_= 1, to=3, orient = HORIZONTAL,
+                                                                    length = 162)
 
         self.button_run      = Button(side, width = 17, text = "Run simulation", 
                                                 command = self.run_simulation)
@@ -36,7 +36,7 @@ class ButtonsSection:
         #     "laser_threshold": float(self.sensors_section.entry_laser.get())
         # }
         
-        self.context.simulation_running = True # CHECK AFTER
+        self.context.simulation_running = True
         # self.controller.run_simulation(params)
 
     def stop_simulation(self):
