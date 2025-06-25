@@ -27,10 +27,20 @@ class Service():
             position['x'] = self.current_size['x'] * position['x'] / self.previus_size['x']
             position['y'] = self.current_size['y'] * position['y'] / self.previus_size['y']
         return position
-
     
     def get_edge(self, size, scale, line_per_meters):
         return size / (scale * line_per_meters)
+
+    def px_point_to_m(self, px, py):
+        x = self.canvas_scale['x'] * px / self.current_size['x']
+        y = self.canvas_scale['y'] * py / self.current_size['y']
+        return str(x)[:4], str(y)[:4]
+
+
+
+
+
+
 
     # MATH CONVERTIONS
     def pixels_to_m(self, scale, size, point):

@@ -46,6 +46,11 @@ class Controller:
     def get_edge(self, size, scale, line_per_meters):
         return self.service.get_edge(size, scale, line_per_meters)
 
+    def px_point_to_m(self, px, py):
+        return self.service.px_point_to_m(px, py)
+
+
+
     def pixels_to_m(self, scale, size, point):
         return self.service.pixels_to_m(scale, size, point)
 
