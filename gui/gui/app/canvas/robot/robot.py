@@ -19,14 +19,17 @@ class Robot:
         self.polygon = Polygon(context)
         self.route   = Route(context)
 
-    def plot(self, position):
+    def plot(self, position = None):
         entry_angle  = self.context.robot_section.entry_angle .get()
         entry_radius = self.context.robot_section.entry_radius.get()
 
         angle       = self.controller.normalize_angle(entry_angle)
     
         self.radius = self.controller.m_to_pixels(entry_radius)
-        self.pose   = self.controller.set_pose(position['x'], position['y'], angle)
+        if position is not None:
+            self.pose   = self.controller.set_pose(position['x'], position['y'], angle)
+        elif self.pose is not None:
+            self.pose   = self.controller.remap_position(self.pose)
 
 
         if self.body:
@@ -36,11 +39,12 @@ class Robot:
             self.canvas.delete(self.left_wheel)
             self.canvas.delete(self.right_wheel)
 
-        self.body        = get_body(self.canvas, self.pose, self.radius, self.color)
-        self.hokuyo      = get_hokuyo(self.canvas, self.pose, self.radius, self.color)
-        self.head        = self.polygon.get(self.pose, self.radius, head_points(), 'head', tag = "robot")
-        self.left_wheel  = self.polygon.get(self.pose, self.radius, l_wheel_points(),'wheel', tag = "robot")
-        self.right_wheel = self.polygon.get(self.pose, self.radius, r_wheel_points(),'wheel', tag = "robot")
+        if self.pose is not None:
+            self.body        = get_body(self.canvas, self.pose, self.radius, self.color)
+            self.hokuyo      = get_hokuyo(self.canvas, self.pose, self.radius, self.color)
+            self.head        = self.polygon.get(self.pose, self.radius, head_points(), 'head', tag = "robot")
+            self.left_wheel  = self.polygon.get(self.pose, self.radius, l_wheel_points(),'wheel', tag = "robot")
+            self.right_wheel = self.polygon.get(self.pose, self.radius, r_wheel_points(),'wheel', tag = "robot")
 
     def rotate(self, direction):
         increment = self.controller.degrees_to_radians(1)

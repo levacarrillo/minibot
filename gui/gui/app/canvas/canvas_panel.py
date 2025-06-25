@@ -2,6 +2,7 @@ from tkinter import *
 from gui.app.canvas.grid  import Grid
 from gui.app.canvas.light import Light
 from gui.app.canvas.robot.robot import Robot
+from gui.app.canvas.animation import Animation
 
 class CanvasPanel:
     def __init__(self, context):
@@ -35,31 +36,7 @@ class CanvasPanel:
         self.app.frame.grid(column = 0, row = 0, columnspan = 3, rowspan = 2, sticky = (N, S, E, W))
         self.canvas.pack()
 
-    #     self.robot_animation()
-    #     self.robot_curr_displacement = 0
-    #     self.angle_tolerance = 0.01
-    #     self.distance_tolerance = 1
-
-    # def robot_animation(self):
-    #     goal = self.controller.get_goal_pose()
-    #     curr_angle = self.robot.get_pose()['angle']
-
-    #     if self.buttons_section.simulation_running and goal is not None:
-    #         delta = goal['angle'] - curr_angle
-    #         if abs(delta) > self.angle_tolerance:
-    #             direction = 1 if delta > 0 else -1 # 1: LEFT, -1: RIGHT
-    #             self.robot.rotate(direction)
-    #         else:
-    #             delta = abs(goal['distance']) - self.robot_curr_displacement
-    #             if abs(delta) >= self.distance_tolerance:
-    #                 direction = 1 if goal['distance'] > 0 else -1 # 1: FORWARD, 2: BACKWARD
-    #                 self.robot_curr_displacement += self.robot.displace(direction)
-    #             else:
-    #                 self.robot_curr_displacement = 0
-    #                 self.buttons_section.simulation_running = False
-    #                 self.controller.finish_movement()
-
-    #     self.app.after(1, self.robot_animation)
+        Animation(context)
 
     def resize(self, new_size_x, new_size_y):
         print(f"New canva's size: {new_size_x}x{new_size_y}")
@@ -68,14 +45,9 @@ class CanvasPanel:
 
         self.light.plot()
         self.grid.plot()
-        # robot_radius = self.controller.m_to_pixels(
-        #                                             self.scale['x'],
-        #                                             new_size['x'],
-        #                                             self.robot_section.entry_radius.get()
-        #                                         )
-        self.canvas.configure(width = new_size_x, height = new_size_y)
-        # self.robot.plot(robot_pose, robot_radius)
+        self.robot.plot()
         # self.robot.route.trace(trace_init_pose, trace_final_pose)
+        self.canvas.configure(width = new_size_x, height = new_size_y)
  
     def right_click(self, e_point):
         light_position = self.controller.set_position(e_point.x, e_point.y)
@@ -98,7 +70,7 @@ class CanvasPanel:
 
         self.robot_section.entry_pose_x.delete(0, END)
         self.robot_section.entry_pose_y.delete(0, END)
-        
+
         pose_x, pose_y = self.controller.px_point_to_m(e_point.x, e_point.y)
 
         self.robot_section.entry_pose_x.insert(0, pose_x)
