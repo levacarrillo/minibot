@@ -1,8 +1,8 @@
 import rclpy
 import threading
 from gui.app.app import App
-from gui.controllers.controller import Controller
 from gui.infraestructure.ros import Ros
+from gui.controllers.controller import Controller
 
 
 def main(args=None):

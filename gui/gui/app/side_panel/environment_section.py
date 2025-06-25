@@ -3,9 +3,9 @@ from tkinter import ttk
 
 
 class EnvironmentSection:
-    def __init__(self, parent_panel):
-        side       = parent_panel.side_panel
-        controller = parent_panel.controller
+    def __init__(self, context):
+        side       = context.side_frame
+        controller = context.controller
 
         environment_list = controller.get_environment_list()
         behavior_list    = controller.get_param('behavior_list')

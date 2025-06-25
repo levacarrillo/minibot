@@ -1,8 +1,8 @@
 class Route:
-    def __init__(self, parent):
-        controller  = parent.controller
-        self.canvas = parent.canvas
-        self.color  = parent.color
+    def __init__(self, context):
+        controller  = context.controller
+        self.canvas = context.canvas
+        self.color  = context.color
         self.trace_route = []
         self.initial_point = controller.set_pose(0, 0)
         self.final_point   = controller.set_pose(0, 0)

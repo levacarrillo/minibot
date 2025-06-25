@@ -1,5 +1,6 @@
 import tkinter as tk
 from tkinter import Frame, BOTH
+from gui.app.app_context import AppContext
 from gui.config.colors import colors
 from gui.app.menu.menu_bar import MenuBar
 from gui.app.canvas.canvas_panel import CanvasPanel
@@ -11,16 +12,21 @@ class App(tk.Tk):
         super().__init__()
         self.title("Mobile Robot 2D Simulator v.2")
 
-        self.color = colors
-        self.controller = controller
-        self.content = Frame(self)
+        content = Frame(self)
+
+        context = AppContext(
+            app        = self,
+            color      = colors,
+            content    = content,
+            controller = controller
+        )
         
-        # self.controller.update_params()
-        self.side_panel = SidePanel(self)
-        self.canvas_panel = CanvasPanel(self)
-        self.content.pack(fill=BOTH, expand=True)
-        self.menu_bar = MenuBar(self)
+        controller.update_params()
+        SidePanel(context)
+        CanvasPanel(context)
+        MenuBar(context)
+        content.pack(fill=BOTH, expand=True)
+        context.grid.plot()
     
     def run(self):
-        self.canvas_panel.grid.plot()
         self.mainloop()

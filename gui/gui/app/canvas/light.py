@@ -2,14 +2,15 @@ from tkinter import PhotoImage
 from PIL import ImageTk
 
 class Light:
-    def __init__(self, canvas_panel):
-        self.controller   = canvas_panel.controller
-        self.canvas       = canvas_panel.canvas
+    def __init__(self, context):
+        controller   = context.controller
+        self.canvas       = context.canvas
   
-        self.pose  = self.controller.set_pose(0, 0, 0)
+        self.pose  = controller.set_pose(0, 0, 0)
         self.image = False
-        self.img   = PhotoImage(file = self.controller.get_file_path('light.png'))
+        self.img   = PhotoImage(file = controller.get_file_path('light.png'))
         self.img.zoom(50, 50)
+        context.set_light(self)
 
 
     def plot(self, pose):

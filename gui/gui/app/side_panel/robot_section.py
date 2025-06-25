@@ -1,9 +1,9 @@
 from tkinter import *
 
 class RobotSection:
-    def __init__(self, parent_panel):
-        side = parent_panel.side_panel
-        controller = parent_panel.controller
+    def __init__(self, context):
+        side = context.side_frame
+        controller = context.controller
         
         self.label_robot      = Label(side, text = "Robot")
         self.label_pose_x     = Label(side, text = "Pose X:")

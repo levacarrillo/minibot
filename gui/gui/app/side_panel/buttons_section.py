@@ -2,12 +2,9 @@ from tkinter import *
 
 
 class ButtonsSection:
-    def __init__(self, parent_panel):
-        side               = parent_panel.side_panel
-        self.controller    = parent_panel.controller
-        self.env_section   = parent_panel.env_section
-        self.robot_section = parent_panel.robot_section
-        self.sensors_section    = parent_panel.sensors_section
+    def __init__(self, context):
+        side               = context.side_frame
+        self.controller    = context.controller
         self.simulation_running = False
 
         self.label_simulator = Label (side, text = "Simulator")

@@ -4,32 +4,35 @@ from gui.app.canvas.light import Light
 from gui.app.canvas.robot.robot import Robot
 
 class CanvasPanel:
-    def __init__(self, app):
-        self.app = app
-        self.color      = app.color
-        self.controller = app.controller
-        self.env_section     = app.side_panel.env_section
-        self.robot_section   = app.side_panel.robot_section
-        self.buttons_section = app.side_panel.buttons_section
+    def __init__(self, context):
+        self.app = context.app
+        content  = context.content
+        color    = context.color
+        self.controller = context.controller
+        self.env_section     = context.env_section
+        self.robot_section   = context.robot_section
+        self.buttons_section = context.buttons_section
 
-        app.frame = Frame(app.content)
-        app.frame = Frame(app.content, borderwidth = 5, relief = "flat", width = 900,
-                                        height = 900, bg=self.color['background'])
+        self.app.frame = Frame(content)
+        self.app.frame = Frame(content, borderwidth = 5, relief = "flat", width = 900,
+                                        height = 900, bg=color['background'])
 
         self.scale = self.controller.set_dymension(1, 1)
         self.size  = self.controller.set_dymension(500, 500) # PIXELS
 
-        self.canvas = Canvas(app.frame, width = self.size['x'], height = self.size['y'],
-                                        bg=self.color['canvas'])
+        self.canvas = Canvas(self.app.frame, width = self.size['x'], height = self.size['y'],
+                                        bg=color['canvas'])
 
-        self.grid  = Grid(self)
-        self.light = Light(self)
-        self.robot = Robot(self)
+        context.set_canvas_panel(self)
+
+        self.grid  = Grid(context)
+        self.light = Light(context)
+        self.robot = Robot(context)
 
         self.canvas.bind("<Button-3>", self.right_click)
         self.canvas.bind("<Button-1>", self.left_click)
         
-        app.frame.grid(column = 0, row = 0, columnspan = 3, rowspan = 2, sticky = (N, S, E, W))
+        self.app.frame.grid(column = 0, row = 0, columnspan = 3, rowspan = 2, sticky = (N, S, E, W))
         self.canvas.pack()
 
         self.robot_animation()

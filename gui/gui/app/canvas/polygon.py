@@ -1,8 +1,8 @@
 class Polygon:
-    def __init__(self, parent_panel):
-        self.color      = parent_panel.color
-        self.canvas     = parent_panel.canvas
-        self.controller = parent_panel.controller
+    def __init__(self, context):
+        self.color      = context.color
+        self.canvas     = context.canvas
+        self.controller = context.controller
 
     def get(self, anchor, radius, points, color_name, tag = None):
         polygon = []

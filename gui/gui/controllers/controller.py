@@ -61,8 +61,9 @@ class Controller:
 
     # ROS CONTROLLERS
     def update_params(self):
-        params = self.ros.update_params()
-        self.ros_params = self.service.format_params(params)
+        print("UPDATING FRAME'S PARAMS")
+        # params = self.ros.update_params()
+        # self.ros_params = self.service.format_params(params)
 
     def run_simulation(self, params):
         self.ros.run_simulation(params)

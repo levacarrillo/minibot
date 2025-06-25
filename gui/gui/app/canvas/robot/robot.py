@@ -1,22 +1,19 @@
-import time
-import math
 from gui.app.canvas.robot.parts import *
 from gui.app.canvas.polygon import Polygon
 from gui.app.canvas.robot.route import Route
 
 
 class Robot:
-    def __init__(self, canvas_panel):
-        self.light      = canvas_panel.light
-        self.color      = canvas_panel.color
-        self.canvas     = canvas_panel.canvas
-        self.controller = canvas_panel.controller
+    def __init__(self, context):
+        self.color      = context.color
+        self.canvas     = context.canvas
+        self.controller = context.controller
 
         self.body    = False
         self.pose    = self.controller.set_pose(0, 0, 0)
         self.radius  = 0
-        self.polygon = Polygon(self)
-        self.route   = Route(self)
+        self.polygon = Polygon(context)
+        self.route   = Route(context)
 
     def plot(self, pose, radius):
         self.pose = pose

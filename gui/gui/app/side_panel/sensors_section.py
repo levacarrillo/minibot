@@ -1,16 +1,16 @@
 from tkinter import *
 
 class SensorsSection:
-    def __init__(self, parent_panel):
-        side = parent_panel.side_panel
-        controller = parent_panel.controller
+    def __init__(self, context):
+        side = context.side_frame
+        controller = context.controller
 
         self.label_sensors       = Label(side, text = "Sensors")
         self.label_num_sensors   = Label(side, text = "Num Sensors:")
         self.label_origing_angle = Label(side, text = "Origin angle:" )
         self.label_range         = Label(side, text = "Range:")
-        self.lidar_value         = Label(side, text = "lidar value:")
-        self.light_value         = Label(side, text = "light value:")
+        self.lidar_value         = Label(side, text = "Lidar value:")
+        self.light_value         = Label(side, text = "Light value:")
 
         self.entry_num_sensors   = Entry(side, validate = 'key', 
                                         textvariable = StringVar(value = "20"),      width = 10)
