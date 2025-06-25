@@ -8,12 +8,13 @@ class AppContext:
         self.canvas       = None
         self.canvas_size  = None
         self.canvas_scale = None
+        self.canvas_panel = None
+
+        self.side_frame   = None
 
         self.grid         = None
         self.light        = None
-
-        self.canvas_panel = None
-        self.side_frame      = None
+        self.robot        = None
 
         self.env_section     = None 
         self.sensors_section = None 
@@ -52,3 +53,6 @@ class AppContext:
 
     def set_light(self, light):
         self.light = light
+
+    def set_robot(self, robot):
+        self.robot = robot

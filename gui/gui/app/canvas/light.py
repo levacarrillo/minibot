@@ -26,8 +26,5 @@ class Light:
             self.image = self.canvas.create_image(self.position['x'], self.position['y'], 
                                                                         image = self.img)
 
-    def get_position(self):
-        return self.position
-
     def delete(self):
         self.canvas.delete(self.image)

@@ -30,7 +30,7 @@ class CanvasPanel:
         self.robot = Robot(context)
 
         self.canvas.bind("<Button-3>", self.right_click)
-        # self.canvas.bind("<Button-1>", self.left_click)
+        self.canvas.bind("<Button-1>", self.left_click)
         
         self.app.frame.grid(column = 0, row = 0, columnspan = 3, rowspan = 2, sticky = (N, S, E, W))
         self.canvas.pack()
@@ -89,9 +89,10 @@ class CanvasPanel:
         # self.buttons_section.simulation_running = True
         # self.controller.simulate_light_proximity(self.robot.get_pose(), self.robot.radius, self.light.get_pose())
 
-    # def left_click(self, e_point):
-    #     angle = self.controller.normalize_angle(self.robot_section.entry_angle.get())
-    #     robot_pose   = self.controller.set_pose(e_point.x, e_point.y, angle)
+    def left_click(self, e_point):
+        robot_position = self.controller.set_position(e_point.x, e_point.y)
+        self.robot.plot(robot_position)
+        # angle = self.controller.normalize_angle(self.robot_section.entry_angle.get())
     #     robot_radius = self.controller.m_to_pixels(
     #                                                 self.scale['x'], 
     #                                                 self.size['x'],

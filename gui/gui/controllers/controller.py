@@ -54,8 +54,8 @@ class Controller:
     def pixels_to_m(self, scale, size, point):
         return self.service.pixels_to_m(scale, size, point)
 
-    def m_to_pixels(self, scale, size, length):
-        return self.service.m_to_pixels(scale, size, length)
+    def m_to_pixels(self, length):
+        return self.service.m_to_pixels(length)
 
     def normalize_angle(self, angle):
         return self.service.normalize_angle(angle)

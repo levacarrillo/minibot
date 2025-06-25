@@ -45,3 +45,4 @@ class RobotSection:
         self.entry_turn_angle .grid(column = 4, row = 7, sticky = (N, E), padx = (5, 0))
         self.button_set_zero  .grid(column = 4, row = 4, sticky = (N, W), padx = (5, 0),
                                     columnspan = 2)
+        context.set_robot_section(self)
