@@ -4,9 +4,11 @@ from tkinter import ttk
 
 class EnvironmentSection:
     def __init__(self, context):
-        side       = context.side_frame
-        controller = context.controller
+        self.context = context
+        side         = context.side_frame
+        controller   = context.controller
 
+        self.check_fast_mode  = IntVar()
         environment_list = controller.get_environment_list()
         behavior_list    = controller.get_param('behavior_list')
         max_steps        = StringVar(value = controller.get_param('max_steps'))
@@ -27,7 +29,9 @@ class EnvironmentSection:
         self.environment_cb    = ttk.Combobox(side,  values = environment_list, width = 16)
         self.behavior_list_cb  = ttk.Combobox(side, values = behavior_list,  width = 16)
 
-        self.ck_button_fast    = Checkbutton(side, text="Fast mode")
+        self.ck_button_fast    = Checkbutton(side, text="Fast mode",
+                                                variable = self.check_fast_mode, 
+                                                command = self.on_change_fast_mode)
         self.ck_button_sensors = Checkbutton(side, text="Show sensors")
         self.ck_add_noise      = Checkbutton(side, text="Add Noise")
         self.ck_button_load    = Checkbutton(side, text="Load Objects")
@@ -57,3 +61,6 @@ class EnvironmentSection:
         self.behavior_list_cb.current(0)
 
         context.set_env_section(self)
+
+    def on_change_fast_mode(self):
+        self.context.set_fast_mode(self.check_fast_mode.get())

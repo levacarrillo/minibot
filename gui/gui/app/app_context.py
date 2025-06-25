@@ -23,6 +23,7 @@ class AppContext:
 
         self.simulation_running  = False
         self.velocity_slider = 1
+        self.fast_mode = 0
 
     def set_canvas_panel(self, canvas_panel):
         self.canvas_panel = canvas_panel
@@ -62,3 +63,7 @@ class AppContext:
 
     def set_velocity_slider(self, value):
         self.velocity_slider = value
+    
+    def set_fast_mode(self, value):
+        self.fast_mode = value
+
