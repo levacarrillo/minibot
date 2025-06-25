@@ -1,5 +1,6 @@
 import rclpy
 import time
+from threading import Event
 from interfaces.srv import *
 from rclpy.node import Node
 from rclpy.action import ActionServer
@@ -14,12 +15,12 @@ class Ros(Node):
         self.light_readings = []
         self.light_max_value = None
         self.light_max_index = None
-        self.movement_executing = False
+        self.movement_execution = Event()
         self.get_params_cli = self.create_client(GetParams, 'get_params')
         self.set_params_cli = self.create_client(SetParams, 'set_params')
+        self.get_scan_srv   = self.create_service(GetScan, 'get_scan', self.get_scan)
         self.get_lights_srv = self.create_service(GetLightReadings, 'get_light_readings', 
                                                     self.update_light_readings)
-        self.get_scan_srv   = self.create_service(GetScan, 'get_scan', self.get_scan)
         
         self._action_server = ActionServer(
             self,
@@ -43,23 +44,17 @@ class Ros(Node):
         rclpy.spin_until_future_complete(self, future)
         return future.result()
 
-    def stop_movement(self):
-        # self.get_logger().info('STOPPING MOVEMENTS...')
-        self.movement_executing = False
+    def finish_movement(self):
+        self.get_logger().info('FINISH MOVEMENT...')
+        self.movement_execution.set()
 
     def execute_movement_callback(self, goal_handle):
-        # self.get_logger().info('EXECUTING GOAL...')
-        feedback_msg = GoToPose.Feedback()
-
-        self.movement_executing = True
         self.goal_pose = goal_handle.request
 
-        while self.movement_executing:
-            # self.get_logger().info('WAITING UNTIL MOVEMENT IS DONE...')
-            feedback_msg.feedback = "WAITING UNTIL MOVEMENT IS DONE..."
-            goal_handle.publish_feedback(feedback_msg)
+        self.get_logger().info('WAITING UNTIL MOVEMENT IS DONE...')
+        self.movement_execution.clear()
+        self.movement_execution.wait(timeout = 10)
 
-        feedback_msg.feedback = "MOVEMENT IS DONE"
         goal_handle.succeed()
         result = GoToPose.Result()
         result.success = True

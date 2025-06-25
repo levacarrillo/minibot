@@ -43,5 +43,5 @@ class ButtonsSection:
         # self.controller.run_simulation(params)
 
     def stop_simulation(self):
-        self.controller.stop_movement()
+        self.controller.finish_movement()
         self.simulation_running = False

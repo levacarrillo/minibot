@@ -41,7 +41,6 @@ class CanvasPanel:
         goal = self.controller.get_goal_pose()
         curr_angle = self.robot.get_pose()['angle']
 
-
         if self.buttons_section.simulation_running and goal is not None:
             delta = goal['angle'] - curr_angle
             if abs(delta) > self.angle_tolerance:
@@ -53,8 +52,9 @@ class CanvasPanel:
                     direction = 1 if goal['distance'] > 0 else -1 # 1: FORWARD, 2: BACKWARD
                     self.robot_curr_displacement += self.robot.displace(direction)
                 else:
-                    print('ROBOT MOVEMENT FINISHED')
+                    self.robot_curr_displacement = 0
                     self.buttons_section.simulation_running = False
+                    self.controller.finish_movement()
 
         self.app.after(1, self.robot_animation)
 
@@ -87,7 +87,7 @@ class CanvasPanel:
         label_pose_x = self.controller.pixels_to_m(self.scale['x'], self.size ['x'], e_point.x)
         label_pose_y = self.controller.pixels_to_m(self.scale['y'], self.size['y'], e_point.y)
         self.env_section.label_light_pose_x.config(text = label_pose_x)
-        self.env_section.label_light_pose_y.config(text = label_pose_Y)
+        self.env_section.label_light_pose_y.config(text = label_pose_y)
 
         self.buttons_section.simulation_running = True
         # self.controller.simulate_light_proximity(self.robot.get_pose(), self.robot.radius, self.light.get_pose())

@@ -8,6 +8,19 @@ class Controller:
         self.service = Service()
         self.file_manager = FileManager()
 
+    # FILE CONTROLLERS
+    def simulate_light_proximity(self, robot_pose, robot_radius, light_pose):
+        light_readings = self.service.get_lights_readings(robot_pose, robot_radius, light_pose)
+        max_index, max_value = self.service.get_max_reading(light_readings)
+        print(max_index)
+        self.ros.simulate_light_proximity(light_readings, max_index, max_value)
+
+    def get_file_path(self, file_name):
+        return self.file_manager.get_file_path(file_name)
+
+    def get_environment_list(self):
+        return ["EMPTY", "HOME", "ARENA 1", "ARENA 2"]
+
     # SERVICE CONTROLLERS
     def set_dymension(self, x, y):
         return self.service.set_dymension(x, y)
@@ -45,18 +58,6 @@ class Controller:
     def displace_point(self, initial_pose, distance, angle):
         return self.service.displace_point(initial_pose, distance, angle)
 
-    # FILE CONTROLLERS
-    def simulate_light_proximity(self, robot_pose, robot_radius, light_pose):
-        light_readings = self.service.get_lights_readings(robot_pose, robot_radius, light_pose)
-        max_index, max_value = self.service.get_max_reading(light_readings)
-        print(max_index)
-        self.ros.simulate_light_proximity(light_readings, max_index, max_value)
-
-    def get_file_path(self, file_name):
-        return self.file_manager.get_file_path(file_name)
-
-    def get_environment_list(self):
-        return ["EMPTY", "HOME", "ARENA 1", "ARENA 2"]
 
     # ROS CONTROLLERS
     def update_params(self):
@@ -73,15 +74,12 @@ class Controller:
     def movement_executing(self):
         return self.ros.movement_executing()
 
-    def stop_movement(self):
-        self.ros.stop_movement()
+    def finish_movement(self):
+        self.ros.finish_movement()
 
     def get_goal_pose(self):
-        goal = {
-            'distance': 100,
-            'angle'   : 0.7854
-        }
-        return goal
+        goal = self.ros.get_goal_pose()
+        return self.service.format_goal_pose(goal)
 
     def cartesian_to_polar(self, x, y):
         return self.service.cartesian_to_polar(x, y)

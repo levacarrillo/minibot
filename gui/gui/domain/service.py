@@ -114,3 +114,12 @@ class Service():
                 max_value = list_values[i]
 
         return max_index, max_value
+
+    def format_goal_pose(self, goal):
+        if goal is not None:
+            distance = goal.distance * 500
+            goal = {
+                'angle'   : goal.angle,
+                'distance': distance
+            }
+        return goal
