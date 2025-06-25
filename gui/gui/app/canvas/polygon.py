@@ -4,10 +4,10 @@ class Polygon:
         self.canvas     = parent_panel.canvas
         self.controller = parent_panel.controller
 
-    def get(self, anchor, radius, points, color_name):
+    def get(self, anchor, radius, points, color_name, tag = None):
         polygon = []
         for point in points:
             polygon.append(self.controller.set_polygon_point(anchor, radius, point))
 
         return self.canvas.create_polygon(polygon, outline = self.color[color_name],
-                                                fill = self.color[color_name], width = 1)
+                                            fill = self.color[color_name], width = 1, tag = tag)

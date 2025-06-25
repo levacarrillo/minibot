@@ -14,7 +14,8 @@ def get_body(canvas, pose, radius, color):
         pose['y'] + radius,
         outline = color['robot'],
         fill    = color['robot'],
-        width   = 1
+        width   = 1,
+        tag = "robot"
     )
 
 def get_hokuyo(canvas, pose, radius, color):
@@ -25,10 +26,11 @@ def get_hokuyo(canvas, pose, radius, color):
             pose['y'] + (radius / 5),
             outline = color['hokuyo'],
             fill    = color['hokuyo'],
-            width   = 1
+            width   = 1,
+            tag = "robot"
         )
 
-def left_wheel_points():
+def l_wheel_points():
     # POINTS MAGNITUDES RELATIVE TO ROBOT'S RADIUS
     return [
             {'x': -1/2, 'y': -5/6 },
@@ -37,7 +39,7 @@ def left_wheel_points():
             {'x': -1/2, 'y': -3/6 }
         ]
 
-def right_wheel_points():
+def r_wheel_points():
     # POINTS MAGNITUDES RELATIVE TO ROBOT'S RADIUS
     return [
             {'x': -1/2, 'y':  3/6 },

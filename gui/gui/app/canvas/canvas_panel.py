@@ -5,10 +5,12 @@ from gui.app.canvas.robot.robot import Robot
 
 class CanvasPanel:
     def __init__(self, app):
+        self.app = app
         self.color      = app.color
         self.controller = app.controller
-        self.env_section   = app.side_panel.env_section
-        self.robot_section = app.side_panel.robot_section
+        self.env_section     = app.side_panel.env_section
+        self.robot_section   = app.side_panel.robot_section
+        self.buttons_section = app.side_panel.buttons_section
 
         app.frame = Frame(app.content)
         app.frame = Frame(app.content, borderwidth = 5, relief = "flat", width = 900,
@@ -29,6 +31,32 @@ class CanvasPanel:
         
         app.frame.grid(column = 0, row = 0, columnspan = 3, rowspan = 2, sticky = (N, S, E, W))
         self.canvas.pack()
+
+        self.robot_animation()
+        self.robot_curr_displacement = 0
+        self.angle_tolerance = 0.01
+        self.distance_tolerance = 1
+
+    def robot_animation(self):
+        goal = self.controller.get_goal_pose()
+        curr_angle = self.robot.get_pose()['angle']
+
+
+        if self.buttons_section.simulation_running and goal is not None:
+            delta = goal['angle'] - curr_angle
+            if abs(delta) > self.angle_tolerance:
+                direction = 1 if delta > 0 else -1 # 1: LEFT, -1: RIGHT
+                self.robot.rotate(direction)
+            else:
+                delta = abs(goal['distance']) - self.robot_curr_displacement
+                if abs(delta) >= self.distance_tolerance:
+                    direction = 1 if goal['distance'] > 0 else -1 # 1: FORWARD, 2: BACKWARD
+                    self.robot_curr_displacement += self.robot.displace(direction)
+                else:
+                    print('ROBOT MOVEMENT FINISHED')
+                    self.buttons_section.simulation_running = False
+
+        self.app.after(1, self.robot_animation)
 
     def resize(self, new_size_x, new_size_y):
         new_size   = self.controller.set_dymension(new_size_x, new_size_y)
@@ -56,20 +84,13 @@ class CanvasPanel:
         self.light.plot(light_pose)
         e_point.y = self.size['y'] - e_point.y # CHANGING REFERENCE SYSTEM
 
-        self.env_section.label_light_pose_x.config(text = self.controller.pixels_to_m(
-                                                                            self.scale['x'],
-                                                                            self.size ['x'],
-                                                                            e_point.x
-                                                                            )
-                                                                        )
-        self.env_section.label_light_pose_y.config(text = self.controller.pixels_to_m(
-                                                                            self.scale['y'],
-                                                                            self.size['y'],
-                                                                            e_point.y
-                                                                            )
-                                                                        )
+        label_pose_x = self.controller.pixels_to_m(self.scale['x'], self.size ['x'], e_point.x)
+        label_pose_y = self.controller.pixels_to_m(self.scale['y'], self.size['y'], e_point.y)
+        self.env_section.label_light_pose_x.config(text = label_pose_x)
+        self.env_section.label_light_pose_y.config(text = label_pose_Y)
 
-        self.controller.simulate_light_proximity(self.robot.get_pose(), self.robot.radius, self.light.get_pose())
+        self.buttons_section.simulation_running = True
+        # self.controller.simulate_light_proximity(self.robot.get_pose(), self.robot.radius, self.light.get_pose())
 
     def left_click(self, e_point):
         angle = self.controller.normalize_angle(self.robot_section.entry_angle.get())
@@ -85,15 +106,8 @@ class CanvasPanel:
         self.robot_section.entry_pose_x.delete(0, END)
         self.robot_section.entry_pose_y.delete(0, END)
 
-        self.robot_section.entry_pose_x.insert(0, self.controller.pixels_to_m(
-                                                                    self.scale['x'],
-                                                                    self.size['x'],
-                                                                    e_point.x
-                                                                    )
-                                                                )
-        self.robot_section.entry_pose_y.insert(0, self.controller.pixels_to_m(
-                                                                    self.scale['y'],
-                                                                    self.size['y'],
-                                                                    e_point.y
-                                                                    )
-                                                                )
+        pose_x = self.controller.pixels_to_m(self.scale['x'], self.size['x'], e_point.x)
+        pose_y = self.controller.pixels_to_m(self.scale['y'], self.size['y'], e_point.y)
+
+        self.robot_section.entry_pose_x.insert(0, pose_x)
+        self.robot_section.entry_pose_y.insert(0, pose_y)

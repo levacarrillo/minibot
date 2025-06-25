@@ -30,47 +30,24 @@ class Robot:
             self.canvas.delete(self.right_wheel)
 
         self.body        = get_body(self.canvas, pose, radius, self.color)
-        self.head   = self.polygon.get(pose, radius, head_points(), color_name = 'head')
         self.hokuyo      = get_hokuyo(self.canvas, pose, radius, self.color)
-        self.left_wheel  = self.polygon.get(pose, radius, left_wheel_points(),  'wheel')
-        self.right_wheel = self.polygon.get(pose, radius, right_wheel_points(), 'wheel')
+        self.head        = self.polygon.get(pose, radius, head_points(), 'head', tag = "robot")
+        self.left_wheel  = self.polygon.get(pose, radius, l_wheel_points(),'wheel', tag = "robot")
+        self.right_wheel = self.polygon.get(pose, radius, r_wheel_points(),'wheel', tag = "robot")
 
+    def rotate(self, direction):
+        increment = self.controller.degrees_to_radians(1)
+        new_pose  = self.controller.rotate_pose(self.pose, direction * increment)
+        self.plot(new_pose, self.radius)
 
-    def move(self, distance, angle):
-        increment = 0
-        initial_pose = self.pose
-        final_point = self.pose
-        print(f'MOVING WITH: distance->{distance} angle->{angle}')
-        self.controller.simulate_light_proximity(self.get_pose(), self.radius, self.light.get_pose())
-        while(increment < math.fabs(angle)):
-            increment += math.radians(1)
-            if angle < 0:
-                new_pose = self.controller.rotate_pose(initial_pose, -increment)
-            else:
-                new_pose = self.controller.rotate_pose(initial_pose,  increment)
+    def displace(self, direction):
+        x, y = self.controller.polar_to_cartesian(direction, self.pose['angle'])
+        self.canvas.move('robot', x, y)
+        return abs(direction)
 
-            self.plot(new_pose, self.radius)
-            # time.sleep(1)
-            self.canvas.update()
-
-        increment = 0
-        while(increment < math.fabs(distance)):
-            increment += 5
-            if distance < 0:
-                new_pose = self.controller.displace_point(initial_pose, - increment, angle)
-            else:
-                new_pose = self.controller.displace_point(initial_pose,   increment, angle)
-
-            self.plot(new_pose, self.radius)
-            # time.sleep(1)
-            final_point = new_pose
-
-            self.route.trace(initial_pose, new_pose)
-
-            self.canvas.update()
-
-        self.controller.stop_movement()
-
+    #     self.controller.simulate_light_proximity(self.get_pose(), self.radius, 
+                                                    # self.light.get_pose())
+    #         self.route.trace(initial_pose, new_pose)
 
     def get_pose(self):
         return self.pose

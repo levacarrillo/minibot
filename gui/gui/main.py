@@ -16,7 +16,7 @@ def main(args=None):
             rclpy.spin_once(node, timeout_sec=0.1)
 
     ros_thread = threading.Thread(target = ros_spin, daemon = True)
-    ros_thread.start()
+    # ros_thread.start()
     app.run()
 
     node.destroy_node()

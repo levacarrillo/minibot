@@ -67,7 +67,8 @@ class Controller:
         self.ros.run_simulation(params)
 
     def get_param(self, param_name):
-        return self.ros_params[param_name]
+        # return self.ros_params[param_name]
+        return "0.0"
 
     def movement_executing(self):
         return self.ros.movement_executing()
@@ -76,4 +77,14 @@ class Controller:
         self.ros.stop_movement()
 
     def get_goal_pose(self):
-        return self.ros.get_goal_pose()
+        goal = {
+            'distance': 100,
+            'angle'   : 0.7854
+        }
+        return goal
+
+    def cartesian_to_polar(self, x, y):
+        return self.service.cartesian_to_polar(x, y)
+
+    def polar_to_cartesian(self, radius, angle):
+        return self.service.polar_to_cartesian(radius, angle)

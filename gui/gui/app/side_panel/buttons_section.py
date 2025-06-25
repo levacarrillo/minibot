@@ -28,20 +28,19 @@ class ButtonsSection:
                                                 sticky = (N, W), padx = 5)
     
     def run_simulation(self):
-        params = {
-            "behavior"       : self.env_section.behavior_list_cb.get(),
-            "run_behavior"   : True,
-            "step"           : int(0),
-            "max_steps"      : int(self.env_section.steps_entry.get()),
-            "max_advance"    : float(self.robot_section.entry_advance.get()),
-            "max_turn_angle" : float(self.robot_section.entry_turn_angle.get()),
-            "light_threshold": float(self.sensors_section.entry_light.get()),
-            "laser_threshold": float(self.sensors_section.entry_laser.get())
-        }
+        # params = {
+        #     "behavior"       : self.env_section.behavior_list_cb.get(),
+        #     "run_behavior"   : True,
+        #     "step"           : int(0),
+        #     "max_steps"      : int(self.env_section.steps_entry.get()),
+        #     "max_advance"    : float(self.robot_section.entry_advance.get()),
+        #     "max_turn_angle" : float(self.robot_section.entry_turn_angle.get()),
+        #     "light_threshold": float(self.sensors_section.entry_light.get()),
+        #     "laser_threshold": float(self.sensors_section.entry_laser.get())
+        # }
         
         self.simulation_running = True # CHECK AFTER
-        self.controller.run_simulation(params)
-        print(self.simulation_running)
+        # self.controller.run_simulation(params)
 
     def stop_simulation(self):
         self.controller.stop_movement()

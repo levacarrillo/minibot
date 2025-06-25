@@ -18,11 +18,22 @@ class Service():
     def get_edge(self, size, scale, line_per_meters):
         return size / (scale * line_per_meters)
 
+    # MATH CONVERTIONS
     def pixels_to_m(self, scale, size, point):
         return str(scale * point / size)[:4]
 
     def m_to_pixels(self, scale, size, length):
         return (float(length) * size) / scale
+
+    def cartesian_to_polar(self, x, y):
+        magnitude = math.sqrt(pow(x, 2) + pow(y, 2))
+        angle = math.atan(y, x)
+        return magnitude, angle
+
+    def polar_to_cartesian(self, radius, angle):
+        x = radius * math.cos(-angle)
+        y = radius * math.sin(-angle)
+        return x, y
 
     def radians_to_degrees(self, radians):
         return math.degrees(radians)

@@ -6,7 +6,7 @@ class Light:
         self.controller   = canvas_panel.controller
         self.canvas       = canvas_panel.canvas
   
-        self.pose  = self.controller.set_pose(0, 0, 0) # OUT OF CANVAS
+        self.pose  = self.controller.set_pose(0, 0, 0)
         self.image = False
         self.img   = PhotoImage(file = self.controller.get_file_path('light.png'))
         self.img.zoom(50, 50)

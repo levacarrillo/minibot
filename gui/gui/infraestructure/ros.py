@@ -28,14 +28,14 @@ class Ros(Node):
             self.execute_movement_callback
         )
 
-        while not self.get_params_cli.wait_for_service(timeout_sec=1.0):
-            self.get_logger().warn('SERVICE /get_params NOT AVAILABLE, WAITING AGAIN...')
+        # while not self.get_params_cli.wait_for_service(timeout_sec=1.0):
+        #     self.get_logger().warn('SERVICE /get_params NOT AVAILABLE, WAITING AGAIN...')
 
-        while not self.set_params_cli.wait_for_service(timeout_sec=1.0):
-            self.get_logger().warn('SERVICE /set_params NOT AVAILABLE, WAITING AGAIN...')
+        # while not self.set_params_cli.wait_for_service(timeout_sec=1.0):
+        #     self.get_logger().warn('SERVICE /set_params NOT AVAILABLE, WAITING AGAIN...')
 
-        time.sleep(0.1)
-        self.update_params()
+        # time.sleep(0.1)
+        # self.update_params()
 
     def update_params(self):
         req = GetParams.Request()
@@ -52,10 +52,7 @@ class Ros(Node):
         feedback_msg = GoToPose.Feedback()
 
         self.movement_executing = True
-        self.goal_pose = {
-                            "angle": goal_handle.request.angle,
-                            "distance": goal_handle.request.distance
-                        }
+        self.goal_pose = goal_handle.request
 
         while self.movement_executing:
             # self.get_logger().info('WAITING UNTIL MOVEMENT IS DONE...')
