@@ -32,7 +32,6 @@ class Animation:
             if self.context.simulation_running and goal is not None:
                 if self.context.fast_mode == 1:
                     self.robot.rotate(goal['angle'])
-                    # print(f"distance->{goal['distance']} px, angle->{goal['angle']} rad")
                     self.robot.displace(goal['distance'])
                     self.context.simulation_running = False
                     self.controller.finish_movement()

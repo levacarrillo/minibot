@@ -56,7 +56,6 @@ class Robot:
 
     def displace(self, advance):
         x, y = self.controller.polar_to_cartesian(advance, self.pose['angle'])
-        # print(f"x->{x} , y->{y}")
         self.canvas.move('robot', x, y)
         self.pose = self.controller.set_pose(self.pose['x'] + x, self.pose['y'] + y, 
                                                                 self.pose['angle'])
