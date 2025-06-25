@@ -9,7 +9,6 @@ class Animation:
         self.controller = context.controller
 
         self.execution_delay = 0
-
         self.robot_curr_displacement = 0
 
         self.angle_tolerance = 0.01
@@ -33,8 +32,8 @@ class Animation:
             if self.context.simulation_running and goal is not None:
                 if self.context.fast_mode == 1:
                     self.robot.rotate(goal['angle'])
+                    # print(f"distance->{goal['distance']} px, angle->{goal['angle']} rad")
                     self.robot.displace(goal['distance'])
-
                     self.context.simulation_running = False
                     self.controller.finish_movement()
                 else:
@@ -46,7 +45,7 @@ class Animation:
                         delta = abs(goal['distance']) - self.robot_curr_displacement
                         if abs(delta) >= self.distance_tolerance:
                             direction = 1 if goal['distance'] > 0 else -1 # 1: FORWARD, 2: BACKWARD
-                            self.robot_curr_displacement += self.robot.displace(direction)
+                            # self.robot_curr_displacement += self.robot.displace(direction)
                         else:
                             self.robot_curr_displacement = 0
                             self.context.simulation_running = False

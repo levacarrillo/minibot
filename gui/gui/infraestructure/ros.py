@@ -45,13 +45,13 @@ class Ros(Node):
         return future.result()
 
     def finish_movement(self):
-        self.get_logger().info('FINISH MOVEMENT...')
+        # self.get_logger().info('FINISH MOVEMENT...')
         self.movement_execution.set()
 
     def execute_movement_callback(self, goal_handle):
         self.goal_pose = goal_handle.request
 
-        self.get_logger().info('WAITING UNTIL MOVEMENT IS DONE...')
+        # self.get_logger().info('WAITING UNTIL MOVEMENT IS DONE...')
         self.movement_execution.clear()
         self.movement_execution.wait(timeout = 10)
 
@@ -59,7 +59,7 @@ class Ros(Node):
         result = GoToPose.Result()
         result.success = True
         self.goal_pose = None
-        self.get_logger().info('MOVEMENT FINISHED')
+        # self.get_logger().info('MOVEMENT FINISHED')
         return result
 
     def run_simulation(self, params):

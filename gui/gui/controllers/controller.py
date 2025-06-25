@@ -71,7 +71,7 @@ class Controller:
 
     # ROS CONTROLLERS
     def update_params(self):
-        print("UPDATING FRAME'S PARAMS")
+        print("")
         # params = self.ros.update_params()
         # self.ros_params = self.service.format_params(params)
 
