@@ -10,7 +10,7 @@ class ButtonsSection:
         self.label_simulator = Label (side, text = "Simulator")
         self.label_velocity  = Label(side,  text = "Execution velocity:")
         self.slider_velocity = Scale(side,  from_= 1, to=3, orient = HORIZONTAL,
-                                                                    length = 162)
+                                        length = 162, command = self.scale_value)
 
         self.button_run      = Button(side, width = 17, text = "Run simulation", 
                                                 command = self.run_simulation)
@@ -38,6 +38,9 @@ class ButtonsSection:
         
         self.context.simulation_running = True
         # self.controller.run_simulation(params)
+
+    def scale_value(self, value):
+        self.context.set_velocity_slider(value)
 
     def stop_simulation(self):
         self.controller.finish_movement()

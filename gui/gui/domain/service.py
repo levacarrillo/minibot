@@ -36,6 +36,9 @@ class Service():
         y = self.canvas_scale['y'] * py / self.current_size['y']
         return str(x)[:4], str(y)[:4]
 
+    def get_execution_delay(self, slider_value):
+        delay = (3 - int(slider_value)) * 0.01
+        return delay
 
 
 

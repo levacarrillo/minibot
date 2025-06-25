@@ -23,7 +23,11 @@ class Robot:
         entry_angle  = self.context.robot_section.entry_angle .get()
         entry_radius = self.context.robot_section.entry_radius.get()
 
-        angle       = self.controller.normalize_angle(entry_angle) + rotation
+        if rotation == 0:
+            angle = self.controller.normalize_angle(entry_angle)
+        else:
+            angle = rotation
+
         self.radius = self.controller.m_to_pixels(entry_radius)
         if position is not None:
             self.pose   = self.controller.set_pose(position['x'], position['y'], angle)
@@ -52,7 +56,6 @@ class Robot:
         increment = self.controller.degrees_to_radians(1)
         new_angle = self.pose['angle'] + direction * increment
         self.plot(position = self.pose, rotation = new_angle)
-        return increment
 
     def displace(self, direction):
         x, y = self.controller.polar_to_cartesian(direction, self.pose['angle'])

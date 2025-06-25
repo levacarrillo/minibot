@@ -49,6 +49,8 @@ class Controller:
     def px_point_to_m(self, px, py):
         return self.service.px_point_to_m(px, py)
 
+    def get_execution_delay(self, slider_value):
+        return self.service.get_execution_delay(slider_value)
 
 
     def pixels_to_m(self, scale, size, point):

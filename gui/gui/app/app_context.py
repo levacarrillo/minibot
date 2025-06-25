@@ -21,7 +21,8 @@ class AppContext:
         self.robot_section   = None 
         self.buttons_section = None 
 
-        self.simulation_running = False
+        self.simulation_running  = False
+        self.velocity_slider = 1
 
     def set_canvas_panel(self, canvas_panel):
         self.canvas_panel = canvas_panel
@@ -58,3 +59,6 @@ class AppContext:
 
     def set_robot(self, robot):
         self.robot = robot
+
+    def set_velocity_slider(self, value):
+        self.velocity_slider = value
