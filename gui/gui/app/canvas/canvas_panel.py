@@ -8,6 +8,7 @@ class CanvasPanel:
         self.app = context.app
         content  = context.content
         color    = context.color
+        self.context = context
         self.controller = context.controller
         self.env_section     = context.env_section
         self.robot_section   = context.robot_section
@@ -16,8 +17,7 @@ class CanvasPanel:
         self.app.frame = Frame(content, borderwidth = 5, relief = "flat", width = 900,
                                                         height = 900, bg=color['background'])
 
-        self.scale = self.controller.set_dymension(1, 1)
-        # self.size  = self.controller.set_dymension(500, 500) # PIXELS
+        self.scale = self.controller.set_canvas_scale(1, 1)
         self.size  = self.controller.set_canvas_size(500, 500) # PIXELS
 
         self.canvas = Canvas(self.app.frame, width = self.size['x'], height = self.size['y'],
@@ -64,8 +64,10 @@ class CanvasPanel:
     def resize(self, new_size_x, new_size_y):
         print(f"New canva's size: {new_size_x}x{new_size_y}")
         new_size = self.controller.set_canvas_size(new_size_x, new_size_y)
+        self.context.set_canvas_size(new_size)
 
         self.light.plot()
+        self.grid.plot()
         # light_pose = self.controller.remap_pose(self.size, new_size, self.light.get_pose())
         # robot_pose = self.controller.remap_pose(self.size, new_size, self.robot.get_pose())
         # trace_init_pose  = self.controller.remap_pose(self.size, new_size, self.robot.route.get_init_point())
@@ -77,7 +79,6 @@ class CanvasPanel:
         #                                         )
         # self.size  = new_size
 
-        # self.canvas.size = self.controller.set_dymension(new_size_x, new_size_y)
         self.canvas.configure(width = new_size_x, height = new_size_y)
 
         # self.grid .plot()

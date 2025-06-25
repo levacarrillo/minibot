@@ -2,17 +2,19 @@ import math
 
 class Service():
     def __init__(self):
+        self.canvas_scale = None
         # CANVA'S SIZE
         self.previus_size = None
         self.current_size = None
+
+    def set_canvas_scale(self, x, y):
+        self.canvas_scale = { 'x': x, 'y': y }
+        return self.canvas_scale
 
     def set_canvas_size(self, x, y):
         self.previus_size = self.current_size
         self.current_size = { 'x': x, 'y': y }
         return self.current_size
-
-    def set_dymension(self, x, y):
-        return { 'x': x, 'y': y }
     
     def set_position(self, x, y):
         return { 'x': x, 'y': y }
@@ -26,11 +28,7 @@ class Service():
             position['y'] = self.current_size['y'] * position['y'] / self.previus_size['y']
         return position
 
-    def remap_pose(old_size, new_size, pose):
-        pose['x'] = new_size['x'] * pose['x'] / old_size['x']
-        pose['y'] = new_size['y'] * pose['y'] / old_size['y']
-        return pose
-
+    
     def get_edge(self, size, scale, line_per_meters):
         return size / (scale * line_per_meters)
 

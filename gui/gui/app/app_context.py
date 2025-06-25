@@ -26,6 +26,9 @@ class AppContext:
         self.canvas_size  = canvas_panel.size
         self.canvas_scale = canvas_panel.scale
 
+    def set_canvas_size(self, canvas_size):
+        self.canvas_size  = canvas_size
+
     # SETTERS FOR MAIN FRAMES
     def set_side_frame(self, side_frame):
         self.side_frame = side_frame

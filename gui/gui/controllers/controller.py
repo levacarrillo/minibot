@@ -22,11 +22,11 @@ class Controller:
         return ["EMPTY", "HOME", "ARENA 1", "ARENA 2"]
 
     # SERVICE CONTROLLERS
+    def set_canvas_scale(self, x, y):
+        return self.service.set_canvas_scale(x, y)
+
     def set_canvas_size(self, x, y):
         return self.service.set_canvas_size(x, y)
-
-    def set_dymension(self, x, y):
-        return self.service.set_dymension(x, y)
 
     def set_pose(self, x, y, angle = 0):
         return self.service.set_pose(x, y, angle)
@@ -36,9 +36,6 @@ class Controller:
 
     def remap_position(self, position):
         return self.service.remap_position(position)
-
-    def remap_pose(self, old_size, new_size, pose):
-        return self.service.remap_pose(old_size, new_size, pose)
 
     def radians_to_degrees(self, radians):
         return self.service.radians_to_degrees(radians)

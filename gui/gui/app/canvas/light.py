@@ -7,22 +7,24 @@ class Light:
         self.canvas     = context.canvas
         self.controller = context.controller
   
-        self.position   = self.controller.set_position(0, 0)
+        self.position   = None
         self.image = False
         self.img   = PhotoImage(file = self.controller.get_file_path('light.png'))
         self.img.zoom(50, 50)
         context.set_light(self)
 
     def plot(self, position = None):
-        if position is None:
-            self.position = self.controller.remap_position(self.position)
-        else:
+        if position is not None:
             self.position = position
+        elif self.position is not None:
+            self.position = self.controller.remap_position(self.position)
 
         if self.image:
             self.canvas.delete(self.image)
-        self.image = self.canvas.create_image(self.position['x'], self.position['y'], 
-                                                                    image = self.img)
+
+        if self.position is not None:
+            self.image = self.canvas.create_image(self.position['x'], self.position['y'], 
+                                                                        image = self.img)
 
     def get_position(self):
         return self.position

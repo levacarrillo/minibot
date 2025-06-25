@@ -1,14 +1,16 @@
 class Grid:
     def __init__(self, context):
+        self.context      = context
         self.color        = context.color
         self.canvas       = context.canvas
         self.controller   = context.controller
-        self.canvas_size  = context.canvas_size
         self.canvas_scale = context.canvas_scale
+        self.canvas_size  = context.canvas_size
         self.grid = []
         context.set_grid(self)
 
     def plot(self, line_per_meters = 10):
+        self.canvas_size = self.context.canvas_size
         for i in self.grid:
             self.canvas.delete(i)
 
