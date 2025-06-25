@@ -8,7 +8,6 @@ class Grid:
         self.grid = []
         context.set_grid(self)
 
-
     def plot(self, line_per_meters = 10):
         for i in self.grid:
             self.canvas.delete(i)

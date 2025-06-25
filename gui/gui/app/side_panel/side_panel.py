@@ -10,11 +10,8 @@ class SidePanel:
         side_frame = Frame(context.content, borderwidth = 5, relief = "flat", width = 300)
         context.set_side_frame(side_frame)
 
-        self.env_section = EnvironmentSection(context)
-        self.sensors_section = SensorsSection(context)
-        self.robot_section   = RobotSection(context)
-        self.buttons_section = ButtonsSection(context)
-
-        context.set_side_panel(self)
-        side_frame.grid(column = 3, row = 0, columnspan = 3, rowspan = 2, 
-                                sticky = (N, S, E, W))
+        EnvironmentSection(context)
+        SensorsSection(context)
+        RobotSection(context)
+        ButtonsSection(context)
+        side_frame.grid(column = 3, row = 0, columnspan = 3, rowspan = 2, sticky = (N, S, E, W))

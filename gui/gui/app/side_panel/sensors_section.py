@@ -37,3 +37,5 @@ class SensorsSection:
         self.entry_range         .grid(column = 1, row = 15, sticky = (N, W), padx = (5, 0))
         self.entry_laser         .grid(column = 1, row = 16, sticky = (N, W), padx = (5, 0))
         self.entry_light         .grid(column = 1, row = 17, sticky = (N, W), padx = (5, 0))
+
+        context.set_sensors_section(self)

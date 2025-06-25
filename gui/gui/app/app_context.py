@@ -8,33 +8,42 @@ class AppContext:
         self.canvas       = None
         self.canvas_size  = None
         self.canvas_scale = None
+
         self.grid         = None
         self.light        = None
 
-        self.side_panel   = None
         self.canvas_panel = None
-
         self.side_frame      = None
+
         self.env_section     = None 
         self.sensors_section = None 
         self.robot_section   = None 
         self.buttons_section = None 
 
-    def set_side_frame(self, side_frame):
-        self.side_frame = side_frame
-    
-    def set_side_panel(self, side_panel):
-        self.env_section     = side_panel.env_section
-        self.sensors_section = side_panel.sensors_section
-        self.robot_section   = side_panel.robot_section
-        self.buttons_section = side_panel.buttons_section
-
     def set_canvas_panel(self, canvas_panel):
-        self.canvas = canvas_panel.canvas
         self.canvas_panel = canvas_panel
+        self.canvas = canvas_panel.canvas
         self.canvas_size  = canvas_panel.size
         self.canvas_scale = canvas_panel.scale
-    
+
+    # SETTERS FOR MAIN FRAMES
+    def set_side_frame(self, side_frame):
+        self.side_frame = side_frame
+
+    # SETTERS FOR SECTIONS
+    def set_env_section(self, env_section):
+        self.env_section = env_section
+
+    def set_sensors_section(self, sensors_section):
+        self.sensors_section = sensors_section
+
+    def set_robot_section(self, robot_section):
+        self.robot_section   = robot_section
+
+    def set_buttons_section(self, buttons_section):
+        self.buttons_section = buttons_section
+
+    # SETTERS FOR CANVA'S PROPERTIES
     def set_grid(self, grid):
         self.grid = grid
 

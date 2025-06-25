@@ -2,13 +2,29 @@ import math
 
 class Service():
     def __init__(self):
-        self.simulation_runnning = False
+        # CANVA'S SIZE
+        self.previus_size = None
+        self.current_size = None
+
+    def set_canvas_size(self, x, y):
+        self.previus_size = self.current_size
+        self.current_size = { 'x': x, 'y': y }
+        return self.current_size
 
     def set_dymension(self, x, y):
         return { 'x': x, 'y': y }
     
+    def set_position(self, x, y):
+        return { 'x': x, 'y': y }
+
     def set_pose(self, x, y, angle):
         return { 'x': x, 'y': y, 'angle': angle }
+
+    def remap_position(self, position):
+        if self.previus_size is not None:
+            position['x'] = self.current_size['x'] * position['x'] / self.previus_size['x']
+            position['y'] = self.current_size['y'] * position['y'] / self.previus_size['y']
+        return position
 
     def remap_pose(old_size, new_size, pose):
         pose['x'] = new_size['x'] * pose['x'] / old_size['x']

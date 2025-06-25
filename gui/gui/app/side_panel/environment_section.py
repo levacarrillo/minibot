@@ -55,3 +55,5 @@ class EnvironmentSection:
 
         self.environment_cb.current(0)
         self.behavior_list_cb.current(0)
+
+        context.set_env_section(self)
