@@ -61,8 +61,8 @@ class CanvasPanel:
         self.env_section.label_light_pose_x.config(text = label_pos_x)
         self.env_section.label_light_pose_y.config(text = label_pos_y)
 
-        # self.buttons_section.simulation_running = True
-        # self.controller.simulate_light_proximity(self.robot.get_pose(), self.robot.radius, self.light.get_pose())
+        self.context.simulation_running = True
+        self.controller.simulate_light_proximity(self.robot.get_pose(), self.robot.radius, light_position)
 
     def left_click(self, e_point):
         robot_position = self.controller.set_position(e_point.x, e_point.y)

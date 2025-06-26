@@ -25,19 +25,19 @@ class ButtonsSection:
                                                 sticky = (N, W), padx = 5)
     
     def run_simulation(self):
-        # params = {
-        #     "behavior"       : self.env_section.behavior_list_cb.get(),
-        #     "run_behavior"   : True,
-        #     "step"           : int(0),
-        #     "max_steps"      : int(self.env_section.steps_entry.get()),
-        #     "max_advance"    : float(self.robot_section.entry_advance.get()),
-        #     "max_turn_angle" : float(self.robot_section.entry_turn_angle.get()),
-        #     "light_threshold": float(self.sensors_section.entry_light.get()),
-        #     "laser_threshold": float(self.sensors_section.entry_laser.get())
-        # }
+        params = {
+            "behavior"       : self.context.env_section.behavior_list_cb.get(),
+            "run_behavior"   : True,
+            "step"           : int(0),
+            "max_steps"      : int(self.context.env_section.steps_entry.get()),
+            "max_advance"    : float(self.context.robot_section.entry_advance.get()),
+            "max_turn_angle" : float(self.context.robot_section.entry_turn_angle.get()),
+            "light_threshold": float(self.context.sensors_section.entry_light.get()),
+            "laser_threshold": float(self.context.sensors_section.entry_laser.get())
+        }
         
         self.context.simulation_running = True
-        # self.controller.run_simulation(params)
+        self.controller.run_simulation(params)
 
     def scale_value(self, value):
         self.context.set_velocity_slider(value)

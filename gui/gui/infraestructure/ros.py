@@ -29,14 +29,14 @@ class Ros(Node):
             self.execute_movement_callback
         )
 
-        # while not self.get_params_cli.wait_for_service(timeout_sec=1.0):
-        #     self.get_logger().warn('SERVICE /get_params NOT AVAILABLE, WAITING AGAIN...')
+        while not self.get_params_cli.wait_for_service(timeout_sec=1.0):
+            self.get_logger().warn('SERVICE /get_params NOT AVAILABLE, WAITING AGAIN...')
 
-        # while not self.set_params_cli.wait_for_service(timeout_sec=1.0):
-        #     self.get_logger().warn('SERVICE /set_params NOT AVAILABLE, WAITING AGAIN...')
+        while not self.set_params_cli.wait_for_service(timeout_sec=1.0):
+            self.get_logger().warn('SERVICE /set_params NOT AVAILABLE, WAITING AGAIN...')
 
-        # time.sleep(0.1)
-        # self.update_params()
+        time.sleep(0.1)
+        self.update_params()
 
     def update_params(self):
         req = GetParams.Request()
@@ -89,7 +89,7 @@ class Ros(Node):
         response.readings  = self.light_readings
         response.max_index = self.light_max_index
         response.max_value = self.light_max_value
-        print(response.readings)
+        # print(response.readings)
         return response
 
     def get_scan(self, request, response):

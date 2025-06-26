@@ -23,22 +23,17 @@ class Animation:
 
         if curr_pose is not None:   # VERIFY IF ROBOT EXISTS IN CANVAS
             goal = self.controller.get_goal_pose()
-
             self.delay = self.controller.get_execution_delay(self.context.velocity_slider)
-
-            # print(f"delay->{self.delay}")
-            # print(f"curr_angle->{curr_pose['angle']}")
 
             if self.context.simulation_running and goal is not None:
                 if self.context.fast_mode == 1:
                     self.robot.rotate(goal['angle'])
                     self.robot.displace(goal['distance'])
-                    self.context.simulation_running = False
                     self.controller.finish_movement()
                 else:
                     delta = goal['angle'] - self.angle_increment
                     if abs(delta) > self.angle_tolerance:
-                        direction = 1 if delta > 0 else -1 # 1: LEFT, -1: RIGHT
+                        direction = 1 if goal['angle'] > 0 else -1 # 1: LEFT, -1: RIGHT
                         increment = self.controller.degrees_to_radians(direction)
                         self.robot.rotate(increment)
                         self.angle_increment += increment
@@ -51,7 +46,6 @@ class Animation:
                         else:
                             self.angle_increment         = 0.0
                             self.displacement_increment  = 0
-                            self.context.simulation_running = False
                             self.controller.finish_movement()
                 
                     time.sleep(self.delay)            
