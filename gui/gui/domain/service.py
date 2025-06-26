@@ -34,7 +34,7 @@ class Service():
     def px_point_to_m(self, px, py):
         x = self.canvas_scale['x'] * px / self.current_size['x']
         y = self.canvas_scale['y'] * py / self.current_size['y']
-        return str(x)[:4], str(y)[:4]
+        return str(x)[:6], str(y)[:6]
 
     def get_execution_delay(self, slider_value):
         delay = (3 - int(slider_value)) * 0.01
@@ -47,7 +47,7 @@ class Service():
 
     # MATH CONVERTIONS
     def pixels_to_m(self, scale, size, point):
-        return str(scale * point / size)[:4]
+        return str(scale * point / size)[:6]
 
     def m_to_pixels(self, length):
         return (float(length) * self.current_size['x']) / self.canvas_scale['x']

@@ -49,7 +49,7 @@ class Robot:
                                                             'wheel', tag = "robot")
         
         self.context.robot_section.entry_angle.delete(0, END)
-        self.context.robot_section.entry_angle.insert(0, str(angle)[:4])
+        self.context.robot_section.entry_angle.insert(0, str(angle)[:6])
 
     def rotate(self, angle):
         self.plot(rotation = angle)
