@@ -132,7 +132,6 @@ class Service():
             if list_values[i] > max_value:
                 max_index = i
                 max_value = list_values[i]
-
         return max_index, max_value
 
     def format_goal_pose(self, goal):

@@ -89,6 +89,7 @@ class Ros(Node):
         response.readings  = self.light_readings
         response.max_index = self.light_max_index
         response.max_value = self.light_max_value
+        # print(f"light_max_index->{self.light_max_index}")
         # print(response.readings)
         return response
 

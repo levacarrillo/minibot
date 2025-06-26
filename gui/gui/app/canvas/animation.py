@@ -6,6 +6,7 @@ class Animation:
         self.context    = context
         self.app        = context.app
         self.robot      = context.robot
+        self.light      = context.light
         self.controller = context.controller
 
 
@@ -20,10 +21,12 @@ class Animation:
 
     def execute(self):
         curr_pose = self.robot.get_pose()
-
         if curr_pose is not None:   # VERIFY IF ROBOT EXISTS IN CANVAS
             goal = self.controller.get_goal_pose()
             self.delay = self.controller.get_execution_delay(self.context.velocity_slider)
+
+            if self.light.get_position() is not None:
+                self.controller.simulate_light_proximity(self.robot.get_pose(), self.robot.radius, self.light.get_position())
 
             if self.context.simulation_running and goal is not None:
                 if self.context.fast_mode == 1:

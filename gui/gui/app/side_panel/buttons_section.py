@@ -38,6 +38,7 @@ class ButtonsSection:
         
         self.context.simulation_running = True
         self.controller.run_simulation(params)
+        self.context.route.delete()
 
     def scale_value(self, value):
         self.context.set_velocity_slider(value)

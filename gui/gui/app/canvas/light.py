@@ -7,7 +7,7 @@ class Light:
         self.canvas     = context.canvas
         self.controller = context.controller
   
-        self.position   = None
+        self.position = None
         self.image = False
         self.img   = PhotoImage(file = self.controller.get_file_path('light.png'))
         self.img.zoom(50, 50)
@@ -25,6 +25,8 @@ class Light:
         if self.position is not None:
             self.image = self.canvas.create_image(self.position['x'], self.position['y'], 
                                                                         image = self.img)
+    def get_position(self):
+        return self.position
 
     def delete(self):
         self.canvas.delete(self.image)

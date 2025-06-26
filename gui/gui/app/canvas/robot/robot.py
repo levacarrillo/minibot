@@ -18,8 +18,8 @@ class Robot:
         self.body    = None
         context.set_robot(self)
 
-        self.polygon = Polygon(context)
         self.route   = Route(context)
+        self.polygon = Polygon(context)
 
     def plot(self, position = None, rotation = 0):
         entry_angle  = self.context.robot_section.entry_angle .get()
@@ -57,6 +57,8 @@ class Robot:
     def displace(self, advance):
         x, y = self.controller.polar_to_cartesian(advance, self.pose['angle'])
         self.canvas.move('robot', x, y)
+        # print(f"initial_pose->{self.pose}, final_pose: x->{x} y->{y}")
+        self.route.trace(self.pose['x'], self.pose['y'], self.pose['x'] + x, self.pose['y'] + y)
         self.pose = self.controller.set_pose(self.pose['x'] + x, self.pose['y'] + y, 
                                                                 self.pose['angle'])
 
