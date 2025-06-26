@@ -76,7 +76,7 @@ int main(int argc, char *argv[]) {
     }
 
     rclcpp::spin_some(node);
-    std::this_thread::sleep_for(std::chrono::milliseconds(500));
+    std::this_thread::sleep_for(std::chrono::milliseconds(1));
   }
 
   RCLCPP_INFO(node->get_logger(), "INTERRUPTED MOTION_PLANNER NODE. EXITING.");

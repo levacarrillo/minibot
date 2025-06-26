@@ -7,4 +7,4 @@ motion_planner:
     light_threshold: 2.0
     laser_threshold: 1.2
     step: 0
-    max_steps: 10
+    max_steps: 25
