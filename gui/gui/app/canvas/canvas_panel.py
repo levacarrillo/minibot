@@ -7,20 +7,17 @@ from gui.app.canvas.animation import Animation
 
 class CanvasPanel:
     def __init__(self, context):
-        self.app = context.app
-        content  = context.content
-        color    = context.color
         self.context         = context
         self.controller      = context.controller
 
-        self.app.frame = Frame(content, borderwidth = 5, relief = "flat", width = 900,
-                                        height = 900, bg=color['background'])
+        context.app.frame = Frame(context.content, borderwidth = 5, relief = "flat", 
+                            width = 900, height = 900, bg=context.color['background'])
 
         self.scale = self.controller.set_canvas_scale(1, 1)
         self.size  = self.controller.set_canvas_size(500, 500) # PIXELS
 
-        self.canvas = Canvas(self.app.frame, width = self.size['x'], 
-                                        height = self.size['y'], bg=color['canvas'])
+        self.canvas = Canvas(context.app.frame, width = self.size['x'], 
+                                    height = self.size['y'], bg=context.color['canvas'])
 
         context.set_canvas_panel(self)
 
@@ -31,7 +28,7 @@ class CanvasPanel:
         self.canvas.bind("<Button-3>", self.right_click)
         self.canvas.bind("<Button-1>", self.left_click)
         
-        self.app.frame.grid(column = 0, row = 0, columnspan = 3, rowspan = 2, 
+        context.app.frame.grid(column = 0, row = 0, columnspan = 3, rowspan = 2, 
                                                         sticky = (N, S, E, W))
         self.canvas.pack()
 
