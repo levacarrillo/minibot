@@ -112,3 +112,17 @@ class AppContext:
             self.robot_section.entry_angle.insert(0, str(value)[:6])
         else:
             print(f'PANEL_UPDATE_VALUE()->{name} NOT RECOGNIZED BY CONTEXT')        
+
+    # SHARED METHODS
+    def run_simulation(self):
+        self.simulation_running = True
+        self.route.delete()
+        self.controller.set_ros_param('behavior', self.get_param('behavior'))
+        self.controller.set_ros_param('run_behavior', self.simulation_running)
+        self.controller.set_ros_param('step', 0)
+        self.controller.set_ros_param('max_steps', int(self.get_param('max_steps')))
+        self.controller.set_ros_param('max_advance', float(self.get_param('max_advance')))
+        self.controller.set_ros_param('max_turn_angle', float(self.get_param('max_turn_angle')))
+        self.controller.set_ros_param('light_threshold', float(self.get_param('light_threshold')))
+        self.controller.set_ros_param('laser_threshold', float(self.get_param('laser_threshold')))
+        self.controller.run_simulation()

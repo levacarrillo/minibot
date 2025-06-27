@@ -57,7 +57,7 @@ class CanvasPanel:
         self.context.panel_update_value('label_light_pose_x', label_pos_x)
         self.context.panel_update_value('label_light_pose_y', label_pos_y)
 
-        self.context.simulation_running = True
+        self.context.run_simulation()
 
     def left_click(self, e_point):
         robot_position = self.controller.set_position(e_point.x, e_point.y)

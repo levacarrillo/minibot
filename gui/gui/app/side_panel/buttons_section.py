@@ -24,18 +24,7 @@ class ButtonsSection:
                                                         sticky = (N, W), padx = 5)
     
     def run_simulation(self):
-
-        self.context.simulation_running = True
-        self.context.route.delete()
-        self.controller.set_ros_param('behavior', self.context.get_param('behavior'))
-        self.controller.set_ros_param('run_behavior', self.context.simulation_running)
-        self.controller.set_ros_param('step', 0)
-        self.controller.set_ros_param('max_steps', int(self.context.get_param('max_steps')))
-        self.controller.set_ros_param('max_advance', float(self.context.get_param('max_advance')))
-        self.controller.set_ros_param('max_turn_angle', float(self.context.get_param('max_turn_angle')))
-        self.controller.set_ros_param('light_threshold', float(self.context.get_param('light_threshold')))
-        self.controller.set_ros_param('laser_threshold', float(self.context.get_param('laser_threshold')))
-        self.controller.run_simulation()
+        self.context.run_simulation()
 
     def scale_value(self, value):
         self.context.set_velocity_slider(value)
