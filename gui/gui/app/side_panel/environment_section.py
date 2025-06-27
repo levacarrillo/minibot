@@ -5,36 +5,34 @@ from tkinter import ttk
 class EnvironmentSection:
     def __init__(self, context):
         self.context = context
-        side         = context.side_frame
-        controller   = context.controller
 
         self.check_fast_mode  = IntVar()
-        environment_list = controller.get_environment_list()
-        behavior_list    = controller.get_param('behavior_list')
-        max_steps        = StringVar(value = controller.get_param('max_steps'))
+        environment_list = context.controller.get_environment_list()
+        behavior_list    = context.controller.get_param('behavior_list')
+        max_steps        = StringVar(value = context.controller.get_param('max_steps'))
 
-        self.label_settings      = Label(side, text = "Settings")
-        self.label_enviroments   = Label(side, text = "Environment:")
-        self.label_behavior		 = Label(side, text = "Behavior:")
-        self.label_max_steps     = Label(side, text = "Max steps:")
-        self.label_light_x       = Label(side, text = "Light X:")
-        self.label_light_y       = Label(side, text = "Light Y:")
-        self.label_curr_step     = Label(side, text = "Current step:")
-        self.label_configuration = Label(side, text = "Configurations:")
-        self.label_light_pose_x  = Label(side ,text = "Click Right", justify='center')
-        self.label_light_pose_y  = Label(side ,text = "Click Right",  justify='center')
-        self.label_steps_var     = Label(side ,text = "0", justify='center')
+        self.label_settings      = Label(context.side_frame, text = "Settings")
+        self.label_enviroments   = Label(context.side_frame, text = "Environment:")
+        self.label_behavior		 = Label(context.side_frame, text = "Behavior:")
+        self.label_max_steps     = Label(context.side_frame, text = "Max steps:")
+        self.label_light_x       = Label(context.side_frame, text = "Light X:")
+        self.label_light_y       = Label(context.side_frame, text = "Light Y:")
+        self.label_curr_step     = Label(context.side_frame, text = "Current step:")
+        self.label_configuration = Label(context.side_frame, text = "Configurations:")
+        self.label_light_pose_x  = Label(context.side_frame ,text = "Click Right", justify='center')
+        self.label_light_pose_y  = Label(context.side_frame ,text = "Click Right",  justify='center')
+        self.label_steps_var     = Label(context.side_frame ,text = "0", justify='center')
         
-        self.steps_entry = Entry(side, validate = 'key', textvariable = max_steps, width = 5)
-        self.environment_cb    = ttk.Combobox(side,  values = environment_list, width = 16)
-        self.behavior_list_cb  = ttk.Combobox(side, values = behavior_list,  width = 16)
+        self.steps_entry = Entry(context.side_frame, validate = 'key', textvariable = max_steps, width = 5)
+        self.environment_cb    = ttk.Combobox(context.side_frame,  values = environment_list, width = 16)
+        self.behavior_list_cb  = ttk.Combobox(context.side_frame, values = behavior_list,  width = 16)
 
-        self.ck_button_fast    = Checkbutton(side, text="Fast mode",
+        self.ck_button_fast    = Checkbutton(context.side_frame, text="Fast mode",
                                                 variable = self.check_fast_mode, 
                                                 command = self.on_change_fast_mode)
-        self.ck_button_sensors = Checkbutton(side, text="Show sensors")
-        self.ck_add_noise      = Checkbutton(side, text="Add Noise")
-        self.ck_button_load    = Checkbutton(side, text="Load Objects")
+        self.ck_button_sensors = Checkbutton(context.side_frame, text="Show sensors")
+        self.ck_add_noise      = Checkbutton(context.side_frame, text="Add Noise")
+        self.ck_button_load    = Checkbutton(context.side_frame, text="Load Objects")
 
         self.label_settings      .grid(column = 0, row = 0,  sticky = (N, W), padx = (5, 0))
         self.label_enviroments   .grid(column = 0, row = 1,  sticky = (N, W), padx = (5, 0))

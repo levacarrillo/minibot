@@ -3,33 +3,30 @@ from tkinter import *
 
 class RobotSection:
     def __init__(self, context):
-        side = context.side_frame
-        controller = context.controller
-
-        max_advance    = StringVar(value = controller.get_param('max_advance'))
-        max_turn_angle = StringVar(value = controller.get_param('max_turn_angle'))
+        max_advance    = StringVar(value = context.controller.get_param('max_advance'))
+        max_turn_angle = StringVar(value = context.controller.get_param('max_turn_angle'))
         
-        self.label_robot      = Label(side, text = "Robot")
-        self.label_pose_x     = Label(side, text = "Pose X:")
-        self.label_pose_y     = Label(side, text = "Pose Y:")
-        self.label_angle      = Label(side, text = "Angle:")
-        self.label_radius     = Label(side, text = "Radius:")
-        self.label_advance    = Label(side, text = "Advance:")
-        self.label_turn_angle = Label(side, text = "Turn Angle:")
+        self.label_robot      = Label(context.side_frame, text = "Robot")
+        self.label_pose_x     = Label(context.side_frame, text = "Pose X:")
+        self.label_pose_y     = Label(context.side_frame, text = "Pose Y:")
+        self.label_angle      = Label(context.side_frame, text = "Angle:")
+        self.label_radius     = Label(context.side_frame, text = "Radius:")
+        self.label_advance    = Label(context.side_frame, text = "Advance:")
+        self.label_turn_angle = Label(context.side_frame, text = "Turn Angle:")
 
-        self.entry_pose_x     = Entry(side, validate = 'key', 
-                                        textvariable = StringVar(value = "1.5"),    width = 9)
-        self.entry_pose_y     = Entry(side, validate = 'key', 
-                                        textvariable = StringVar(value = "2.2"),    width = 9)
-        self.entry_angle      = Entry(side, validate = 'key',
-                                        textvariable = StringVar(value = "0.0"),    width = 9)
-        self.entry_radius      = Entry(side, validate = 'key',
-                                        textvariable = StringVar(value = "0.04"),   width = 9)
-        self.entry_advance    = Entry(side, validate = 'key',
+        self.entry_pose_x     = Entry(context.side_frame, validate = 'key', 
+                                    textvariable = StringVar(value = "1.5"),  width = 9)
+        self.entry_pose_y     = Entry(context.side_frame, validate = 'key', 
+                                    textvariable = StringVar(value = "2.2"),  width = 9)
+        self.entry_angle      = Entry(context.side_frame, validate = 'key',
+                                    textvariable = StringVar(value = "0.0"),  width = 9)
+        self.entry_radius      = Entry(context.side_frame, validate = 'key',
+                                    textvariable = StringVar(value = "0.04"), width = 9)
+        self.entry_advance    = Entry(context.side_frame, validate = 'key',
                                     textvariable = max_advance,    width = 9)
-        self.entry_turn_angle = Entry(side, validate = 'key',
+        self.entry_turn_angle = Entry(context.side_frame, validate = 'key',
                                     textvariable = max_turn_angle, width = 9)
-        self.button_set_zero  = Button(side, width = 8, text = "Angle Zero")
+        self.button_set_zero  = Button(context.side_frame, width = 8, text = "Angle Zero")
 
         self.label_robot      .grid(column = 4, row = 0, sticky = (N, W), padx = (5, 0))     
         self.label_pose_x     .grid(column = 4, row = 1, sticky = (N, W), padx = (5, 0))

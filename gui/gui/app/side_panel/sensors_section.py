@@ -3,29 +3,27 @@ from tkinter import *
 
 class SensorsSection:
     def __init__(self, context):
-        side = context.side_frame
-        controller = context.controller
 
-        light_threshold = StringVar(value = controller.get_param('light_threshold'))
-        laser_threshold = StringVar(value = controller.get_param('laser_threshold'))
+        light_threshold = StringVar(value = context.controller.get_param('light_threshold'))
+        laser_threshold = StringVar(value = context.controller.get_param('laser_threshold'))
 
-        self.label_sensors       = Label(side, text = "Sensors")
-        self.label_num_sensors   = Label(side, text = "Num Sensors:")
-        self.label_origing_angle = Label(side, text = "Origin angle:" )
-        self.label_range         = Label(side, text = "Range:")
-        self.lidar_value         = Label(side, text = "Lidar value:")
-        self.light_value         = Label(side, text = "Light value:")
+        self.label_sensors       = Label(context.side_frame, text = "Sensors")
+        self.label_num_sensors   = Label(context.side_frame, text = "Num Sensors:")
+        self.label_origing_angle = Label(context.side_frame, text = "Origin angle:" )
+        self.label_range         = Label(context.side_frame, text = "Range:")
+        self.lidar_value         = Label(context.side_frame, text = "Lidar value:")
+        self.light_value         = Label(context.side_frame, text = "Light value:")
 
-        self.entry_num_sensors   = Entry(side, validate = 'key', 
+        self.entry_num_sensors   = Entry(context.side_frame, validate = 'key', 
                                         textvariable = StringVar(value = "20"),      width = 10)
-        self.entry_origin_angle  = Entry(side, validate = 'key',
+        self.entry_origin_angle  = Entry(context.side_frame, validate = 'key',
                                         textvariable = StringVar(value = "-1.5707"), width = 10)
-        self.entry_range         = Entry(side, validate = 'key',
+        self.entry_range         = Entry(context.side_frame, validate = 'key',
                                         textvariable = StringVar(value = "3.1416"),  width = 10)
-        self.entry_light         = Entry(side, validate = 'key', textvariable = light_threshold, 
-                                                                                width = 10)
-        self.entry_laser         = Entry(side, validate = 'key', textvariable = laser_threshold,
-                                                                                width = 10)
+        self.entry_light         = Entry(context.side_frame, validate = 'key', 
+                                                textvariable = light_threshold, width = 10)
+        self.entry_laser         = Entry(context.side_frame, validate = 'key',
+                                                textvariable = laser_threshold, width = 10)
 
         self.label_sensors       .grid(column = 0, row = 12, sticky = (N, W), padx = (5, 0))     
         self.label_num_sensors   .grid(column = 0, row = 13, sticky = (N, W), padx = (5, 0))

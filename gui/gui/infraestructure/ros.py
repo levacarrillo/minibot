@@ -6,6 +6,7 @@ from rclpy.node import Node
 from rclpy.action import ActionServer
 from interfaces.action import GoToPose
 
+
 class Ros(Node):
     def __init__(self):
         super().__init__('simulator')
