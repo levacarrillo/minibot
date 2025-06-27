@@ -19,9 +19,9 @@ class EnvironmentSection:
         self.label_light_y       = Label(context.side_frame, text = "Light Y:")
         self.label_curr_step     = Label(context.side_frame, text = "Current step:")
         self.label_configuration = Label(context.side_frame, text = "Configurations:")
-        self.label_light_pose_x  = Label(context.side_frame ,text = "Click Right", justify='center')
-        self.label_light_pose_y  = Label(context.side_frame ,text = "Click Right",  justify='center')
-        self.label_steps_var     = Label(context.side_frame ,text = "0", justify='center')
+        self.label_light_pose_x  = Label(context.side_frame, text = "Click Right", justify='center')
+        self.label_light_pose_y  = Label(context.side_frame, text = "Click Right",  justify='center')
+        self.label_steps         = Label(context.side_frame, text = "0", justify='center')
         
         self.steps_entry = Entry(context.side_frame, validate = 'key', textvariable = max_steps, width = 5)
         self.environment_cb    = ttk.Combobox(context.side_frame,  values = environment_list, width = 16)
@@ -44,7 +44,7 @@ class EnvironmentSection:
         self.label_configuration .grid(column = 0, row = 7,  sticky = (N, W), padx = (5, 0))
         self.label_light_pose_x  .grid(column = 1, row = 4,  sticky = (N, W), padx = (5, 0))
         self.label_light_pose_y  .grid(column = 1, row = 5,  sticky = (N, W), padx = (5, 0))
-        self.label_steps_var     .grid(column = 1, row = 6,  sticky = (N, W), padx = (5, 0))
+        self.label_steps         .grid(column = 1, row = 6,  sticky = (N, W), padx = (5, 0))
 
         self.steps_entry         .grid(column = 1, row = 3,  sticky = (N, W), padx = (5, 0))
         self.environment_cb      .grid(column = 1, row = 1,  sticky = (N, W), padx = (5, 0))

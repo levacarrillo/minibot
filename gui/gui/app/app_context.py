@@ -99,6 +99,8 @@ class AppContext:
             self.env_section.label_light_pose_x.config(text = value)
         elif name == 'label_light_pose_y':
             self.env_section.label_light_pose_y.config(text = value)
+        elif name == 'label_steps':
+            self.env_section.label_steps.config(text = value)
         elif name == 'entry_pose_x':
             self.robot_section.entry_pose_x.delete(0, END)
             self.robot_section.entry_pose_x.insert(0, value)

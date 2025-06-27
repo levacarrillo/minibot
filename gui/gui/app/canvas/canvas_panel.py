@@ -12,7 +12,6 @@ class CanvasPanel:
         color    = context.color
         self.context         = context
         self.controller      = context.controller
-        self.buttons_section = context.buttons_section
 
         self.app.frame = Frame(content, borderwidth = 5, relief = "flat", width = 900,
                                         height = 900, bg=color['background'])
@@ -46,7 +45,6 @@ class CanvasPanel:
         self.light.plot()
         self.grid.plot()
         self.robot.plot()
-        # self.robot.route.trace(trace_init_pose, trace_final_pose)
         self.canvas.configure(width = new_size_x, height = new_size_y)
  
     def right_click(self, e_point):
