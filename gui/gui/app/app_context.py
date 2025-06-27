@@ -125,4 +125,4 @@ class AppContext:
         self.controller.set_ros_param('max_turn_angle', float(self.get_param('max_turn_angle')))
         self.controller.set_ros_param('light_threshold', float(self.get_param('light_threshold')))
         self.controller.set_ros_param('laser_threshold', float(self.get_param('laser_threshold')))
-        self.controller.run_simulation()
+        self.controller.send_state_params()
