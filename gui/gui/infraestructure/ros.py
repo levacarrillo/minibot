@@ -35,7 +35,7 @@ class Ros(Node):
         rclpy.spin_until_future_complete(self, future)
         return future.result()
 
-    def run_simulation(self, req):
+    def send_state_params(self, req):
         future = self.set_params_cli.call_async(req)
         rclpy.spin_until_future_complete(self, future)
         return future.result()

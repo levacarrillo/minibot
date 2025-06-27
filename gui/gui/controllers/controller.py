@@ -73,8 +73,8 @@ class Controller:
     def set_ros_param(self, name, value):
         return self.service.set_ros_param(name, value)
 
-    def run_simulation(self):
-        self.ros.run_simulation(self.service.get_all_params())
+    def send_state_params(self):
+        self.ros.send_state_params(self.service.get_all_params())
 
     def finish_movement(self):
         self.ros.finish_movement()
