@@ -24,7 +24,9 @@ class ButtonsSection:
                                                         sticky = (N, W), padx = 5)
     
     def run_simulation(self):
+
         self.context.simulation_running = True
+        self.context.route.delete()
         self.controller.set_ros_param('behavior', self.context.get_param('behavior'))
         self.controller.set_ros_param('run_behavior', self.context.simulation_running)
         self.controller.set_ros_param('step', 0)

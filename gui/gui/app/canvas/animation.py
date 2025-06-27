@@ -1,5 +1,5 @@
 import time
-
+from gui.app.canvas.route import Route
 
 class Animation:
     def __init__(self, context):
@@ -9,6 +9,7 @@ class Animation:
         self.light      = context.light
         self.controller = context.controller
 
+        self.route = Route(context)
 
         self.angle_tolerance = 0.01
         self.distance_tolerance = 1
@@ -17,6 +18,7 @@ class Animation:
         self.angle_increment = 0.0
         self.displacement_increment = 0
 
+        self.init_pose = None
         self.execute()
 
     def execute(self):
@@ -30,6 +32,8 @@ class Animation:
                                                 self.robot.radius, self.light.get_position())
 
             if self.context.simulation_running and goal is not None:
+                if self.init_pose is None:
+                    self.init_pose = curr_pose
                 current_step = self.controller.get_current_step()
                 self.context.panel_update_value('label_steps', current_step)
 
@@ -37,6 +41,9 @@ class Animation:
                     self.robot.rotate(goal['angle'])
                     self.robot.displace(goal['distance'])
                     self.controller.finish_movement()
+                    final_pose = self.robot.get_pose()
+                    self.route.trace(self.init_pose, final_pose)
+                    self.init_pose = None
                 else:
                     delta = goal['angle'] - self.angle_increment
                     if abs(delta) > self.angle_tolerance:
@@ -54,6 +61,9 @@ class Animation:
                             self.angle_increment         = 0.0
                             self.displacement_increment  = 0
                             self.controller.finish_movement()
+                            final_pose = self.robot.get_pose()
+                            self.route.trace(self.init_pose, final_pose)
+                            self.init_pose = None
                 
                     time.sleep(self.delay)            
 
