@@ -78,6 +78,9 @@ class Service():
             behavior_list.remove('')
         if 'UNKNOWN' in behavior_list:
             behavior_list.remove('UNKNOWN')
+        
+        max_advance = math.trunc(params.max_advance * 1000) / 1000
+        laser_threshold = math.trunc(params.laser_threshold * 1000) / 1000
 
         self.ros_params = {
             "behavior" :       params.behavior,
@@ -85,14 +88,13 @@ class Service():
             "behavior_list" :  behavior_list,
             "step" :           params.step,
             "max_steps" :      params.max_steps,
-            "max_advance" :    params.max_advance,
+            "max_advance" :    max_advance,
             "max_turn_angle":  params.max_turn_angle,
             "light_threshold": params.light_threshold,
-            "laser_threshold": params.laser_threshold
+            "laser_threshold": laser_threshold
         }
 
     def get_ros_param(self, param_name):
-        # print(f"PARAM REQUESTED->{param_name}")
         return self.ros_params[param_name]
 
     def set_ros_param(self, name, value):
