@@ -26,14 +26,14 @@ class ButtonsSection:
     
     def run_simulation(self):
         self.context.simulation_running = True
-        self.controller.set_ros_param('behavior', self.context.env_section.behavior_list_cb.get())
+        self.controller.set_ros_param('behavior', self.context.get_param('behavior'))
         self.controller.set_ros_param('run_behavior', self.context.simulation_running)
         self.controller.set_ros_param('step', 0)
-        self.controller.set_ros_param('max_steps', int(self.context.env_section.steps_entry.get()))
-        self.controller.set_ros_param('max_advance', float(self.context.robot_section.entry_advance.get()))
-        self.controller.set_ros_param('max_turn_angle', float(self.context.robot_section.entry_turn_angle.get()))
-        self.controller.set_ros_param('light_threshold', float(self.context.sensors_section.entry_light.get()))
-        self.controller.set_ros_param('laser_threshold', float(self.context.sensors_section.entry_laser.get()))
+        self.controller.set_ros_param('max_steps', int(self.context.get_param('max_steps')))
+        self.controller.set_ros_param('max_advance', float(self.context.get_param('max_advance')))
+        self.controller.set_ros_param('max_turn_angle', float(self.context.get_param('max_turn_angle')))
+        self.controller.set_ros_param('light_threshold', float(self.context.get_param('light_threshold')))
+        self.controller.set_ros_param('laser_threshold', float(self.context.get_param('laser_threshold')))
         self.controller.run_simulation()
 
     def scale_value(self, value):

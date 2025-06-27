@@ -26,14 +26,6 @@ class AppContext:
         self.fast_mode = 0
         self.route = None
 
-    def set_canvas_panel(self, canvas_panel):
-        self.canvas_panel = canvas_panel
-        self.canvas = canvas_panel.canvas
-        self.canvas_size  = canvas_panel.size
-        self.canvas_scale = canvas_panel.scale
-
-    def set_canvas_size(self, canvas_size):
-        self.canvas_size  = canvas_size
 
     # SETTERS FOR MAIN FRAMES
     def set_side_frame(self, side_frame):
@@ -53,6 +45,15 @@ class AppContext:
         self.buttons_section = buttons_section
 
     # SETTERS FOR CANVA'S COMPONENTS
+    def set_canvas_panel(self, canvas_panel):
+        self.canvas_panel = canvas_panel
+        self.canvas = canvas_panel.canvas
+        self.canvas_size  = canvas_panel.size
+        self.canvas_scale = canvas_panel.scale
+
+    def set_canvas_size(self, canvas_size):
+        self.canvas_size  = canvas_size
+
     def set_grid(self, grid):
         self.grid = grid
 
@@ -70,3 +71,19 @@ class AppContext:
 
     def set_route(self, value):
         self.route = value
+
+    def get_param(self, name):
+        if name == 'behavior':
+            return self.env_section.behavior_list_cb.get()
+        elif name == 'max_steps':
+            return int(self.env_section.steps_entry.get())
+        elif name == 'max_advance':
+            return float(self.robot_section.entry_advance.get())
+        elif name == 'max_turn_angle':
+            return float(self.robot_section.entry_turn_angle.get())
+        elif name == 'light_threshold':
+            return float(self.sensors_section.entry_light.get())
+        elif name == 'laser_threshold':
+            return float(self.sensors_section.entry_laser.get())
+        else:
+            print(f'PARAMETER {name} IS NO RECOGNIZED BY CONTEXT')
