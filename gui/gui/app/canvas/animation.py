@@ -26,7 +26,8 @@ class Animation:
             self.delay = self.controller.get_execution_delay(self.context.velocity_slider)
 
             if self.light.get_position() is not None:
-                self.controller.simulate_light_proximity(self.robot.get_pose(), self.robot.radius, self.light.get_position())
+                self.controller.simulate_light_readings(self.robot.get_pose(), 
+                                                self.robot.radius, self.light.get_position())
 
             if self.context.simulation_running and goal is not None:
                 if self.context.fast_mode == 1:

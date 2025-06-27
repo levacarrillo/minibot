@@ -1,4 +1,6 @@
 import math
+from interfaces.srv import SetParams
+
 
 class Service():
     def __init__(self):
@@ -6,7 +8,9 @@ class Service():
         # CANVA'S SIZE
         self.previus_size = None
         self.current_size = None
+        self.ros_params   = None
 
+    # GUI'S SERVICES
     def set_canvas_scale(self, x, y):
         self.canvas_scale = { 'x': x, 'y': y }
         return self.canvas_scale
@@ -40,30 +44,21 @@ class Service():
         delay = (3 - int(slider_value)) * 0.01
         return delay
 
-
-
-
-
+    def set_polygon_point(self, pose, radius, portion):
+        sinT = math.sin(-pose['angle'])
+        cosT = math.cos(-pose['angle'])
+        x = radius * (portion['x'] * cosT - portion['y'] * sinT) + pose['x']
+        y = radius * (portion['x'] * sinT + portion['y'] * cosT) + pose['y']
+        return x, y
 
     # MATH CONVERTIONS
-    def pixels_to_m(self, scale, size, point):
-        return str(scale * point / size)[:6]
-
     def m_to_pixels(self, length):
         return (float(length) * self.current_size['x']) / self.canvas_scale['x']
-
-    def cartesian_to_polar(self, x, y):
-        magnitude = math.sqrt(pow(x, 2) + pow(y, 2))
-        angle = math.atan(y, x)
-        return magnitude, angle
 
     def polar_to_cartesian(self, radius, angle):
         x = radius * math.cos(-angle)
         y = radius * math.sin(-angle)
         return x, y
-
-    def radians_to_degrees(self, radians):
-        return math.degrees(radians)
 
     def degrees_to_radians(self, degrees):
         return math.radians(degrees)        
@@ -76,43 +71,50 @@ class Service():
             return math.pi * 2 - ((angle * -1) % (math.pi * 2))
         return angle
 
-    def set_polygon_point(self, pose, radius, portion):
-        sinT = math.sin(-pose['angle'])
-        cosT = math.cos(-pose['angle'])
-        x = radius * (portion['x'] * cosT - portion['y'] * sinT) + pose['x']
-        y = radius * (portion['x'] * sinT + portion['y'] * cosT) + pose['y']
-        return x, y
-
-    def displace_point(self, initial_pose, distance, angle):
-        return {
-            'x': distance * math.cos(-(angle + initial_pose['angle'])) + initial_pose['x'],
-            'y': distance * math.sin(-(angle + initial_pose['angle'])) + initial_pose['y'],
-            'angle': angle + initial_pose['angle']
-            }
-
-    def format_params(self, params):
+    # ROS SERVICES
+    def format_ros_params(self, params):
         behavior_list = params.behavior_list
         if '' in behavior_list:
             behavior_list.remove('')
         if 'UNKNOWN' in behavior_list:
             behavior_list.remove('UNKNOWN')
 
-        param_dict = {
-            "behavior" : params.behavior,
-            "run_behavior" : params.run_behavior,
-            "behavior_list" : behavior_list,
-            "step" : params.step,
-            "max_steps" : params.max_steps,
-            "max_advance" : params.max_advance,
-            "max_turn_angle" : params.max_turn_angle,
-            "light_threshold" : params.light_threshold,
-            "laser_threshold" : params.laser_threshold
+        self.ros_params = {
+            "behavior" :       params.behavior,
+            "run_behavior" :   params.run_behavior,
+            "behavior_list" :  behavior_list,
+            "step" :           params.step,
+            "max_steps" :      params.max_steps,
+            "max_advance" :    params.max_advance,
+            "max_turn_angle":  params.max_turn_angle,
+            "light_threshold": params.light_threshold,
+            "laser_threshold": params.laser_threshold
         }
 
-        return param_dict
+    def get_ros_param(self, param_name):
+        # print(f"PARAM REQUESTED->{param_name}")
+        return self.ros_params[param_name]
 
-    def get_lights_readings(self, robot_pose, robot_radius, light_pose):
-        light_readings = []
+    def set_ros_param(self, name, value):
+        self.ros_params[name] = value
+
+    def get_all_params(self):
+        req = SetParams.Request()
+        req.behavior        = self.ros_params['behavior']
+        req.run_behavior    = self.ros_params['run_behavior']
+        req.step            = self.ros_params['step']
+        req.max_steps       = self.ros_params['max_steps']
+        req.max_advance     = self.ros_params['max_advance']
+        req.max_turn_angle  = self.ros_params['max_turn_angle']
+        req.light_threshold = self.ros_params['light_threshold']
+        req.laser_threshold = self.ros_params['laser_threshold']
+        return req
+
+    def get_light_readings(self, robot_pose, robot_radius, light_pose):
+        max_index = 0
+        max_value = 0.0
+        readings = []
+
         for i in range(8):
             sensor_angle = robot_pose['angle'] + i * math.pi / 4
             sensor_x = robot_pose['x'] + robot_radius * math.cos(-sensor_angle)
@@ -120,23 +122,25 @@ class Service():
             x_distance = sensor_x - light_pose['x']
             y_distance = sensor_y - light_pose['y']
 
-            sensor_distance = math.sqrt(pow(x_distance, 2) + pow(y_distance, 2))
-            light_readings.append(1 / sensor_distance)
+            simulated_reading = 1 / math.sqrt(pow(x_distance, 2) + pow(y_distance, 2))
             
-        return light_readings
-
-    def get_max_reading(self, list_values):
-        max_index = 0
-        max_value = 0.0
-        for i in range(len(list_values)):
-            if list_values[i] > max_value:
+            if simulated_reading > max_value:
+                max_value = simulated_reading
                 max_index = i
-                max_value = list_values[i]
-        return max_index, max_value
+
+            readings.append(simulated_reading)
+
+        light_readings = {
+            'max_index': max_index,
+            'max_value': max_value,
+            'readings' : readings
+        }
+
+        return light_readings
 
     def format_goal_pose(self, goal):
         if goal is not None:
-            distance = goal.distance * 500
+            distance = goal.distance * self.current_size['x']
             goal = {
                 'angle'   : goal.angle,
                 'distance': distance

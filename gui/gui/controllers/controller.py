@@ -1,10 +1,10 @@
 from gui.domain.service import Service
 from gui.infraestructure.file_manager import FileManager
 
+
 class Controller:
     def __init__(self, ros):
         self.ros = ros
-        self.ros_params = None
         self.service = Service()
         self.file_manager = FileManager()
 
@@ -31,9 +31,6 @@ class Controller:
     def remap_position(self, position):
         return self.service.remap_position(position)
 
-    def radians_to_degrees(self, radians):
-        return self.service.radians_to_degrees(radians)
-
     def degrees_to_radians(self, degrees):
         return self.service.degrees_to_radians(degrees)
 
@@ -43,12 +40,11 @@ class Controller:
     def px_point_to_m(self, px, py):
         return self.service.px_point_to_m(px, py)
 
+    def set_polygon_point(self, pose, radius, portion_radius):
+        return self.service.set_polygon_point(pose, radius, portion_radius)
+
     def get_execution_delay(self, slider_value):
         return self.service.get_execution_delay(slider_value)
-
-
-    def pixels_to_m(self, scale, size, point):
-        return self.service.pixels_to_m(scale, size, point)
 
     def m_to_pixels(self, length):
         return self.service.m_to_pixels(length)
@@ -56,41 +52,29 @@ class Controller:
     def normalize_angle(self, angle):
         return self.service.normalize_angle(angle)
 
-    def set_polygon_point(self, pose, radius, portion_radius):
-        return self.service.set_polygon_point(pose, radius, portion_radius)
-
-    def displace_point(self, initial_pose, distance, angle):
-        return self.service.displace_point(initial_pose, distance, angle)
-
+    def polar_to_cartesian(self, radius, angle):
+        return self.service.polar_to_cartesian(radius, angle)
 
     # ROS CONTROLLERS
-    def simulate_light_proximity(self, robot_pose, robot_radius, light_pose):
-        light_readings = self.service.get_lights_readings(robot_pose, robot_radius, light_pose)
-        max_index, max_value = self.service.get_max_reading(light_readings)
-        self.ros.simulate_light_proximity(light_readings, max_index, max_value)
+    def simulate_light_readings(self, robot_pose, robot_radius, light_pose):
+        light_readings = self.service.get_light_readings(robot_pose, 
+                                                        robot_radius, light_pose)
+        self.ros.set_light_readings(light_readings)
 
     def update_params(self):
-        params = self.ros.update_params()
-        self.ros_params = self.service.format_params(params)
-
-    def run_simulation(self, params):
-        self.ros.run_simulation(params)
+        self.service.format_ros_params(self.ros.update_params())
 
     def get_param(self, param_name):
-        return self.ros_params[param_name]
+        return self.service.get_ros_param(param_name)
 
-    def movement_executing(self):
-        return self.ros.movement_executing()
+    def set_ros_param(self, name, value):
+        return self.service.set_ros_param(name, value)
+
+    def run_simulation(self):
+        self.ros.run_simulation(self.service.get_all_params())
 
     def finish_movement(self):
         self.ros.finish_movement()
 
     def get_goal_pose(self):
-        goal = self.ros.get_goal_pose()
-        return self.service.format_goal_pose(goal)
-
-    def cartesian_to_polar(self, x, y):
-        return self.service.cartesian_to_polar(x, y)
-
-    def polar_to_cartesian(self, radius, angle):
-        return self.service.polar_to_cartesian(radius, angle)
+        return self.service.format_goal_pose(self.ros.get_goal_pose())
