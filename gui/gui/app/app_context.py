@@ -1,3 +1,6 @@
+from tkinter import END
+
+
 class AppContext:
     def __init__(self, app, color, content, controller):
         self.app          = app
@@ -25,11 +28,6 @@ class AppContext:
         self.velocity_slider = 1
         self.fast_mode = 0
         self.route = None
-
-
-    # SETTERS FOR MAIN FRAMES
-    def set_side_frame(self, side_frame):
-        self.side_frame = side_frame
 
     # SETTERS FOR SECTIONS
     def set_env_section(self, env_section):
@@ -77,6 +75,10 @@ class AppContext:
             return self.env_section.behavior_list_cb.get()
         elif name == 'max_steps':
             return int(self.env_section.steps_entry.get())
+        elif name == 'entry_angle':
+            return self.robot_section.entry_angle.get()
+        elif name == 'entry_radius':
+            return self.robot_section.entry_radius.get()
         elif name == 'max_advance':
             return float(self.robot_section.entry_advance.get())
         elif name == 'max_turn_angle':
@@ -86,4 +88,25 @@ class AppContext:
         elif name == 'laser_threshold':
             return float(self.sensors_section.entry_laser.get())
         else:
-            print(f'PARAMETER {name} IS NO RECOGNIZED BY CONTEXT')
+            print(f'GET_PARAM()->PARAMETER {name} NOT RECOGNIZED BY CONTEXT')
+
+    # SETTERS FOR MAIN FRAMES
+    def set_side_frame(self, side_frame):
+        self.side_frame = side_frame
+
+    def panel_update_value(self, name, value):
+        if name == 'label_light_pose_x':
+            self.env_section.label_light_pose_x.config(text = value)
+        elif name == 'label_light_pose_y':
+            self.env_section.label_light_pose_y.config(text = value)
+        elif name == 'entry_pose_x':
+            self.robot_section.entry_pose_x.delete(0, END)
+            self.robot_section.entry_pose_x.insert(0, value)
+        elif name == 'entry_pose_y':
+            self.robot_section.entry_pose_y.delete(0, END)
+            self.robot_section.entry_pose_y.insert(0, value)
+        elif name == 'entry_angle':
+            self.robot_section.entry_angle.delete(0, END)
+            self.robot_section.entry_angle.insert(0, str(value)[:6])
+        else:
+            print(f'PANEL_UPDATE_VALUE()->{name} NOT RECOGNIZED BY CONTEXT')        

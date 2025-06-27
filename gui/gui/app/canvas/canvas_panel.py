@@ -12,8 +12,6 @@ class CanvasPanel:
         color    = context.color
         self.context         = context
         self.controller      = context.controller
-        self.env_section     = context.env_section
-        self.robot_section   = context.robot_section
         self.buttons_section = context.buttons_section
 
         self.app.frame = Frame(content, borderwidth = 5, relief = "flat", width = 900,
@@ -58,8 +56,8 @@ class CanvasPanel:
         e_point.y = self.size['y'] - e_point.y # CHANGING REFERENCE SYSTEM
         
         label_pos_x, label_pos_y = self.controller.px_point_to_m(e_point.x, e_point.y)
-        self.env_section.label_light_pose_x.config(text = label_pos_x)
-        self.env_section.label_light_pose_y.config(text = label_pos_y)
+        self.context.panel_update_value('label_light_pose_x', label_pos_x)
+        self.context.panel_update_value('label_light_pose_y', label_pos_y)
 
         self.context.simulation_running = True
 
@@ -69,10 +67,7 @@ class CanvasPanel:
 
         e_point.y = self.size['y'] - e_point.y # CHANGING REFERENCE SYSTEM
 
-        self.robot_section.entry_pose_x.delete(0, END)
-        self.robot_section.entry_pose_y.delete(0, END)
-
         pose_x, pose_y = self.controller.px_point_to_m(e_point.x, e_point.y)
 
-        self.robot_section.entry_pose_x.insert(0, pose_x)
-        self.robot_section.entry_pose_y.insert(0, pose_y)
+        self.context.panel_update_value('entry_pose_x', pose_x)
+        self.context.panel_update_value('entry_pose_y', pose_y)

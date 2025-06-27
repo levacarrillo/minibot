@@ -22,9 +22,8 @@ class Robot:
         self.polygon = Polygon(context)
 
     def plot(self, position = None, rotation = 0):
-        entry_angle  = self.context.robot_section.entry_angle .get()
-        entry_radius = self.context.robot_section.entry_radius.get()
-
+        entry_angle  = self.context.get_param('entry_angle')
+        entry_radius = self.context.get_param('entry_radius')
         angle = self.controller.normalize_angle(entry_angle) + rotation
 
         self.radius = self.controller.m_to_pixels(entry_radius)
@@ -48,8 +47,7 @@ class Robot:
             self.right_wheel = self.polygon.get(self.pose, self.radius, r_wheel_points(),
                                                             'wheel', tag = "robot")
         
-        self.context.robot_section.entry_angle.delete(0, END)
-        self.context.robot_section.entry_angle.insert(0, str(angle)[:6])
+        self.context.panel_update_value('entry_angle', angle)
 
     def rotate(self, angle):
         self.plot(rotation = angle)
@@ -63,10 +61,9 @@ class Robot:
                                                                 self.pose['angle'])
 
         label_pos_x, label_pos_y = self.controller.px_point_to_m(self.pose['x'], self.pose['y'])
-        self.context.robot_section.entry_pose_x.delete(0, END)
-        self.context.robot_section.entry_pose_y.delete(0, END)
-        self.context.robot_section.entry_pose_x.insert(0, label_pos_x)
-        self.context.robot_section.entry_pose_y.insert(0, label_pos_y)
+
+        self.context.panel_update_value('entry_pose_x', label_pos_x)
+        self.context.panel_update_value('entry_pose_y', label_pos_y)
 
     def get_pose(self):
         return self.pose
