@@ -30,6 +30,9 @@ class Animation:
                                                 self.robot.radius, self.light.get_position())
 
             if self.context.simulation_running and goal is not None:
+                current_step = self.controller.get_current_step()
+                self.context.panel_update_value('label_steps', current_step)
+
                 if self.context.fast_mode == 1:
                     self.robot.rotate(goal['angle'])
                     self.robot.displace(goal['distance'])

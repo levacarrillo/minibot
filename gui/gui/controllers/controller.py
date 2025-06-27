@@ -64,6 +64,9 @@ class Controller:
     def update_params(self):
         self.service.format_ros_params(self.ros.update_params())
 
+    def get_current_step(self):
+        return self.service.get_current_step(self.ros.update_params())
+
     def get_param(self, param_name):
         return self.service.get_ros_param(param_name)
 

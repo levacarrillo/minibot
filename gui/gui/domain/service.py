@@ -94,6 +94,10 @@ class Service():
             "laser_threshold": laser_threshold
         }
 
+    def get_current_step(self, params):
+        self.ros_params['step'] = params.step
+        return self.ros_params['step']
+
     def get_ros_param(self, param_name):
         return self.ros_params[param_name]
 
