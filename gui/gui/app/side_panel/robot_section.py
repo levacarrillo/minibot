@@ -3,6 +3,8 @@ from tkinter import *
 
 class RobotSection:
     def __init__(self, context):
+        self.context = context
+
         max_advance    = StringVar(value = context.controller.get_param('max_advance'))
         max_turn_angle = StringVar(value = context.controller.get_param('max_turn_angle'))
         
@@ -26,7 +28,8 @@ class RobotSection:
                                     textvariable = max_advance,    width = 9)
         self.entry_turn_angle = Entry(context.side_frame, validate = 'key',
                                     textvariable = max_turn_angle, width = 9)
-        self.button_set_zero  = Button(context.side_frame, width = 8, text = "Angle Zero")
+        self.button_set_zero  = Button(context.side_frame, width = 8, text = "Angle Zero",
+                                                            command = self.set_angle_zero)
 
         self.label_robot      .grid(column = 4, row = 0, sticky = (N, W), padx = (5, 0))     
         self.label_pose_x     .grid(column = 4, row = 1, sticky = (N, W), padx = (5, 0))
@@ -46,3 +49,7 @@ class RobotSection:
                                     columnspan = 2)
 
         context.set_robot_section(self)
+
+    def set_angle_zero(self):
+        self.context.panel_update_value('entry_angle', 0.0)
+        self.context.robot.plot()
