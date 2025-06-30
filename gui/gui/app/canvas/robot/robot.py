@@ -2,6 +2,7 @@ import time
 from tkinter import END
 from gui.app.canvas.robot.parts import *
 from gui.app.canvas.polygon import Polygon
+from gui.app.canvas.robot.sensors import Sensors
 
 
 class Robot:
@@ -11,12 +12,14 @@ class Robot:
         self.canvas     = context.canvas
         self.controller = context.controller
 
+    
         self.pose    = None
         self.radius  = None
 
         self.body    = None
         context.set_robot(self)
 
+        self.sensors = Sensors(context)
         self.polygon = Polygon(context)
 
     def plot(self, position = None, rotation = 0):
@@ -35,6 +38,11 @@ class Robot:
         if self.body:
             self.delete()
 
+        if self.context.show_sensors:
+            self.sensors.plot()
+        else:
+            self.sensors.delete()
+
         if self.pose is not None:
             self.body        = get_body(self.canvas, self.pose, self.radius, self.color)
             self.hokuyo      = get_hokuyo(self.canvas, self.pose, self.radius, self.color)
@@ -47,6 +55,7 @@ class Robot:
         
         self.context.panel_update_value('entry_angle', angle)
 
+
     def rotate(self, angle):
         self.plot(rotation = angle)
 
@@ -55,11 +64,15 @@ class Robot:
         self.canvas.move('robot', x, y)
         self.pose = self.controller.set_pose(self.pose['x'] + x, self.pose['y'] + y, 
                                                                 self.pose['angle'])
-
         label_pos_x, label_pos_y = self.controller.px_point_to_m(self.pose['x'], self.pose['y'])
 
         self.context.panel_update_value('entry_pose_x', label_pos_x)
         self.context.panel_update_value('entry_pose_y', label_pos_y)
+
+        if self.context.show_sensors:
+            self.sensors.plot()
+        else:
+            self.sensors.delete()
 
     def get_pose(self):
         return self.pose

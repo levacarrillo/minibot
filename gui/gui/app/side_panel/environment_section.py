@@ -6,7 +6,9 @@ class EnvironmentSection:
     def __init__(self, context):
         self.context = context
 
-        self.check_fast_mode  = IntVar()
+        self.check_fast_mode    = IntVar()
+        self.check_show_sensors = IntVar()
+
         environment_list = context.controller.get_environment_list()
         behavior_list    = context.controller.get_param('behavior_list')
         max_steps        = StringVar(value = context.controller.get_param('max_steps'))
@@ -29,8 +31,10 @@ class EnvironmentSection:
 
         self.ck_button_fast    = Checkbutton(context.side_frame, text="Fast mode",
                                                 variable = self.check_fast_mode, 
-                                                command = self.on_change_fast_mode)
-        self.ck_button_sensors = Checkbutton(context.side_frame, text="Show sensors")
+                                                command  = self.on_change_fast_mode)
+        self.ck_button_sensors = Checkbutton(context.side_frame, text="Show sensors",
+                                                variable = self.check_show_sensors,
+                                                command  = self.onchange_show_sensors)
         self.ck_add_noise      = Checkbutton(context.side_frame, text="Add Noise")
         self.ck_button_load    = Checkbutton(context.side_frame, text="Load Objects")
 
@@ -62,3 +66,6 @@ class EnvironmentSection:
 
     def on_change_fast_mode(self):
         self.context.set_fast_mode(self.check_fast_mode.get())
+
+    def onchange_show_sensors(self):
+        self.context.set_show_sensors(self.check_show_sensors.get())

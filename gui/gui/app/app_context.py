@@ -25,6 +25,7 @@ class AppContext:
         self.buttons_section = None 
 
         self.simulation_running  = False
+        self.show_sensors = False
         self.velocity_slider = 1
         self.fast_mode = 0
         self.route = None
@@ -67,6 +68,9 @@ class AppContext:
     def set_fast_mode(self, value):
         self.fast_mode = value
 
+    def set_show_sensors(self, value):
+        self.show_sensors = value
+
     def set_route(self, value):
         self.route = value
 
@@ -83,6 +87,12 @@ class AppContext:
             return float(self.robot_section.entry_advance.get())
         elif name == 'max_turn_angle':
             return float(self.robot_section.entry_turn_angle.get())
+        elif name == 'num_sensors':
+            return int(self.sensors_section.entry_num_sensors.get())
+        elif name == 'origin_angle':
+            return float(self.sensors_section.entry_origin_angle.get())
+        elif name == 'range_sensor':
+            return float(self.sensors_section.entry_range.get())
         elif name == 'light_threshold':
             return float(self.sensors_section.entry_light.get())
         elif name == 'laser_threshold':

@@ -1,5 +1,6 @@
 import time
-from gui.app.canvas.route import Route
+from gui.app.canvas.robot.route import Route
+
 
 class Animation:
     def __init__(self, context):

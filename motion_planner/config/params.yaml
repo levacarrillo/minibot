@@ -5,6 +5,6 @@ motion_planner:
     max_advance: 0.03 # METERS
     max_turn_angle: 0.5 # RADIANS
     light_threshold: 2.0
-    laser_threshold: 1.2
+    laser_threshold: 0.09
     step: 0
     max_steps: 25

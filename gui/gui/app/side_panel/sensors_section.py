@@ -15,7 +15,7 @@ class SensorsSection:
         self.light_value         = Label(context.side_frame, text = "Light value:")
 
         self.entry_num_sensors   = Entry(context.side_frame, validate = 'key', 
-                                        textvariable = StringVar(value = "20"),      width = 10)
+                                        textvariable = StringVar(value = "30"),      width = 10)
         self.entry_origin_angle  = Entry(context.side_frame, validate = 'key',
                                         textvariable = StringVar(value = "-1.5707"), width = 10)
         self.entry_range         = Entry(context.side_frame, validate = 'key',
