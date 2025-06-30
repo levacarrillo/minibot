@@ -12,7 +12,6 @@ class Robot:
         self.canvas     = context.canvas
         self.controller = context.controller
 
-    
         self.pose    = None
         self.radius  = None
 
@@ -55,7 +54,6 @@ class Robot:
         
         self.context.panel_update_value('entry_angle', angle)
 
-
     def rotate(self, angle):
         self.plot(rotation = angle)
 
@@ -69,15 +67,5 @@ class Robot:
         self.context.panel_update_value('entry_pose_x', label_pos_x)
         self.context.panel_update_value('entry_pose_y', label_pos_y)
 
-        if self.context.show_sensors:
-            self.sensors.plot()
-
     def get_pose(self):
         return self.pose
-
-    def delete(self):
-        self.canvas.delete(self.body)
-        self.canvas.delete(self.head)
-        self.canvas.delete(self.hokuyo)
-        self.canvas.delete(self.left_wheel)
-        self.canvas.delete(self.right_wheel)

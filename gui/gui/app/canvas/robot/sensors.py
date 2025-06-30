@@ -45,7 +45,8 @@ class Sensors:
                                         sensor_i['y'],
                                         sensor_value_i['x'],
                                         sensor_value_i['y'],
-                                        fill = self.color['laser']
+                                        fill = self.color['laser'],
+                                        tag = 'robot'
                                         )
                 )
             step_angle += step
