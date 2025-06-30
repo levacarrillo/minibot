@@ -37,11 +37,11 @@ class Robot:
 
         if self.body:
             self.delete()
+            if self.sensors:  
+                self.sensors.delete()
 
         if self.context.show_sensors:
             self.sensors.plot()
-        else:
-            self.sensors.delete()
 
         if self.pose is not None:
             self.body        = get_body(self.canvas, self.pose, self.radius, self.color)
@@ -71,8 +71,6 @@ class Robot:
 
         if self.context.show_sensors:
             self.sensors.plot()
-        else:
-            self.sensors.delete()
 
     def get_pose(self):
         return self.pose
