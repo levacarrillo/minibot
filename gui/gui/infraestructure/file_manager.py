@@ -22,7 +22,6 @@ class FileManager:
 
 
     def get_map(self, map_name):
-        print(f'READING MAP->{map_name}')
         map_file = open(os.path.join(self.maps_path, map_name.lower() + '.wrl'), 'r')
         return map_file
 

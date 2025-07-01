@@ -24,8 +24,6 @@ class AppContext:
         self.robot_section   = None 
         self.buttons_section = None 
 
-        self.map = None
-
         self.simulation_running  = False
         self.show_sensors = False
         self.velocity_slider = 1
@@ -81,6 +79,8 @@ class AppContext:
             return self.env_section.behavior_list_cb.get()
         elif name == 'max_steps':
             return int(self.env_section.steps_entry.get())
+        elif name == 'map':
+            return self.env_section.environment_cb.get()
         elif name == 'entry_angle':
             return self.robot_section.entry_angle.get()
         elif name == 'entry_radius':
@@ -138,3 +138,16 @@ class AppContext:
         self.controller.set_ros_param('light_threshold', float(self.get_param('light_threshold')))
         self.controller.set_ros_param('laser_threshold', float(self.get_param('laser_threshold')))
         self.controller.send_state_params()
+    
+    def update_map(self):
+        canvas_size, polygon_vertices = self.controller.get_map(self.get_param('map'))
+        if self.canvas is not None:
+            self.canvas.delete('map')
+            for coords in polygon_vertices:
+                self.canvas.create_polygon(
+                    coords, 
+                    outline = self.color['obstacle_outline'],
+                    fill = self.color['obstacle_inner'],
+                    width = 1,
+                    tag = 'map'
+                )

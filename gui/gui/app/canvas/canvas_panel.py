@@ -31,18 +31,9 @@ class CanvasPanel:
         context.app.frame.grid(column = 0, row = 0, columnspan = 3, rowspan = 2, 
                                                         sticky = (N, S, E, W))
         
-        new_size, polygon_vertices = self.context.map
-        self.canvas.delete('map')
-        for coords in polygon_vertices:
-            self.canvas.create_polygon(
-                coords, 
-                outline = self.context.color['obstacle_outline'],
-                fill = self.context.color['obstacle_inner'],
-                width = 1,
-                tag = 'map'
-            )
-
+        self.grid.plot()
         self.canvas.pack()
+        context.update_map()
 
         Animation(context)
 

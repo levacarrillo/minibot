@@ -26,7 +26,7 @@ class App(tk.Tk):
         CanvasPanel(context)
         MenuBar(context)
         content.pack(fill=BOTH, expand=True)
-        context.grid.plot()
+        # context.grid.plot()
     
     def run(self):
         self.mainloop()
