@@ -10,6 +10,27 @@ class Service():
         self.current_size = None
         self.ros_params   = None
 
+    # FILES SERVICES
+    def parse_map(self, map_file):
+        canvas_size = None
+        vertices_list = []
+        coords = None
+        lines = map_file.readlines()
+        for line in lines:
+            words = line.split()
+            if words and words[0] == "(": # IGNORE EMPTY LINES AND COMMENTS
+                if words[1] == "dimensions":
+                    canvas_size = self.set_position(float (words[3]), float (words[4])) 
+                    print(f'NEW CANVAS_DIMENSION->{canvas_size}')
+                elif words[1] == "polygon":
+                    vertices_x = [float(x)*500 for x in words[4:len(words)-1:2]]
+                    vertices_y = [float(y)*500 for y in words[5:len(words)-1:2]]
+                    # vertex_y_calculus = [float(y) for y in words[5:len(words)-1:2]]
+                    coords = [coord for xy in zip(vertices_x, vertices_y) for coord in xy]
+                    vertices_list.append(coords)
+
+        return canvas_size, vertices_list
+
     # GUI'S SERVICES
     def set_canvas_scale(self, x, y):
         self.canvas_scale = { 'x': x, 'y': y }

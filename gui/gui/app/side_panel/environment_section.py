@@ -59,14 +59,31 @@ class EnvironmentSection:
         self.ck_add_noise        .grid(column = 1, row = 9,  sticky = (N, W), padx = (5, 0))
         self.ck_button_load      .grid(column = 1, row = 10, sticky = (N, W), padx = (5, 0))
 
-        # self.environment_cb.current(0)
-        self.environment_cb.set('EMPTY')
         self.behavior_list_cb.current(0)
+        self.environment_cb.set('EMPTY')
+        self.on_change_enviroment()
 
+        self.environment_cb.bind("<<ComboboxSelected>>", self.on_change_enviroment)
         context.set_env_section(self)
+
+    def on_change_enviroment(self, event = None):
+        self.context.map = self.context.controller.get_map(self.environment_cb.get())
+        new_size, polygon_vertices = self.context.map
+
+        if self.context.canvas is not None:
+            self.context.canvas.delete('map')
+            for coords in polygon_vertices:
+                self.context.canvas.create_polygon(
+                    coords, 
+                    outline = self.context.color['obstacle_outline'],
+                    fill = self.context.color['obstacle_inner'],
+                    width = 1,
+                    tag = 'map'
+                )
 
     def on_change_fast_mode(self):
         self.context.set_fast_mode(self.check_fast_mode.get())
 
     def onchange_show_sensors(self):
         self.context.set_show_sensors(self.check_show_sensors.get())
+

@@ -11,13 +11,13 @@ class CanvasPanel:
         self.controller      = context.controller
 
         context.app.frame = Frame(context.content, borderwidth = 5, relief = "flat", 
-                            width = 900, height = 900, bg=context.color['background'])
+                            width = 900, height = 900, bg = context.color['background'])
 
         self.scale = self.controller.set_canvas_scale(1, 1)
         self.size  = self.controller.set_canvas_size(500, 500) # PIXELS
 
         self.canvas = Canvas(context.app.frame, width = self.size['x'], 
-                                    height = self.size['y'], bg=context.color['canvas'])
+                                    height = self.size['y'], bg = context.color['canvas'])
 
         context.set_canvas_panel(self)
 
@@ -30,6 +30,18 @@ class CanvasPanel:
         
         context.app.frame.grid(column = 0, row = 0, columnspan = 3, rowspan = 2, 
                                                         sticky = (N, S, E, W))
+        
+        new_size, polygon_vertices = self.context.map
+        self.canvas.delete('map')
+        for coords in polygon_vertices:
+            self.canvas.create_polygon(
+                coords, 
+                outline = self.context.color['obstacle_outline'],
+                fill = self.context.color['obstacle_inner'],
+                width = 1,
+                tag = 'map'
+            )
+
         self.canvas.pack()
 
         Animation(context)

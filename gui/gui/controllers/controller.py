@@ -13,8 +13,11 @@ class Controller:
         return self.file_manager.get_file_path(file_name)
 
     def get_environment_list(self):
-        # return ["EMPTY", "HOME", "ARENA 1", "ARENA 2"]
         return self.file_manager.get_environment_list()
+
+    def get_map(self, file_name):
+        map_file = self.file_manager.get_map(file_name)
+        return self.service.parse_map(map_file)
 
     # SERVICE CONTROLLERS
     def set_canvas_scale(self, x, y):

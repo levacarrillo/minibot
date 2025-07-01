@@ -24,6 +24,8 @@ class AppContext:
         self.robot_section   = None 
         self.buttons_section = None 
 
+        self.map = None
+
         self.simulation_running  = False
         self.show_sensors = False
         self.velocity_slider = 1

@@ -7,7 +7,7 @@ colors = {
     'menu_button': '#375ACC',
     'menu_button_font': '#FFFFFF',
     'obstacle_inner': '#447CFF',
-    'obstacles_outline': '#216E7D',
+    'obstacle_outline': '#216E7D',
     'button': '#1373E6',
     'button_font': '#FFFFFF',
     'canvas': '#FFFFFF',
