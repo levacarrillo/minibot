@@ -46,6 +46,12 @@
 !launch/*.launch
 !launch/*.launch.py
 
+!maps/
+!maps/*/
+!maps/*/*.top
+!maps/*/*.wrl
+
+
 !resource/
 !resource/gui
 

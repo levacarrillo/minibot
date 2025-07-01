@@ -26,7 +26,7 @@ class EnvironmentSection:
         self.label_steps         = Label(context.side_frame, text = "0", justify='center')
         
         self.steps_entry = Entry(context.side_frame, validate = 'key', textvariable = max_steps, width = 5)
-        self.environment_cb    = ttk.Combobox(context.side_frame,  values = environment_list, width = 16)
+        self.environment_cb    = ttk.Combobox(context.side_frame, values = environment_list, width = 16)
         self.behavior_list_cb  = ttk.Combobox(context.side_frame, values = behavior_list,  width = 16)
 
         self.ck_button_fast    = Checkbutton(context.side_frame, text="Fast mode",
@@ -59,7 +59,8 @@ class EnvironmentSection:
         self.ck_add_noise        .grid(column = 1, row = 9,  sticky = (N, W), padx = (5, 0))
         self.ck_button_load      .grid(column = 1, row = 10, sticky = (N, W), padx = (5, 0))
 
-        self.environment_cb.current(0)
+        # self.environment_cb.current(0)
+        self.environment_cb.set('EMPTY')
         self.behavior_list_cb.current(0)
 
         context.set_env_section(self)
