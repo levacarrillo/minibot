@@ -69,3 +69,6 @@ class Robot:
 
     def get_pose(self):
         return self.pose
+
+    def delete(self):
+        self.canvas.delete('robot')

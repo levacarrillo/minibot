@@ -61,6 +61,10 @@ class Controller:
                                                         robot_radius, light_pose)
         self.ros.set_light_readings(light_readings)
 
+    def simulate_lidar_readings(self):
+        lidar_readings = self.service.get_lidar_readings()
+        self.ros.set_lidar_readings(lidar_readings)
+
     def update_params(self):
         self.service.format_ros_params(self.ros.update_params())
 

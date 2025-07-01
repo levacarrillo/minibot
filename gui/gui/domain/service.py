@@ -143,6 +143,10 @@ class Service():
         }
 
         return light_readings
+    
+    def get_lidar_readings(self):
+        lidar_readings = [0.25, 0.25, 0.25]
+        return lidar_readings
 
     def format_goal_pose(self, goal):
         if goal is not None:
