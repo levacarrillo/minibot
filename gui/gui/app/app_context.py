@@ -48,7 +48,9 @@ class AppContext:
         self.canvas_panel = canvas_panel
         self.canvas = canvas_panel.canvas
         self.canvas_size  = canvas_panel.size
-        # self.canvas_scale = canvas_panel.scale
+
+    def set_canvas_size(self, new_size_x, new_size_y):
+        self.canvas_size  = self.controller.set_canvas_size(new_size_x, new_size_y)
 
     def set_grid(self, grid):
         self.grid = grid

@@ -10,6 +10,8 @@ class MenuBar:
         submenu_canvas = Menu(settings, tearoff = 0)
         exit           = Menu(settings, tearoff = 0)
 
+        submenu_canvas.add_command(label = " 500 x 500 ",
+                                    command = lambda : context.canvas_panel.resize(500, 500))
         submenu_canvas.add_command(label = " 600 x 600 ",
                                     command = lambda : context.canvas_panel.resize(600, 600))
         submenu_canvas.add_command(label = " 700 x 700 ",
