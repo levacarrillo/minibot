@@ -44,6 +44,7 @@ class CanvasPanel:
         self.grid.plot()
         self.robot.plot()
         self.canvas.configure(width = new_size_x, height = new_size_y)
+        self.context.plot_map()
  
     def right_click(self, e_point):
         light_position = self.controller.set_position(e_point.x, e_point.y)

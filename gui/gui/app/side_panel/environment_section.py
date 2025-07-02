@@ -62,11 +62,8 @@ class EnvironmentSection:
         self.behavior_list_cb.current(0)
         self.environment_cb.set('EMPTY')
 
-
-        context.set_env_section(self)
-    
-        self.on_change_enviroment()
         self.environment_cb.bind("<<ComboboxSelected>>", self.on_change_enviroment)
+        context.set_env_section(self)
 
     def on_change_enviroment(self, event = None):
         self.context.plot_map()
