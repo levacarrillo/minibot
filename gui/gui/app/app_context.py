@@ -1,4 +1,4 @@
-from tkinter import END
+from tkinter import NORMAL, DISABLED, END
 
 
 class AppContext:
@@ -99,6 +99,14 @@ class AppContext:
             return float(self.sensors_section.entry_laser.get())
         else:
             print(f'GET_PARAM()->PARAMETER {name} NOT RECOGNIZED BY CONTEXT')
+
+    def enable_button_run(self):
+        self.buttons_section.button_run.config(state  = NORMAL)
+        self.buttons_section.button_stop.config(state = DISABLED)
+
+    def disable_button_run(self):
+        self.buttons_section.button_run.config(state = DISABLED)
+        self.buttons_section.button_stop.config(state = NORMAL)
 
     # SETTERS FOR MAIN FRAMES
     def set_side_frame(self, side_frame):

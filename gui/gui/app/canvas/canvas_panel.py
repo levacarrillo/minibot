@@ -53,7 +53,9 @@ class CanvasPanel:
         self.context.panel_update_value('label_light_pose_x', label_pos_x)
         self.context.panel_update_value('label_light_pose_y', label_pos_y)
 
-        self.context.run_simulation()
+        if self.robot.get_pose() is not None:
+            self.context.disable_button_run()
+            self.context.run_simulation()
 
     def left_click(self, e_point):
         robot_position = self.controller.set_position(e_point.x, e_point.y)
@@ -65,3 +67,6 @@ class CanvasPanel:
 
         self.context.panel_update_value('entry_pose_x', pose_x)
         self.context.panel_update_value('entry_pose_y', pose_y)
+
+        if self.light.get_position() is not None:
+            self.context.enable_button_run()
