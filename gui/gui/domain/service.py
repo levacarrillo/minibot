@@ -19,13 +19,14 @@ class Service():
             words = line.split()
             if words and words[0] == "(": # IGNORE EMPTY LINES AND COMMENTS
                 if words[1] == "dimensions":
-                    # print(f'NEW CANVAS_DIMENSION->{canvas_size}')
-                    # canvas_size = self.set_position(float (words[3]), float (words[4])) 
-                    self.current_size = self.set_canvas_size(
-                            self.m_to_pixels(words[3]), self.m_to_pixels(words[4])) 
+                    self.set_canvas_scale(float(words[3]), float(words[4])) 
+                    print(f'NEW CANVAS_DIMENSION->{self.canvas_scale}')
+
+                    # self.current_size = self.set_canvas_size(
+                    #         self.m_to_pixels(words[3]), self.m_to_pixels(words[4]))
                 elif words[1] == "polygon":
-                    vertices_x = [float(x)*500 for x in words[4:len(words)-1:2]]
-                    vertices_y = [float(y)*500 for y in words[5:len(words)-1:2]]
+                    vertices_x = [self.m_to_pixels(x) for x in words[4:len(words)-1:2]]
+                    vertices_y = [self.m_to_pixels(y) for y in words[5:len(words)-1:2]]
                     # vertex_y_calculus = [float(y) for y in words[5:len(words)-1:2]]
                     coords = [coord for xy in zip(vertices_x, vertices_y) for coord in xy]
                     vertices_list.append(coords)
@@ -41,6 +42,9 @@ class Service():
         self.current_size = { 'x': x, 'y': y }
         return self.current_size
     
+    def set_canvas_scale(self, x, y):
+        self.canvas_scale = { 'x': x, 'y': y }
+
     def set_position(self, x, y):
         return { 'x': x, 'y': y }
 
