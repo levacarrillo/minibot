@@ -138,7 +138,9 @@ class AppContext:
         self.controller.send_state_params()
     
     def plot_map(self):
-        canvas_size, polygon_vertices = self.controller.get_map(self.get_param('map'))
+        polygon_vertices = self.controller.get_map(self.get_param('map'))
+        self.grid.plot()
+
         self.canvas.delete('map')
         for coords in polygon_vertices:
             self.canvas.create_polygon(

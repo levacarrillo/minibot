@@ -29,8 +29,6 @@ class CanvasPanel:
         
         context.app.frame.grid(column = 0, row = 0, columnspan = 3, rowspan = 2, 
                                                         sticky = (N, S, E, W))
-        
-        self.grid.plot()
         self.canvas.pack()
         context.plot_map()
 
@@ -41,7 +39,6 @@ class CanvasPanel:
         self.context.set_canvas_size(new_size_x, new_size_y)
 
         self.light.plot()
-        self.grid.plot()
         self.robot.plot()
         self.canvas.configure(width = new_size_x, height = new_size_y)
         self.context.plot_map()

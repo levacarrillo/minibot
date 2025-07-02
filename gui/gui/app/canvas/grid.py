@@ -16,7 +16,7 @@ class Grid:
 
         for axis in canvas_size:
             edge = self.controller.get_edge(axis, self.line_per_meters)
-            for i in range(0, self.line_per_meters):
+            for i in range(0, canvas_size[axis]):
                 self.grid.append(
                     self.canvas.create_line(
                         i * edge if axis == 'x' else 0,

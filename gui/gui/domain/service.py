@@ -20,18 +20,13 @@ class Service():
             if words and words[0] == "(": # IGNORE EMPTY LINES AND COMMENTS
                 if words[1] == "dimensions":
                     self.set_canvas_scale(float(words[3]), float(words[4])) 
-                    print(f'NEW CANVAS_DIMENSION->{self.canvas_scale}')
-
-                    # self.current_size = self.set_canvas_size(
-                    #         self.m_to_pixels(words[3]), self.m_to_pixels(words[4]))
                 elif words[1] == "polygon":
                     vertices_x = [self.m_to_pixels(x) for x in words[4:len(words)-1:2]]
                     vertices_y = [self.m_to_pixels(y) for y in words[5:len(words)-1:2]]
-                    # vertex_y_calculus = [float(y) for y in words[5:len(words)-1:2]]
                     coords = [coord for xy in zip(vertices_x, vertices_y) for coord in xy]
                     vertices_list.append(coords)
 
-        return self.current_size, vertices_list
+        return vertices_list
 
     # GUI'S SERVICES
     def get_canvas_size(self):
