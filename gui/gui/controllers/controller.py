@@ -20,8 +20,11 @@ class Controller:
         return self.service.parse_map(map_file)
 
     # SERVICE CONTROLLERS
-    def set_canvas_scale(self, x, y):
-        return self.service.set_canvas_scale(x, y)
+    def get_canvas_scale(self, x, y):
+        return self.service.get_canvas_scale(x, y)
+
+    def get_canvas_size(self):
+        return self.service.get_canvas_size()
 
     def set_canvas_size(self, x, y):
         return self.service.set_canvas_size(x, y)
@@ -38,8 +41,8 @@ class Controller:
     def degrees_to_radians(self, degrees):
         return self.service.degrees_to_radians(degrees)
 
-    def get_edge(self, size, scale, line_per_meters):
-        return self.service.get_edge(size, scale, line_per_meters)
+    def get_edge(self, axis, line_per_meters):
+        return self.service.get_edge(axis, line_per_meters)
 
     def px_point_to_m(self, px, py):
         return self.service.px_point_to_m(px, py)

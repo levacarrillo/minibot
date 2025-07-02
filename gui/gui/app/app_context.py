@@ -48,10 +48,7 @@ class AppContext:
         self.canvas_panel = canvas_panel
         self.canvas = canvas_panel.canvas
         self.canvas_size  = canvas_panel.size
-        self.canvas_scale = canvas_panel.scale
-
-    def set_canvas_size(self, canvas_size):
-        self.canvas_size  = canvas_size
+        # self.canvas_scale = canvas_panel.scale
 
     def set_grid(self, grid):
         self.grid = grid
@@ -139,7 +136,7 @@ class AppContext:
         self.controller.set_ros_param('laser_threshold', float(self.get_param('laser_threshold')))
         self.controller.send_state_params()
     
-    def update_map(self):
+    def plot_map(self):
         canvas_size, polygon_vertices = self.controller.get_map(self.get_param('map'))
         if self.canvas is not None:
             self.canvas.delete('map')

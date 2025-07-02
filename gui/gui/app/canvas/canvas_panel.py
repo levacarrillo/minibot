@@ -13,8 +13,7 @@ class CanvasPanel:
         context.app.frame = Frame(context.content, borderwidth = 5, relief = "flat", 
                             width = 900, height = 900, bg = context.color['background'])
 
-        self.scale = self.controller.set_canvas_scale(1, 1)
-        self.size  = self.controller.set_canvas_size(500, 500) # PIXELS
+        self.size = self.controller.get_canvas_size()
 
         self.canvas = Canvas(context.app.frame, width = self.size['x'], 
                                     height = self.size['y'], bg = context.color['canvas'])
@@ -33,14 +32,13 @@ class CanvasPanel:
         
         self.grid.plot()
         self.canvas.pack()
-        context.update_map()
+        context.plot_map()
 
         Animation(context)
 
     def resize(self, new_size_x, new_size_y):
         print(f"New canva's size: {new_size_x}x{new_size_y}")
-        new_size = self.controller.set_canvas_size(new_size_x, new_size_y)
-        self.context.set_canvas_size(new_size)
+        self.context.set_canvas_size(new_size_x, new_size_y)
 
         self.light.plot()
         self.grid.plot()

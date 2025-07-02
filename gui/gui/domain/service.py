@@ -4,15 +4,14 @@ from interfaces.srv import SetParams
 
 class Service():
     def __init__(self):
-        self.canvas_scale = None
-        # CANVA'S SIZE
-        self.previus_size = None
-        self.current_size = None
         self.ros_params   = None
+        # CANVA'S SIZE DEFAULT VALUES
+        self.canvas_scale = { 'x': 1, 'y': 1 }
+        self.previus_size = None
+        self.current_size = { 'x': 500, 'y': 500 } # PIXELS
 
     # FILES SERVICES
     def parse_map(self, map_file):
-        canvas_size = None
         vertices_list = []
         coords = None
         lines = map_file.readlines()
@@ -20,8 +19,10 @@ class Service():
             words = line.split()
             if words and words[0] == "(": # IGNORE EMPTY LINES AND COMMENTS
                 if words[1] == "dimensions":
-                    canvas_size = self.set_position(float (words[3]), float (words[4])) 
-                    print(f'NEW CANVAS_DIMENSION->{canvas_size}')
+                    # print(f'NEW CANVAS_DIMENSION->{canvas_size}')
+                    # canvas_size = self.set_position(float (words[3]), float (words[4])) 
+                    self.current_size = self.set_canvas_size(
+                            self.m_to_pixels(words[3]), self.m_to_pixels(words[4])) 
                 elif words[1] == "polygon":
                     vertices_x = [float(x)*500 for x in words[4:len(words)-1:2]]
                     vertices_y = [float(y)*500 for y in words[5:len(words)-1:2]]
@@ -29,12 +30,11 @@ class Service():
                     coords = [coord for xy in zip(vertices_x, vertices_y) for coord in xy]
                     vertices_list.append(coords)
 
-        return canvas_size, vertices_list
+        return self.current_size, vertices_list
 
     # GUI'S SERVICES
-    def set_canvas_scale(self, x, y):
-        self.canvas_scale = { 'x': x, 'y': y }
-        return self.canvas_scale
+    def get_canvas_size(self):
+        return self.current_size
 
     def set_canvas_size(self, x, y):
         self.previus_size = self.current_size
@@ -52,9 +52,9 @@ class Service():
             position['x'] = self.current_size['x'] * position['x'] / self.previus_size['x']
             position['y'] = self.current_size['y'] * position['y'] / self.previus_size['y']
         return position
-    
-    def get_edge(self, size, scale, line_per_meters):
-        return size / (scale * line_per_meters)
+
+    def get_edge(self, axis, line_per_meters):
+        return self.current_size[axis] / (self.canvas_scale[axis] * line_per_meters)
 
     def px_point_to_m(self, px, py):
         x = self.canvas_scale['x'] * px / self.current_size['x']

@@ -69,7 +69,7 @@ class EnvironmentSection:
         self.environment_cb.bind("<<ComboboxSelected>>", self.on_change_enviroment)
 
     def on_change_enviroment(self, event = None):
-        self.context.update_map()
+        self.context.plot_map()
 
     def on_change_fast_mode(self):
         self.context.set_fast_mode(self.check_fast_mode.get())
