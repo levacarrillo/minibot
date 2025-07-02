@@ -9,7 +9,7 @@ class ButtonsSection:
         self.label_simulator = Label (context.side_frame, text = "Simulator")
         self.label_velocity  = Label(context.side_frame,  text = "Execution velocity:")
         self.slider_velocity = Scale(context.side_frame,  from_= 1, to=3, orient = HORIZONTAL,
-                                        length = 162, command = self.scale_value)
+                                        length = 162, command = self.slider_value)
 
         self.button_run      = Button(context.side_frame, width = 17, text = "Run simulation", 
                                                 command = self.run_simulation)
@@ -26,7 +26,7 @@ class ButtonsSection:
     def run_simulation(self):
         self.context.run_simulation()
 
-    def scale_value(self, value):
+    def slider_value(self, value):
         self.context.set_velocity_slider(value)
 
     def stop_simulation(self):

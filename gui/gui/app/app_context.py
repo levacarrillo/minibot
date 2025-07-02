@@ -10,7 +10,6 @@ class AppContext:
 
         self.canvas       = None
         self.canvas_size  = None
-        self.canvas_scale = None
         self.canvas_panel = None
 
         self.side_frame   = None
@@ -140,14 +139,12 @@ class AppContext:
     
     def plot_map(self):
         canvas_size, polygon_vertices = self.controller.get_map(self.get_param('map'))
-        print(f'app_context.canvas_size->{canvas_size}')
-        if self.canvas is not None:
-            self.canvas.delete('map')
-            for coords in polygon_vertices:
-                self.canvas.create_polygon(
-                    coords, 
-                    outline = self.color['obstacle_outline'],
-                    fill = self.color['obstacle_inner'],
-                    width = 1,
-                    tag = 'map'
-                )
+        self.canvas.delete('map')
+        for coords in polygon_vertices:
+            self.canvas.create_polygon(
+                coords, 
+                outline = self.color['obstacle_outline'],
+                fill = self.color['obstacle_inner'],
+                width = 1,
+                tag = 'map'
+            )

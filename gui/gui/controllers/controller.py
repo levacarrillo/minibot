@@ -20,9 +20,6 @@ class Controller:
         return self.service.parse_map(map_file)
 
     # SERVICE CONTROLLERS
-    def get_canvas_scale(self, x, y):
-        return self.service.get_canvas_scale(x, y)
-
     def get_canvas_size(self):
         return self.service.get_canvas_size()
 

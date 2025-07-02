@@ -7,8 +7,8 @@ from gui.app.canvas.animation import Animation
 
 class CanvasPanel:
     def __init__(self, context):
-        self.context         = context
-        self.controller      = context.controller
+        self.context    = context
+        self.controller = context.controller
 
         context.app.frame = Frame(context.content, borderwidth = 5, relief = "flat", 
                             width = 900, height = 900, bg = context.color['background'])
