@@ -147,8 +147,7 @@ class Service():
             sensor_y = robot_pose['y'] + robot_radius * math.sin(-sensor_angle)
             x_distance = sensor_x - light_pose['x']
             y_distance = sensor_y - light_pose['y']
-
-            simulated_reading = 1 / math.sqrt(pow(x_distance, 2) + pow(y_distance, 2))
+            simulated_reading = 1 / math.hypot(x_distance, y_distance)
             
             if simulated_reading > max_value:
                 max_value = simulated_reading
