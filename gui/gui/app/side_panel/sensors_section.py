@@ -3,7 +3,7 @@ from tkinter import *
 
 class SensorsSection:
     def __init__(self, context):
-
+        self.context = context
         light_threshold = StringVar(value = context.controller.get_param('light_threshold'))
         laser_threshold = StringVar(value = context.controller.get_param('laser_threshold'))
 
@@ -37,4 +37,11 @@ class SensorsSection:
         self.entry_laser         .grid(column = 1, row = 16, sticky = (N, W), padx = (5, 0))
         self.entry_light         .grid(column = 1, row = 17, sticky = (N, W), padx = (5, 0))
 
+        self.entry_num_sensors  .bind("<Return>", self.update_sensors)
+        self.entry_origin_angle .bind("<Return>", self.update_sensors)
+        self.entry_range        .bind("<Return>", self.update_sensors)
+        self.entry_laser        .bind("<Return>", self.update_sensors)
         context.set_sensors_section(self)
+
+    def update_sensors(self, event = None):
+        self.context.robot.plot()
