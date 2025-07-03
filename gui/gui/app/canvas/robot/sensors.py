@@ -22,6 +22,9 @@ class Sensors:
             self.canvas.delete(i)
 
         self.lasers = []
+        if num_sensors < 2:
+            num_sensors = 2
+            self.context.panel_update_value('num_sensors', num_sensors)
 
         step = range_sensor / ( num_sensors - 1 )
         step_angle = robot_pose['angle'] + origin_angle

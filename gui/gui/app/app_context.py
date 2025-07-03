@@ -140,6 +140,9 @@ class AppContext:
         elif name == 'entry_angle':
             self.robot_section.entry_angle.delete(0, END)
             self.robot_section.entry_angle.insert(0, str(value)[:6])
+        elif name == 'num_sensors':
+            self.sensors_section.entry_num_sensors.delete(0, END)
+            self.sensors_section.entry_num_sensors.insert(0, str(value))
         else:
             print(f'PANEL_UPDATE_VALUE()->{name} NOT RECOGNIZED BY CONTEXT')        
 
