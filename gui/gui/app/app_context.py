@@ -101,18 +101,24 @@ class AppContext:
             print(f'GET_PARAM()->PARAMETER {name} NOT RECOGNIZED BY CONTEXT')
 
     def enable_button_run(self):
-        self.buttons_section.button_run   .config(state = NORMAL)
-        self.env_section.environment_cb   .config(state = NORMAL)
-        self.env_section.behavior_list_cb .config(state = NORMAL)
-        self.env_section.steps_entry      .config(state = NORMAL)
-        self.buttons_section.button_stop  .config(state = DISABLED)
+        self.buttons_section.button_stop   .config(state = DISABLED)
+        self.buttons_section.button_run    .config(state = NORMAL)
+        self.env_section.environment_cb    .config(state = NORMAL)
+        self.env_section.behavior_list_cb  .config(state = NORMAL)
+        self.env_section.steps_entry       .config(state = NORMAL)
+        self.robot_section.entry_radius    .config(state = NORMAL)
+        self.robot_section.entry_advance   .config(state = NORMAL)
+        self.robot_section.entry_turn_angle.config(state = NORMAL)
 
     def disable_button_run(self):
+        self.buttons_section.button_stop  .config(state = NORMAL)
         self.buttons_section.button_run   .config(state = DISABLED)
         self.env_section.environment_cb   .config(state = DISABLED)
         self.env_section.behavior_list_cb .config(state = DISABLED)
         self.env_section.steps_entry      .config(state = DISABLED)
-        self.buttons_section.button_stop  .config(state = NORMAL)
+        self.robot_section.entry_radius    .config(state = DISABLED)
+        self.robot_section.entry_advance   .config(state = DISABLED)
+        self.robot_section.entry_turn_angle.config(state = DISABLED)
 
     # SETTERS FOR MAIN FRAMES
     def set_side_frame(self, side_frame):

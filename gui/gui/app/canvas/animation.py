@@ -67,6 +67,9 @@ class Animation:
                             self.route.trace(self.init_pose, final_pose)
                             self.init_pose = None
                 
-                    time.sleep(self.delay)            
+                    time.sleep(self.delay)
+
+                if self.context.get_param('max_steps') <= current_step:
+                    self.context.enable_button_run()
 
         self.app.after(1, self.execute)
