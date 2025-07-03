@@ -74,4 +74,4 @@ class EnvironmentSection:
 
     def onchange_show_sensors(self):
         self.context.set_show_sensors(self.check_show_sensors.get())
-
+        self.context.robot.plot()

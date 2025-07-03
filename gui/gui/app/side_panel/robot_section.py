@@ -48,7 +48,8 @@ class RobotSection:
         self.button_set_zero  .grid(column = 4, row = 4, sticky = (N, W), padx = (5, 0),
                                     columnspan = 2)
 
-        self.entry_angle.bind("<Return>", self.set_angle)
+        self.entry_angle  .bind("<Return>", self.set_angle)
+        self.entry_radius .bind("<Return>", self.on_enter_radius)
         context.set_robot_section(self)
 
     def set_angle(self, event = None):
@@ -56,4 +57,7 @@ class RobotSection:
             self.context.panel_update_value('entry_angle', 0.0)
         else:
             self.context.panel_update_value('entry_angle', self.entry_angle.get())
+        self.context.robot.plot()
+
+    def on_enter_radius(self, event = None):
         self.context.robot.plot()
