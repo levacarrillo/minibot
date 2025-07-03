@@ -29,7 +29,7 @@ class RobotSection:
         self.entry_turn_angle = Entry(context.side_frame, validate = 'key',
                                     textvariable = max_turn_angle, width = 9)
         self.button_set_zero  = Button(context.side_frame, width = 8, text = "Angle Zero",
-                                                            command = self.set_angle_zero)
+                                                                command = self.set_angle)
 
         self.label_robot      .grid(column = 4, row = 0, sticky = (N, W), padx = (5, 0))     
         self.label_pose_x     .grid(column = 4, row = 1, sticky = (N, W), padx = (5, 0))
@@ -48,8 +48,12 @@ class RobotSection:
         self.button_set_zero  .grid(column = 4, row = 4, sticky = (N, W), padx = (5, 0),
                                     columnspan = 2)
 
+        self.entry_angle.bind("<Return>", self.set_angle)
         context.set_robot_section(self)
 
-    def set_angle_zero(self):
-        self.context.panel_update_value('entry_angle', 0.0)
+    def set_angle(self, event = None):
+        if event is None:
+            self.context.panel_update_value('entry_angle', 0.0)
+        else:
+            self.context.panel_update_value('entry_angle', self.entry_angle.get())
         self.context.robot.plot()
