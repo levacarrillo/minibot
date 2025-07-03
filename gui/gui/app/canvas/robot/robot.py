@@ -1,7 +1,7 @@
 import time
 from tkinter import END
 from gui.app.canvas.robot.parts import *
-from gui.app.canvas.polygon import Polygon
+from gui.app.canvas.robot.polygon import Polygon
 from gui.app.canvas.robot.sensors import Sensors
 
 

@@ -20,8 +20,6 @@ class FileManager:
                 map_list.append(file.replace('.wrl', '').upper())
         return sorted(map_list)
 
-
     def get_map(self, map_name):
         self.map_file = open(os.path.join(self.maps_path, map_name.lower() + '.wrl'), 'r')
         return self.map_file
-
