@@ -32,6 +32,9 @@ class Controller:
     def set_position(self, x, y):
         return self.service.set_position(x, y)
 
+    def sum_vectors(self, p1, p2):
+        return self.service.sum_vectors(p1, p2)
+
     def remap_position(self, position):
         return self.service.remap_position(position)
 
@@ -59,6 +62,12 @@ class Controller:
     def polar_to_cartesian(self, radius, angle):
         return self.service.polar_to_cartesian(radius, angle)
 
+    def polar_to_cartesian_point(self, radius, angle):
+        return self.service.polar_to_cartesian_point(radius, angle)
+ 
+    def get_laser_value(self, robot_pose, laser_max_point, polygon_points):
+        return self.service.get_laser_value(robot_pose, laser_max_point, polygon_points)
+        
     # ROS CONTROLLERS
     def simulate_light_readings(self, robot_pose, robot_radius, light_pose):
         light_readings = self.service.get_light_readings(robot_pose, 

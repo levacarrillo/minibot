@@ -1,4 +1,5 @@
 import math
+import numpy as np
 from interfaces.srv import SetParams
 
 
@@ -12,8 +13,10 @@ class Service():
 
     # FILES SERVICES
     def parse_map(self, map_file):
-        vertices_list = []
-        coords = None
+        polygon_list = []
+        polygon_to_plot_list = []
+        polygon = None
+        polygon_to_plot = None
         lines = map_file.readlines()
         for line in lines:
             words = line.split()
@@ -21,12 +24,14 @@ class Service():
                 if words[1] == "dimensions":
                     self.set_canvas_scale(float(words[3]), float(words[4])) 
                 elif words[1] == "polygon":
-                    vertices_x = [self.m_to_pixels(x) for x in words[4:len(words)-1:2]]
-                    vertices_y = [self.m_to_pixels(y) for y in words[5:len(words)-1:2]]
-                    coords = [coord for xy in zip(vertices_x, vertices_y) for coord in xy]
-                    vertices_list.append(coords)
-
-        return vertices_list
+                    vertices_x  = [self.m_to_pixels(x) for x in words[4:len(words)-1:2]]
+                    vertices_y  = [self.m_to_pixels(y) for y in words[5:len(words)-1:2]]
+                    vertices_yp = [self.current_size['y'] - self.m_to_pixels(y) for y in words[5:len(words)-1:2]]
+                    polygon = [vertices_xy for xy in zip(vertices_x, vertices_y) for vertices_xy in xy]
+                    polygon_to_plot = [vertices_xy for xy in zip(vertices_x, vertices_yp) for vertices_xy in xy]
+                    polygon_list.append(polygon)
+                    polygon_to_plot_list.append(polygon_to_plot)
+        return polygon_list, polygon_to_plot_list
 
     # GUI'S SERVICES
     def get_canvas_size(self):
@@ -40,11 +45,17 @@ class Service():
     def set_canvas_scale(self, x, y):
         self.canvas_scale = { 'x': x, 'y': y }
 
-    def set_position(self, x, y):
-        return { 'x': x, 'y': y }
-
     def set_pose(self, x, y, angle):
         return { 'x': x, 'y': y, 'angle': angle }
+
+    def set_position(self, x, y):
+        return { 'x': int(x), 'y': int(y) }
+
+    def sum_vectors(self, p1, p2):
+        return { 'x': p1['x'] + p2['x'], 'y': p1['y'] + p2['y'] }        
+
+    def get_line_segment(self, p1, p2):
+        return { 'x': p2['x'] - p1['x'], 'y': p2['y'] - p1['y'] }
 
     def remap_position(self, position):
         if self.previus_size is not None:
@@ -71,6 +82,64 @@ class Service():
         y = radius * (portion['x'] * sinT + portion['y'] * cosT) + pose['y']
         return x, y
 
+    def change_sys_reference(self, v):
+        return { 'x': v['x'], 'y': self.current_size['y'] - v['y']}
+    
+    def redo_sys_reference(self, v):
+        return { 'x': v['x'], 'y': -(v['y'] - self.current_size['y'])}
+
+    def get_laser_value(self, robot_pose, laser_max_point, points):
+        l = laser_max_point
+        robot_pose = self.change_sys_reference(robot_pose)
+        laser_max_point = self.change_sys_reference(laser_max_point)
+        print(f'\trobot_pose->{robot_pose}')
+        print(f'\tlaser_max_point->{laser_max_point}')
+        
+        laser_segment = self.get_line_segment(robot_pose, laser_max_point)
+        print(f'laser_segment->{laser_segment}')
+        polygon_edge = None
+        aux_segment  = None
+        for i in range(0, len(points)):
+            if i + 1 < len(points):
+                print(f'\tsegment->{points[i]} - {points[i + 1]}')
+                polygon_edge = self.get_line_segment(points[i], points[i + 1])
+                print(f'polygon_edge->{polygon_edge}')
+                aux_segment = self.get_line_segment(points[i], robot_pose)
+            else:
+                print(f'\tsegment->{points[0]} - {points[len(points) - 1]}')
+                polygon_edge = self.get_line_segment(points[0], points[len(points) - 1])
+                aux_segment = self.get_line_segment(points[0], robot_pose)
+            
+            matrix_det = np.array([ [laser_segment['x'], - polygon_edge['x']],
+                                    [laser_segment['y'], - polygon_edge['y']]])
+
+            matrix_det_t = np.array([[aux_segment['x'], - polygon_edge['x']],
+                                     [aux_segment['y'], - polygon_edge['y']]])
+
+            matrix_det_u = np.array([[laser_segment['x'], aux_segment['x']],
+                                     [laser_segment['y'], aux_segment['y']]])  
+
+            det = np.linalg.det(matrix_det)
+            det_t = np.linalg.det(matrix_det_t)
+            det_u = np.linalg.det(matrix_det_u)
+            print(f'\t\tdet->{det}')
+            print(f'\t\tdet_t->{det_t}')
+            print(f'\t\tdet_u->{det_u}')
+            if det != 0:
+                t = - det_t / det
+                u = - det_u / det
+                print(f'\t\tt->{t} - u->{u}')
+                if 0 <= t <= 1 and 0 <= u <= 1:
+                    print(f'\t\tINTERSECTION!')
+                    x = robot_pose['x'] + t * (laser_max_point['x'] - robot_pose['x'])
+                    y = robot_pose['y'] + t * (laser_max_point['y'] - robot_pose['y'])
+
+                    print(f'----------------{self.redo_sys_reference({ 'x': int(x), 'y': int(y) })}')
+                    l = self.redo_sys_reference({ 'x': int(x), 'y': int(y) })
+
+        return l
+        # return self.redo_sys_reference(laser_max_point)
+
     # MATH CONVERTIONS
     def m_to_pixels(self, length):
         return (float(length) * self.current_size['x']) / self.canvas_scale['x']
@@ -79,6 +148,11 @@ class Service():
         x = radius * math.cos(-angle)
         y = radius * math.sin(-angle)
         return x, y
+    
+    def polar_to_cartesian_point(self, radius, angle):
+        x = radius * math.cos(-angle)
+        y = radius * math.sin(-angle)
+        return { 'x': int(x), 'y': int(y) }
 
     def degrees_to_radians(self, degrees):
         return math.radians(degrees)        

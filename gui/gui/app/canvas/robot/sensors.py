@@ -1,3 +1,6 @@
+import numpy as np
+
+
 class Sensors:
     def __init__(self, context):
         self.context = context
@@ -16,7 +19,7 @@ class Sensors:
         range_sensor = self.context.get_param('range_sensor')
         entry_laser  = self.context.get_param('laser_threshold')
 
-        lidar_value  = self.controller.m_to_pixels(entry_laser)
+        lidar_max_value  = float(self.controller.m_to_pixels(entry_laser))
 
         for i in self.lasers:
             self.canvas.delete(i)
@@ -27,27 +30,26 @@ class Sensors:
             self.context.panel_update_value('num_sensors', num_sensors)
 
         step = range_sensor / ( num_sensors - 1 )
-        step_angle = robot_pose['angle'] + origin_angle
+        step_angle = float(robot_pose['angle'] + origin_angle)
+
+        polygon_list = self.context.get_polygon_list()
+
+        polygon_points = polygon_list[0]
 
         for i in range(0, num_sensors):
-            # POINT IN ROBOT'S CIRCUNFERENCE
-            c_x, c_y = self.controller.polar_to_cartesian(self.robot.radius, step_angle)
+            laser_vector = self.controller.polar_to_cartesian_point(lidar_max_value, step_angle)
+            laser_max_point = self.controller.sum_vectors(robot_pose, laser_vector)
 
-            sensor_i  = self.controller.set_position(robot_pose['x'] + c_x,
-                                                    robot_pose['y'] + c_y)
+            print(f'\nstep_angle->{step_angle}')
+            print(f'\tlidar_max_value->{lidar_max_value}')
 
-            # POINTS FOR READINGS VALUES
-            lx, ly = self.controller.polar_to_cartesian(lidar_value, step_angle)
-            sensor_value_i = self.controller.set_position(robot_pose['x'] + lx,
-                                                        robot_pose['y'] + ly)
-
-        
+            laser_point = self.controller.get_laser_value(robot_pose, laser_max_point, polygon_points)
 
             self.lasers.append(
-                self.canvas.create_line(sensor_i['x'],
-                                        sensor_i['y'],
-                                        sensor_value_i['x'],
-                                        sensor_value_i['y'],
+                self.canvas.create_line(robot_pose['x'],
+                                        robot_pose['y'],
+                                        laser_point['x'],
+                                        laser_point['y'],
                                         fill = self.color['laser'],
                                         tag = 'robot'
                                         )

@@ -24,10 +24,13 @@ class AppContext:
         self.buttons_section = None 
 
         self.simulation_running  = False
-        self.show_sensors = False
+        self.show_sensors = None
         self.velocity_slider = 1
         self.fast_mode = 0
         self.route = None
+
+        self.polygon_list = None
+
 
     # SETTERS FOR SECTIONS
     def set_env_section(self, env_section):
@@ -161,15 +164,31 @@ class AppContext:
         self.controller.send_state_params()
     
     def plot_map(self):
-        polygon_vertices = self.controller.get_map(self.get_param('map'))
+        self.polygon_list, polygon_to_plot_list = self.controller.get_map(self.get_param('map'))
         self.grid.plot()
 
         self.canvas.delete('map')
-        for coords in polygon_vertices:
+        for polygon_to_plot in polygon_to_plot_list:
             self.canvas.create_polygon(
-                coords, 
+                polygon_to_plot, 
                 outline = self.color['obstacle_outline'],
                 fill = self.color['obstacle_inner'],
                 width = 1,
                 tag = 'map'
             )
+
+    def get_polygon_list(self):
+        print(f'POLYGONS NUM->{len(self.polygon_list)}')
+        polygon_list = []
+        for polygon_vertices in self.polygon_list:
+            polygon_points = []
+            for i in range(0, len(polygon_vertices), 2):
+                point = self.controller.set_position(polygon_vertices[i], polygon_vertices[i+1])
+                polygon_points.append(point)
+            polygon_list.append(polygon_points)
+
+            # print(f'polygon_points->{polygon_points}')
+            # print(f'vertices_number->{len(polygon_points)}')
+            # print('------------------------------')
+
+        return polygon_list
