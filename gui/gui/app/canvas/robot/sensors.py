@@ -43,13 +43,13 @@ class Sensors:
             print(f'\nstep_angle->{step_angle}')
             print(f'\tlidar_max_value->{lidar_max_value}')
 
-            laser_point = self.controller.get_laser_value(robot_pose, laser_max_point, polygon_points)
+            # laser_point = self.controller.get_laser_value(robot_pose, laser_max_point, polygon_points)
 
             self.lasers.append(
                 self.canvas.create_line(robot_pose['x'],
                                         robot_pose['y'],
-                                        laser_point['x'],
-                                        laser_point['y'],
+                                        laser_max_point['x'],
+                                        laser_max_point['y'],
                                         fill = self.color['laser'],
                                         tag = 'robot'
                                         )
