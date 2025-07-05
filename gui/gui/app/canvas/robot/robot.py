@@ -42,11 +42,11 @@ class Robot:
             self.sensors.plot()
 
         if self.pose is not None:
-            self.body = self.parts.get(self.pose, self.radius, name = 'body')
-            self.parts.get(self.pose, self.radius, name = 'hokuyo')
-            self.parts.get(self.pose, self.radius, name = 'head')
-            self.parts.get(self.pose, self.radius, name = 'left_wheel')
-            self.parts.get(self.pose, self.radius, name = 'right_wheel')
+            self.body = self.parts.get(name = 'body')
+            self.parts.get(name = 'hokuyo')
+            self.parts.get(name = 'head')
+            self.parts.get(name = 'left_wheel')
+            self.parts.get(name = 'right_wheel')
         
         self.context.panel_update_value('entry_angle', angle)
 

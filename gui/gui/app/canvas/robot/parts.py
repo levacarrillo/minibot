@@ -1,5 +1,6 @@
 class Parts:
     def __init__(self, context):
+        self.context = context
         self.color      = context.color
         self.canvas     = context.canvas
         self.controller = context.controller
@@ -7,9 +8,9 @@ class Parts:
         self.anchor = None
         self.radius = None
 
-    def get(self, anchor, radius, name):
-        self.anchor = anchor
-        self.radius = radius
+    def get(self, name):
+        self.anchor = self.context.robot.get_pose()
+        self.radius = self.context.robot.radius
 
         if name == 'body':
             return self.get_body()
