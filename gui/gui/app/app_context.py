@@ -66,6 +66,9 @@ class AppContext:
     def set_velocity_slider(self, value):
         self.velocity_slider = value
     
+    def get_execution_delay(self):
+        return self.controller.get_execution_delay(self.velocity_slider)
+    
     def set_fast_mode(self, value):
         self.fast_mode = value
 
