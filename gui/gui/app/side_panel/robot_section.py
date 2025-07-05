@@ -21,7 +21,7 @@ class RobotSection:
         self.entry_pose_y     = Entry(context.side_frame, validate = 'key', 
                                     textvariable = StringVar(value = "2.2"),  width = 9)
         self.entry_angle      = Entry(context.side_frame, validate = 'key',
-                                    textvariable = StringVar(value = "0.0"),  width = 9)
+                                    textvariable = StringVar(value = "1.5707"),  width = 9)
         self.entry_radius     = Entry(context.side_frame, validate = 'key',
                                     textvariable = StringVar(value = "0.04"), width = 9)
         self.entry_advance    = Entry(context.side_frame, validate = 'key',
