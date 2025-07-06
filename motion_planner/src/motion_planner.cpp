@@ -182,8 +182,8 @@ void MotionPlanner::move_robot(Movement movement) {
   // RCLCPP_INFO(this->get_logger(), "MOVEMENT ACCEPTED, WAITING FOR RESULT...");
 
   auto result_future = this->go_to_pose_client->async_get_result(goal_handle);
-  if (rclcpp::spin_until_future_complete(this->get_node_base_interface(), result_future)
-                                                          != rclcpp::FutureReturnCode::SUCCESS) {
+  if (rclcpp::spin_until_future_complete(this->get_node_base_interface(), result_future, 10s)
+                              != rclcpp::FutureReturnCode::SUCCESS) {
     RCLCPP_ERROR(this->get_logger(), "MOVEMENT RESULT COULDN'T BE FOUND");
     return;
   }
@@ -194,5 +194,6 @@ void MotionPlanner::move_robot(Movement movement) {
   } else {
     RCLCPP_ERROR(this->get_logger(), "MOVEMENT FINISHED WITH AN ERROR");
   }
+
   this->increase_steps();
 }
