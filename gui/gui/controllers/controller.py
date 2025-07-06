@@ -35,6 +35,9 @@ class Controller:
     def sum_vectors(self, p1, p2):
         return self.service.sum_vectors(p1, p2)
 
+    def get_line_segment(self, p1, p2):
+        return self.service.get_line_segment(p1, p2)
+
     def remap_position(self, position):
         return self.service.remap_position(position)
 
@@ -64,6 +67,9 @@ class Controller:
 
     def polar_to_cartesian_point(self, radius, angle):
         return self.service.polar_to_cartesian_point(radius, angle)
+
+    def cartesian_to_polar(self, point):
+        return self.service.cartesian_to_polar(point)
  
     def get_laser_value(self, robot_pose, laser_max_point, polygon_points):
         return self.service.get_laser_value(robot_pose, laser_max_point, polygon_points)
@@ -74,8 +80,8 @@ class Controller:
                                                         robot_radius, light_pose)
         self.ros.set_light_readings(light_readings)
 
-    def simulate_lidar_readings(self):
-        lidar_readings = self.service.get_lidar_readings()
+    def simulate_lidar_readings(self, laser_readings):
+        lidar_readings = self.service.get_lidar_readings(laser_readings)
         self.ros.set_lidar_readings(lidar_readings)
 
     def update_params(self):

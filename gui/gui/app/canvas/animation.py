@@ -31,7 +31,6 @@ class Animation:
             if self.light.get_position() is not None:
                 self.controller.simulate_light_readings(self.robot.get_pose(), 
                                                 self.robot.radius, self.light.get_position())
-            self.controller.simulate_lidar_readings()
 
             if self.context.simulation_running and goal is not None:
                 if self.init_pose is None:

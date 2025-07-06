@@ -149,6 +149,9 @@ class Service():
         y = radius * math.sin(-angle)
         return x, y
     
+    def cartesian_to_polar(self, point):
+        return math.hypot(point['x'], point['y']), math.atan2(point['y'], point['x'])
+
     def polar_to_cartesian_point(self, radius, angle):
         x = radius * math.cos(-angle)
         y = radius * math.sin(-angle)
@@ -239,9 +242,8 @@ class Service():
 
         return light_readings
     
-    def get_lidar_readings(self):
-        lidar_readings = [0.25, 0.25, 0.25]
-        return lidar_readings
+    def get_lidar_readings(self, laser_readings):
+        return laser_readings
 
     def format_goal_pose(self, goal):
         if goal is not None:
