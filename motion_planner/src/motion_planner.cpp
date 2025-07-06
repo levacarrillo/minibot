@@ -89,8 +89,8 @@ MovementParams MotionPlanner::get_movement_params() {
 }
 
 void MotionPlanner::get_params(const std::shared_ptr<GetParams::Request> /*request*/,
-                                        std::shared_ptr<GetParams::Response> response)
-                                        {
+                                        std::shared_ptr<GetParams::Response> response) {
+
   response->behavior        = this->selected_behavior;
   response->run_behavior    = this->behavior_running;
   response->behavior_list   = get_behavior_list();
@@ -117,19 +117,21 @@ void MotionPlanner::set_params(const std::shared_ptr<SetParams::Request> request
   response->success = true;
 }
 
-Sensors MotionPlanner::get_sensors_data() {
-  while(!this->light_readings_client->wait_for_service(1s)) {
+std::optional<Sensors> MotionPlanner::get_sensors_data() {
+  if (!this->light_readings_client->wait_for_service(1s)) {
     RCLCPP_WARN(this->get_logger(), "SERVICE /get_light_readings NOT AVAILABLE, WAITING AGAIN...");
+    return std::nullopt;
   }
 
-  while(!this->laser_readings_client->wait_for_service(1s)) {
-    RCLCPP_WARN(this->get_logger(), "SERVICE /get_scan NOT AVAILABLE, WAITING AGAIN...");   
+  if (!this->laser_readings_client->wait_for_service(1s)) {
+    RCLCPP_WARN(this->get_logger(), "SERVICE /get_scan NOT AVAILABLE, WAITING AGAIN...");
+    return std::nullopt;
   }
 
   auto light_request = std::make_shared<GetLightReadings::Request>();
   auto light_result = this->light_readings_client->async_send_request(light_request);
   
-  if (rclcpp::spin_until_future_complete(this->get_node_base_interface(), light_result)
+  if (rclcpp::spin_until_future_complete(this->get_node_base_interface(), light_result, 1s)
                                                       == rclcpp::FutureReturnCode::SUCCESS) {
     auto light_response = light_result.get();
     
@@ -140,17 +142,19 @@ Sensors MotionPlanner::get_sensors_data() {
 
   } else {
     RCLCPP_ERROR(this->get_logger(), "FAILED TO CALL SERVICE /get_light_readings");
+    return std::nullopt;
   }
 
   auto laser_request = std::make_shared<GetScan::Request>();
   auto laser_result = this->laser_readings_client->async_send_request(laser_request);
-  if (rclcpp::spin_until_future_complete(this->get_node_base_interface(), laser_result)
+  if (rclcpp::spin_until_future_complete(this->get_node_base_interface(), laser_result, 1s)
                                                         == rclcpp::FutureReturnCode::SUCCESS) {
     auto response = laser_result.get();
     this->sensors_data.laser_readings = response->scan;
     this->sensors_data.obstacle_direction = get_obstacle_direction(this->sensors_data);
   } else {
     RCLCPP_ERROR(this->get_logger(), "FAILED TO CALL SERVICE /get_scan");
+    return std::nullopt;
   }
 
   return this->sensors_data;
@@ -167,7 +171,7 @@ void MotionPlanner::move_robot(Movement movement) {
   
   auto goal_handle_future = this->go_to_pose_client->async_send_goal(goal_msg);
 
-  if (rclcpp::spin_until_future_complete(this->get_node_base_interface(), goal_handle_future)
+  if (rclcpp::spin_until_future_complete(this->get_node_base_interface(), goal_handle_future, 1s)
                                                           != rclcpp::FutureReturnCode::SUCCESS) {
     RCLCPP_ERROR(this->get_logger(), "FAILED TO SEND MOVEMENT");
     return;

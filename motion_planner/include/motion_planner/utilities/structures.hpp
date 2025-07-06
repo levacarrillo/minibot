@@ -49,20 +49,6 @@ typedef struct Sensors_ {
     std::array<float, 8> light_readings;
 } Sensors;
 
-// typedef struct LightSensorsData_ {
-//     std::array<float, 8> light_readings;
-//     Direction light_direction;
-//     int light_sensor_max_id;
-//     float light_sensor_max;
-//     float light_threshold;
-// } LightSensorsData;
-
-// typedef struct LaserSensorData_ {
-//     std::vector<float> laser_readings;
-//     Direction obstacle_direction;
-//     float laser_threshold;
-// } LaserSensorData;
-
 typedef struct MovementParams_ {
     float max_advance;
     float max_turn_angle;

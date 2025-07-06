@@ -23,8 +23,12 @@ int main(int argc, char *argv[]) {
       if(node->steps_exceeded()) continue;
       Behaviors behavior = node->get_selected_behavior();
       MovementParams movement_params = node->get_movement_params();
-      Sensors sensors_data  = node->get_sensors_data();
-
+      std::optional<Sensors> sensors_data = node->get_sensors_data();
+      
+      if (!sensors_data) {
+        node->stop_behavior();
+        continue;
+      }
 
       bool valid_behavior = false;
 
@@ -34,27 +38,27 @@ int main(int argc, char *argv[]) {
         break;
         
         case LIGHT_FOLLOWER:
-          behavior_runnig = light_follower(sensors_data, movement_params, &movement);
+          behavior_runnig = light_follower(*sensors_data, movement_params, &movement);
           valid_behavior = true;
         break;
         
         case SM_DESTINATION:
-          behavior_runnig = sm_destination(sensors_data, &movement_params, &movement);
+          behavior_runnig = sm_destination(*sensors_data, &movement_params, &movement);
           valid_behavior = true;
         break;
         
         case SM_AVOID_OBSTACLES:
-          sm_avoid_obstacles(sensors_data, &movement_params, &movement);
+          sm_avoid_obstacles(*sensors_data, &movement_params, &movement);
           valid_behavior = true;
         break;
         
         case SM_AVOIDANCE_DESTINATION:
-          behavior_runnig = sm_avoidance_destination(sensors_data, &movement_params, &movement);
+          behavior_runnig = sm_avoidance_destination(*sensors_data, &movement_params, &movement);
           valid_behavior = true;
         break;
 
         case USER_SM:
-          behavior_runnig = user_sm(sensors_data, &movement_params, &movement);
+          behavior_runnig = user_sm(*sensors_data, &movement_params, &movement);
           valid_behavior = true;
         break;
         

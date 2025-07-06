@@ -31,9 +31,9 @@ class MotionPlanner : public rclcpp::Node {
     bool behavior_is_running();
     void print_selected_behavior();
     
-    Sensors get_sensors_data();
     Behaviors get_selected_behavior();
     MovementParams get_movement_params();
+    std::optional<Sensors> get_sensors_data();
     
   private:
     Movement stop;
