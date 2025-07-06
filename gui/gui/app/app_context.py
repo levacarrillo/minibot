@@ -190,8 +190,4 @@ class AppContext:
                 polygon_points.append(point)
             polygon_list.append(polygon_points)
 
-            # print(f'polygon_points->{polygon_points}')
-            # print(f'vertices_number->{len(polygon_points)}')
-            # print('------------------------------')
-
         return polygon_list

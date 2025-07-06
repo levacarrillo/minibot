@@ -69,7 +69,7 @@ class Animation:
                 
                     time.sleep(self.delay)
 
-                if self.context.get_param('max_steps') <= current_step:
+                if self.context.get_param('max_steps') <= current_step or self.controller.get_param('run_behavior') is False:
                     self.context.enable_button_run()
 
         self.app.after(1, self.execute)
