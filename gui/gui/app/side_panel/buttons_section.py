@@ -12,11 +12,11 @@ class ButtonsSection:
                                         length = 162, command = self.slider_value)
 
         self.plot_topological= Button(context.side_frame, width = 18, text = "Plot topological", 
-                                                command = self.run_simulation, state = DISABLED)
+                                        command = self.plot_topological, state = DISABLED)
         self.button_run      = Button(context.side_frame, width = 18, text = "Run simulation", 
-                                                command = self.run_simulation, state = DISABLED)
+                                        command = self.run_simulation, state = DISABLED)
         self.button_stop     = Button(context.side_frame, width = 18, text = "Stop simulation",
-                                                command = self.stop_simulation, state = DISABLED)
+                                        command = self.stop_simulation, state = DISABLED)
 
         self.label_simulator  .grid(column = 4, row = 12, sticky = (N, W), padx = (5, 0))
         self.plot_topological .grid(column = 4, row = 13, sticky = (N, W), padx = (5, 0))
@@ -28,7 +28,7 @@ class ButtonsSection:
         context.set_buttons_section(self)
 
     def plot_topological(self):
-        print('plotting')
+        self.context.plot_topological_map()
 
     def run_simulation(self):
         self.context.disable_button_run()

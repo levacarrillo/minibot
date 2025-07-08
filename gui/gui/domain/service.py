@@ -47,7 +47,7 @@ class Service():
                 if words[1] == "num":
                     number_nodes = float(words[3])
                 elif words[1] == "node":
-                    print(f'node->[{words[3]}, {words[4]}], px->[{self.m_to_pixels(words[3])}, {self.m_to_pixels(words[4])}]')
+                    # print(f'node->[{words[3]}, {words[4]}], px->[{self.m_to_pixels(words[3])}, {self.m_to_pixels(words[4])}]')
                     node_id = words[2]
                     node = { 'x': self.m_to_pixels(words[3]), 'y': self.m_to_pixels(words[4]) }
                     node_to_plot = { 'x': self.m_to_pixels(words[3]), 'y': self.current_size['y'] - self.m_to_pixels(words[4])}
