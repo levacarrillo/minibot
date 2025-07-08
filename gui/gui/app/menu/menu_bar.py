@@ -4,8 +4,6 @@ from tkinter import Menu, IntVar
 class MenuBar:
     def __init__(self, context):
         menu_bar = Menu(context.app)
-
-        ck_topological = IntVar()
         settings       = Menu(menu_bar, tearoff = 0)
         help           = Menu(menu_bar, tearoff = 0)
 
@@ -27,7 +25,5 @@ class MenuBar:
         menu_bar.add_cascade(label = " Settings",    menu = settings)
         settings.add_cascade(label = " Canvas size", menu = submenu_canvas)
         menu_bar.add_cascade(label = "Help",         menu = help)
-        settings.add_checkbutton(label = " Plot topological", variable = ck_topological,
-                                command = lambda: context.plot_topological_map(ck_topological))
         settings.add_command(label = " Exit", command = context.app.quit)
         context.app.config(menu = menu_bar)
