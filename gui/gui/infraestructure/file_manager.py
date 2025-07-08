@@ -21,6 +21,14 @@ class FileManager:
         return sorted(map_list)
 
     def get_map(self, map_name, topological = False):
-        ext = '.top' if topological else '.wrl' 
-        self.map_file = open(os.path.join(self.maps_path, map_name.lower() + ext), 'r')
-        return self.map_file
+        ext = '.top' if topological else '.wrl'
+        try:
+            self.map_file = open(os.path.join(self.maps_path, map_name.lower() + ext), 'r')
+        except FileNotFoundError:
+            self.map_file = None
+            print(f'ERROR: THE FILE {map_name.lower()}{ext} DOES NOT EXISTS.')
+        except Exception as e:
+            self.map_file = None
+            print(f'AN UNEXPECTED ERROR HAS OCCURRED: {e}')
+        finally:
+            return self.map_file
