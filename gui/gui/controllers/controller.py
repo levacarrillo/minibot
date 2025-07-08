@@ -19,6 +19,10 @@ class Controller:
         map_file = self.file_manager.get_map(file_name)
         return self.service.parse_map(map_file)
 
+    def get_topological_map(self, file_name, topological):
+        map_file = self.file_manager.get_map(file_name, topological)
+        return self.service.parse_topological_map(map_file)
+
     # SERVICE CONTROLLERS
     def get_canvas_size(self):
         return self.service.get_canvas_size()

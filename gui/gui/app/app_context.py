@@ -1,5 +1,5 @@
 from tkinter import NORMAL, DISABLED, END
-
+from PIL import Image, ImageDraw, ImageTk
 
 class AppContext:
     def __init__(self, app, color, content, controller):
@@ -179,6 +179,28 @@ class AppContext:
                 width = 1,
                 tag = 'map'
             )
+
+    def plot_topological_map(self, ck_topological):
+        if ck_topological.get():
+            print(f'PLEASE WAIT...')
+            node_coords, node_coords_to_plot, connections = self.controller.get_topological_map(self.get_param('map'), topological = True)
+            # print(node_coords)
+            # print(node_coords_to_plot)
+            print(connections)
+            image = Image.new('RGBA', (500, 500))
+            draw = ImageDraw.Draw(image)
+            for i in range(len(node_coords_to_plot)):
+                # print(f'node_coords_to_plot[{i}]->{node_coords_to_plot[i]}')
+                draw.ellipse((node_coords_to_plot[i]['x'] - 3, node_coords_to_plot[i]['y'] - 3, node_coords_to_plot[i]['x'] + 3, node_coords_to_plot[i]['y'] + 3), outline = '#9C4FDB', fill = '#9C4FDB')
+                draw.text((node_coords_to_plot[i]['x'], node_coords_to_plot[i]['y'] + 2), fill = "darkblue" ,text = str(i))
+            
+            for i in range(len(connections)):
+                a = connections[i]
+                draw.line((node_coords_to_plot[a[0]]['x'], node_coords_to_plot[a[0]]['y'], node_coords_to_plot[a[1]]['x'], node_coords_to_plot[a[1]]['y']) , fill = '#9C4FDB')
+
+            image.save('nodes.png')
+            self.gif1 = ImageTk.PhotoImage( file ='nodes.png')
+            self.nodes_image = self.canvas.create_image(250, 250, image = self.gif1)
 
     def get_polygon_list(self):
         print(f'POLYGONS NUM->{len(self.polygon_list)}')
