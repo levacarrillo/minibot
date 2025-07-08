@@ -11,18 +11,24 @@ class ButtonsSection:
         self.slider_velocity = Scale(context.side_frame,  from_= 1, to=3, orient = HORIZONTAL,
                                         length = 162, command = self.slider_value)
 
-        self.button_run      = Button(context.side_frame, width = 17, text = "Run simulation", 
+        self.plot_topological= Button(context.side_frame, width = 18, text = "Plot topological", 
                                                 command = self.run_simulation, state = DISABLED)
-        self.button_stop     = Button(context.side_frame, width = 17, text = "Stop simulation",
+        self.button_run      = Button(context.side_frame, width = 18, text = "Run simulation", 
+                                                command = self.run_simulation, state = DISABLED)
+        self.button_stop     = Button(context.side_frame, width = 18, text = "Stop simulation",
                                                 command = self.stop_simulation, state = DISABLED)
 
         self.label_simulator  .grid(column = 4, row = 12, sticky = (N, W), padx = (5, 0))
-        self.label_velocity	  .grid(column = 4, row = 15, sticky = (N, W), padx = (5, 0))
-        self.button_run       .grid(column = 4, row = 13, sticky = (N, W), padx = (5, 0))
-        self.button_stop      .grid(column = 4, row = 14, sticky = (N, W), padx = (5, 0))
-        self.slider_velocity  .grid(column = 4, row = 16, columnspan = 2, rowspan = 1,
+        self.plot_topological .grid(column = 4, row = 13, sticky = (N, W), padx = (5, 0))
+        self.button_run       .grid(column = 4, row = 14, sticky = (N, W), padx = (5, 0))
+        self.button_stop      .grid(column = 4, row = 15, sticky = (N, W), padx = (5, 0))
+        self.label_velocity	  .grid(column = 4, row = 16, sticky = (N, W), padx = (5, 0))
+        self.slider_velocity  .grid(column = 4, row = 17, columnspan = 2, rowspan = 1,
                                                         sticky = (N, W), padx = 5)
         context.set_buttons_section(self)
+
+    def plot_topological(self):
+        print('plotting')
 
     def run_simulation(self):
         self.context.disable_button_run()

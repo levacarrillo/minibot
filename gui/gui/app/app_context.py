@@ -180,7 +180,12 @@ class AppContext:
                 tag = 'map'
             )
 
-    def plot_topological_map(self, ck_topological):
+        if self.controller.check_for_topological_map(self.get_param('map')):
+            self.buttons_section.plot_topological.config(state = NORMAL)
+        else:
+            self.buttons_section.plot_topological.config(state = DISABLED)
+
+    def plot_topological_map(self, ck_topological = None):
         if ck_topological.get():
             print(f'PLEASE WAIT...')
             node_coords, node_coords_to_plot, connections = self.controller.get_topological_map(self.get_param('map'), topological = True)

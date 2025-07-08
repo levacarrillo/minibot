@@ -12,6 +12,13 @@ class FileManager:
 
     def get_file_path(self, file_name):
         return os.path.join(self.resources, file_name)
+    
+    def check_for_topological_map(self, file_name):
+        ext = '.top'
+        if os.path.exists(os.path.join(self.maps_path, file_name.lower() + ext)):
+            return True
+        else:
+            return False
 
     def get_environment_list(self):
         map_list = []

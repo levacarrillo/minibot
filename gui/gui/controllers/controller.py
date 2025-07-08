@@ -9,6 +9,9 @@ class Controller:
         self.file_manager = FileManager()
 
     # FILE CONTROLLERS
+    def check_for_topological_map(self, file_name):
+        return self.file_manager.check_for_topological_map(file_name)        
+
     def get_file_path(self, file_name):
         return self.file_manager.get_file_path(file_name)
 
