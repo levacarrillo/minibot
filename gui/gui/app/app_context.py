@@ -186,6 +186,8 @@ class AppContext:
             node_coords, node_coords_to_plot, connections = self.controller.get_topological_map(self.get_param('map'), topological = True)
             # print(node_coords)
             # print(node_coords_to_plot)
+            if node_coords is None:
+                return
             print(connections)
             image = Image.new('RGBA', (500, 500))
             draw = ImageDraw.Draw(image)

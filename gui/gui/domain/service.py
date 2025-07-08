@@ -34,10 +34,12 @@ class Service():
         return polygon_list, polygon_to_plot_list
 
     def parse_topological_map(self, map_file):
-        lines = map_file.readlines()
         node_coords = []
         node_coords_to_plot = []
         connections = []
+        if map_file is None:
+            return None, None, None
+        lines = map_file.readlines()
 
         for line in lines:
             words = line.split()
