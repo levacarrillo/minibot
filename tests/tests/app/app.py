@@ -1,9 +1,9 @@
 import tkinter as tk
-# from tkinter import Frame, BOTH
 from tkinter import *
 
+
 class App(tk.Tk):
-    def __init__(self):
+    def __init__(self, controller):
         super().__init__()
         self.title("Mobile Robot GUI for Tests")
 
