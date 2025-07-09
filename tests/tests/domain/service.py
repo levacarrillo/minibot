@@ -5,9 +5,11 @@ class Service():
     def __init__(self):
         print('SERVICE...')
 
+    def cm_to_m(self, cm):
+        return float(cm) * 0.01
+
     def degrees_to_radians(self, degrees):
         try:
-            radians = math.radians(int(degrees))
-            return f"{radians:.4f} rad"
+            return math.radians(int(degrees))
         except:
-            return " - -"
+            return 0
