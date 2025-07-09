@@ -29,6 +29,7 @@ class Animation:
             self.delay = self.context.get_execution_delay()
 
             if self.light.get_position() is not None:
+                # METHOD TO SAVE VALUES TO ROS' SERVICE
                 self.controller.simulate_light_readings(self.robot.get_pose(), 
                                                 self.robot.radius, self.light.get_position())
 

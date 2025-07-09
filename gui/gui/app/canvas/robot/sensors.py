@@ -1,6 +1,3 @@
-import numpy as np
-
-
 class Sensors:
     def __init__(self, context):
         self.context = context
@@ -10,6 +7,7 @@ class Sensors:
         self.controller = context.controller
 
         self.lasers = []
+        self.noise = context.sensor_noise
 
     def plot(self):
         robot_pose   = self.robot.get_pose()
@@ -36,6 +34,7 @@ class Sensors:
 
         polygon_points = polygon_list[0]
         laser_readings = []
+        self.noise = context.sensor_noise
         for i in range(0, num_sensors):
             laser_vector = self.controller.polar_to_cartesian_point(lidar_max_value, step_angle)
             laser_max_point = self.controller.sum_vectors(robot_pose, laser_vector)

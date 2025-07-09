@@ -27,6 +27,7 @@ class AppContext:
         self.show_sensors = None
         self.velocity_slider = 1
         self.fast_mode = 0
+        self.sensor_noise = False
         self.route = None
         self.nodes_image = None
 
@@ -231,7 +232,7 @@ class AppContext:
         return polygon_list
 
     def load_objects(self, load_objects):
-        if load_objects:
-            self.objects.plot()
-        else:
-            self.objects.delete()
+        self.objects.plot() if load_objects == 1 else self.objects.delete()
+
+    def change_sensor_noise(self, noise):
+        self.sensor_noise = True if noise == 1 else False

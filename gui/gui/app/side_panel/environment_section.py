@@ -6,6 +6,7 @@ class EnvironmentSection:
     def __init__(self, context):
         self.context = context
 
+        self.check_add_noise        = IntVar()        
         self.check_fast_mode    = IntVar()
         self.check_show_sensors = IntVar()
         self.check_load_objects = IntVar()
@@ -32,14 +33,16 @@ class EnvironmentSection:
 
         self.ck_button_fast    = Checkbutton(context.side_frame, text="Fast mode",
                                                 variable = self.check_fast_mode, 
-                                                command  = self.on_change_fast_mode)
+                                                command  = self.on_check_fast_mode)
         self.ck_button_sensors = Checkbutton(context.side_frame, text="Show sensors",
                                                 variable = self.check_show_sensors,
-                                                command  = self.onchange_show_sensors)
-        self.ck_add_noise      = Checkbutton(context.side_frame, text="Add Noise")
+                                                command  = self.on_check_show_sensors)
+        self.ck_add_noise      = Checkbutton(context.side_frame, text="Add Noise", 
+                                                variable = self.check_add_noise,
+                                                command  = self.on_check_add_noise)
         self.ck_button_load    = Checkbutton(context.side_frame, text="Load Objects",
                                                 variable = self.check_load_objects,
-                                                command  = self.on_change_load) 
+                                                command  = self.on_check_load_objects) 
 
         self.label_settings      .grid(column = 0, row = 0,  sticky = (N, W), padx = (5, 0))
         self.label_enviroments   .grid(column = 0, row = 1,  sticky = (N, W), padx = (5, 0))
@@ -72,12 +75,15 @@ class EnvironmentSection:
     def on_change_enviroment(self, event = None):
         self.context.plot_map()
 
-    def on_change_fast_mode(self):
+    def on_check_fast_mode(self):
         self.context.set_fast_mode(self.check_fast_mode.get())
 
-    def onchange_show_sensors(self):
+    def on_check_show_sensors(self):
         self.context.set_show_sensors(self.check_show_sensors.get())
         self.context.robot.plot()
     
-    def on_change_load(self):
+    def on_check_load_objects(self):
         self.context.load_objects(self.check_load_objects.get())
+
+    def on_check_add_noise(self):
+        self.context.change_sensor_noise(self.check_add_noise.get())
