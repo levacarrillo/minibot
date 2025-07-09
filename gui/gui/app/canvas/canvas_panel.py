@@ -1,6 +1,7 @@
 from tkinter import *
 from gui.app.canvas.grid  import Grid
 from gui.app.canvas.light import Light
+from gui.app.canvas.objects import Objects
 from gui.app.canvas.robot.robot import Robot
 from gui.app.canvas.animation import Animation
 
@@ -23,6 +24,7 @@ class CanvasPanel:
         self.grid  = Grid(context)
         self.light = Light(context)
         self.robot = Robot(context)
+        self.objects = Objects(context)
 
         self.canvas.bind("<Button-3>", self.right_click)
         self.canvas.bind("<Button-1>", self.left_click)

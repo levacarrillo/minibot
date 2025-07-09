@@ -8,6 +8,7 @@ class EnvironmentSection:
 
         self.check_fast_mode    = IntVar()
         self.check_show_sensors = IntVar()
+        self.check_load_objects = IntVar()
 
         environment_list = context.controller.get_environment_list()
         behavior_list    = context.controller.get_param('behavior_list')
@@ -36,7 +37,9 @@ class EnvironmentSection:
                                                 variable = self.check_show_sensors,
                                                 command  = self.onchange_show_sensors)
         self.ck_add_noise      = Checkbutton(context.side_frame, text="Add Noise")
-        self.ck_button_load    = Checkbutton(context.side_frame, text="Load Objects")
+        self.ck_button_load    = Checkbutton(context.side_frame, text="Load Objects",
+                                                variable = self.check_load_objects,
+                                                command  = self.on_change_load) 
 
         self.label_settings      .grid(column = 0, row = 0,  sticky = (N, W), padx = (5, 0))
         self.label_enviroments   .grid(column = 0, row = 1,  sticky = (N, W), padx = (5, 0))
@@ -75,3 +78,6 @@ class EnvironmentSection:
     def onchange_show_sensors(self):
         self.context.set_show_sensors(self.check_show_sensors.get())
         self.context.robot.plot()
+    
+    def on_change_load(self):
+        self.context.load_objects(self.check_load_objects.get())

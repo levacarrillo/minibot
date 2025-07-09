@@ -31,6 +31,7 @@ class AppContext:
         self.nodes_image = None
 
         self.polygon_list = None
+        self.objects = None
 
 
     # SETTERS FOR SECTIONS
@@ -63,6 +64,9 @@ class AppContext:
 
     def set_robot(self, robot):
         self.robot = robot
+
+    def set_objects(self, objects):
+        self.objects = objects
 
     def set_velocity_slider(self, value):
         self.velocity_slider = value
@@ -188,6 +192,7 @@ class AppContext:
             self.buttons_section.plot_topological.config(state = DISABLED)
 
     def plot_topological_map(self):
+        self.buttons_section.plot_topological.config(state = DISABLED)
         node_coords, node_coords_to_plot, connections = self.controller.get_topological_map(self.get_param('map'), topological = True)
         # print(node_coords)
         # print(node_coords_to_plot)
@@ -224,3 +229,9 @@ class AppContext:
             polygon_list.append(polygon_points)
 
         return polygon_list
+
+    def load_objects(self, load_objects):
+        if load_objects:
+            self.objects.plot()
+        else:
+            self.objects.delete()
