@@ -1,5 +1,6 @@
 import tkinter as tk
 from tkinter import *
+from tests.app.app_context import AppContext
 
 
 class App(tk.Tk):
@@ -7,58 +8,50 @@ class App(tk.Tk):
         super().__init__()
         self.title("Mobile Robot GUI for Tests")
 
-        # content = Frame(self)
-        window_width = 390
-        window_height = 310
-        screen_width = self.winfo_screenwidth()
-        screen_height = self.winfo_screenheight()
-        x = (screen_width // 2) + (window_width // 2)
-        y = (screen_height // 2) - (window_height)
-        self.geometry(f"{window_width}x{window_height}+{x}+{y}")
+        content = Frame(self)
 
-        button_stop   = Button(text="Stop")
-        button_start  = Button(text="Start")
-        button_params = Button(text="Params")
-        label_minibot_id = Label(
-            self,
-            text = 'Minibot 2',
-            font=('arial', 11, "bold"),
-            anchor=CENTER,
-            bg="white",
-            justify=CENTER,
-            padx=6,
-            pady=4,
-            wraplength=250
+        context = AppContext(
+            app        = self,
+            content    = content,
+            controller = controller
         )
 
-        button_stop.grid(column = 0, row = 1, sticky = (N, W), padx = (5, 0))
-        button_start.grid(column = 1, row = 1, sticky = (N, W), padx = (5, 0))
-        button_params.grid(column = 2, row = 1, sticky = (N, W), padx = (5, 0))
-        label_minibot_id.grid(column = 4, row = 1, sticky = (N, W), padx = (5, 0))
+        labelframe = LabelFrame(content)  
 
-        radian_var   = StringVar()
-        angle_var    = StringVar(self, value="0°")
-        distance_var = StringVar(self, value="0.0cm")
+        button_stop   = Button(labelframe, text = "Stop")
+        button_start  = Button(labelframe, text = "Start")
+        button_params = Button(labelframe, text = "Params")
+        label_bot_id  = Label(labelframe,  text = 'Minibot 2',
+            font = ('arial', 11, "bold"), bg = "white")
 
-        label_angle = Label(self, text="Angle:")
-        label_distance = Label(self, text="Distance:")
 
-        angle_var.trace_add("write", self.plot)
-        distance_var.trace_add("write", self.plot)
+        self.radian_var   = StringVar()
+        self.angle_var    = StringVar(content, value = "0°")
+        self.distance_var = StringVar(content, value = "0.0cm")
 
-        radian_entry = Entry(self, state='readonly', textvariable=radian_var, width=5)
-        angle_entry  = Spinbox(self, from_=-180, to=180, increment=1, textvariable=angle_var, width=5)
-        distance_entry = Spinbox(self, from_=-100, to=100, increment=0.1, textvariable=distance_var, width=5)
+        label_angle = Label(content, text = "Angle:")
+        label_distance = Label(content, text = "Distance:")
 
-        label_angle.grid(column = 0, row = 4,columnspan = 2, sticky = (N, W), padx = (5, 0))
-        angle_entry.grid(column = 1, row = 4, columnspan = 1, sticky = (N, W), padx = (5, 0))
-        radian_entry.grid(column =2 , row = 4, columnspan = 2, sticky = (N, W), padx = (5, 0))
-        label_distance.grid(column = 4, row = 4, columnspan = 2, sticky = (N, W), padx = (5, 0))
-        distance_entry.grid(column = 5, row = 4, columnspan = 2, sticky = (N, W), padx = (5, 0))
+        self.angle_var.trace_add("write", context.format_angle)
+        self.distance_var.trace_add("write", context.format_distance)
 
-        # content.pack(fill=BOTH, expand=True)
+        angle_entry    = Spinbox(content, from_ = -180, to = 180, increment = 1, textvariable = self.angle_var, width = 5)
+        radian_entry   = Entry(content, state='readonly', textvariable = self.radian_var, width=5)
+        distance_entry = Spinbox(content, from_=-100, to=100, increment=0.1, textvariable=self.distance_var, width=5)
 
-    def plot(self, *args):
-        print('printings')
+        content        .grid(column = 0, row = 0, padx = 10, pady = 10)
+        labelframe     .grid(column = 0, row = 1, sticky = (N, W), padx = (5, 0),  columnspan = 5)
+        button_stop    .grid(column = 0, row = 0, sticky = (N, W), padx = (5, 0),  pady = (10, 10))
+        button_start   .grid(column = 1, row = 0, sticky = (N, W), padx = (5, 0),  pady = (10, 10))
+        button_params  .grid(column = 2, row = 0, sticky = (N, W), padx = (5, 0),  pady = (10, 10))
+        label_bot_id   .grid(column = 3, row = 0, sticky = (N, W), padx = (20, 5), pady = (10, 10))
+
+        label_angle    .grid(column = 0, row = 2, sticky = (N, W), padx = (5, 0))
+        angle_entry    .grid(column = 1, row = 2, sticky = (N, W), padx = (5, 0))
+        radian_entry   .grid(column = 2, row = 2, sticky = (N, W), padx = (5, 0))
+        label_distance .grid(column = 3, row = 2, sticky = (N, W), padx = (5, 0))
+        distance_entry .grid(column = 4, row = 2, sticky = (N, W), padx = (5, 0))
+
+
     def run(self):
         self.mainloop()
