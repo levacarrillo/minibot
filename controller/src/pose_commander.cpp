@@ -64,7 +64,22 @@ private:
         goal_handle->publish_feedback(feedback);
         cmd.angular.z = (goal->angle > 0 ? this->angular_velocity : - this->angular_velocity);
         cmd_vel_pub_->publish(cmd);
-        rclcpp::sleep_for(std::chrono::milliseconds(int(1000 * std::abs(goal->angle) / 0.5)));
+
+        double time_twist = std::abs(goal->angle) / 0.5;
+        rclcpp::Time start_twist = this->now();
+        rclcpp::Duration duration_twist = rclcpp::Duration::from_seconds(time_twist);
+
+        while (this->now() - start_twist < duration_twist) {
+            if (goal_handle->is_canceling()) {
+                RCLCPP_INFO(this->get_logger(), "CANCELING MOVEMENT...");
+                cmd.angular.z = 0.0;
+                cmd_vel_pub_->publish(cmd);
+                result->success = false;
+                goal_handle->canceled(result);
+                return;
+            }
+            rclcpp::sleep_for(std::chrono::milliseconds(100));
+        }
 
 
         feedback->feedback = "Moving...";
@@ -72,10 +87,25 @@ private:
         cmd.angular.z = 0.0;
         cmd.linear.x = (goal->distance > 0 ? this->linear_velocity : - this->linear_velocity);
         cmd_vel_pub_->publish(cmd);
-        rclcpp::sleep_for(std::chrono::milliseconds(int(1000 * std::abs(goal->distance) / 0.2)));
+
+        double time_move = std::abs(goal->distance) / 0.2;
+        rclcpp::Time start_move = this->now();
+        rclcpp::Duration duration_move = rclcpp::Duration::from_seconds(time_move);
+
+        while (this->now() - start_move < duration_move) {
+            if (goal_handle->is_canceling()) {
+                cmd.linear.x = 0.0;
+                cmd_vel_pub_->publish(cmd);
+                result->success = false;
+                goal_handle->canceled(result);
+                return;
+            }
+            rclcpp::sleep_for(std::chrono::milliseconds(100));
+        }
 
         
-        cmd.linear.x = 0.0;
+        cmd.linear.x  = 0.0;
+        cmd.angular.z = 0.0;
         cmd_vel_pub_->publish(cmd);
 
         result->success = true;
