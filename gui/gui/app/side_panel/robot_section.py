@@ -15,6 +15,10 @@ class RobotSection:
         self.label_radius     = Label(context.side_frame, text = "Radius:")
         self.label_advance    = Label(context.side_frame, text = "Advance:")
         self.label_turn_angle = Label(context.side_frame, text = "Turn Angle:")
+        self.label_velocity   = Label(context.side_frame,  text = "Execution velocity:")
+        self.slider_velocity  = Scale(context.side_frame,  from_= 1, to=3,
+                                    orient = HORIZONTAL, length = 162,
+                                    command = self.slider_value)
 
         self.entry_pose_x     = Entry(context.side_frame, validate = 'key', 
                                     textvariable = StringVar(value = "1.5"),  width = 9)
@@ -47,6 +51,9 @@ class RobotSection:
         self.entry_turn_angle .grid(column = 4, row = 7, sticky = (N, E), padx = (5, 0))
         self.button_set_zero  .grid(column = 4, row = 4, sticky = (N, W), padx = (5, 0),
                                     columnspan = 2)
+        self.label_velocity	  .grid(column = 4, row = 9, sticky = (N, W), padx = (5, 0))
+        self.slider_velocity  .grid(column = 4, row = 10, columnspan = 2, rowspan = 1,
+                                    sticky = (N, W), padx = 5)
 
         self.entry_angle  .bind("<Return>", self.set_angle)
         self.entry_radius .bind("<Return>", self.on_enter_radius)
@@ -61,3 +68,6 @@ class RobotSection:
 
     def on_enter_radius(self, event = None):
         self.context.robot.plot()
+
+    def slider_value(self, value):
+        self.context.set_velocity_slider(value)
