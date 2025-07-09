@@ -35,26 +35,30 @@ class Sensors:
         polygon_list = self.context.get_polygon_list()
 
         polygon_points = polygon_list[0]
-
+        laser_readings = []
         for i in range(0, num_sensors):
             laser_vector = self.controller.polar_to_cartesian_point(lidar_max_value, step_angle)
             laser_max_point = self.controller.sum_vectors(robot_pose, laser_vector)
-
             print(f'\nstep_angle->{step_angle}')
             print(f'\tlidar_max_value->{lidar_max_value}')
 
             # laser_point = self.controller.get_laser_value(robot_pose, laser_max_point, polygon_points)
 
+            laser = self.controller.get_line_segment(robot_pose, laser_max_point)
+            laser_magnitude, laser_angle = self.controller.cartesian_to_polar(laser)
+            laser_readings.append(laser_magnitude)
             self.lasers.append(
                 self.canvas.create_line(robot_pose['x'],
                                         robot_pose['y'],
-                                        laser_max_point['x'],
+                                        laser_max_point[
+                                            'x'],
                                         laser_max_point['y'],
                                         fill = self.color['laser'],
                                         tag = 'robot'
                                         )
                 )
             step_angle += step
+        self.controller.simulate_lidar_readings(1)
 
     def delete(self):
         for i in self.lasers:

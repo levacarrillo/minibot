@@ -51,6 +51,8 @@
 !maps/*/*.top
 !maps/*/*.wrl
 
+!objects/
+!objects/*.txt
 
 !resource/
 !resource/gui

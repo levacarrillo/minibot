@@ -26,6 +26,10 @@ class Controller:
         map_file = self.file_manager.get_map(file_name, topological)
         return self.service.parse_topological_map(map_file)
 
+    def load_objects(self):
+        objects_file = self.file_manager.load_objects()
+        return self.service.parse_objects_file(objects_file)
+
     # SERVICE CONTROLLERS
     def get_canvas_size(self):
         return self.service.get_canvas_size()

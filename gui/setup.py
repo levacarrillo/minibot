@@ -13,6 +13,7 @@ setup(
         (os.path.join('share', package_name, 'launch'), glob('launch/*.launch.py')),
         (os.path.join('share', package_name, 'maps'), glob('maps/*/*.top')),
         (os.path.join('share', package_name, 'maps'), glob('maps/*/*.wrl')),
+        (os.path.join('share', package_name, 'objects'), glob('objects/*.txt')),
         ('share/' + package_name, ['package.xml']),
     ],
     install_requires=['setuptools'],

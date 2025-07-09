@@ -5,10 +5,13 @@ class FileManager:
     def __init__(self):
         self.resources = os.path.join(os.path.dirname(__file__), '..', 'resources')
         self.maps_path = os.path.join(os.path.dirname(__file__), '../../../../..', 'share', 'gui', 'maps')
+        self.objects_path = os.path.join(os.path.dirname(__file__), '../../../../..', 'share', 'gui', 'objects')
         self.map_file = None
+        self.objects_file = None
 
     def __del__(self):
         self.map_file.close()
+        self.objects_file.close()
 
     def get_file_path(self, file_name):
         return os.path.join(self.resources, file_name)
@@ -39,3 +42,7 @@ class FileManager:
             print(f'AN UNEXPECTED ERROR HAS OCCURRED: {e}')
         finally:
             return self.map_file
+
+    def load_objects(self):
+        self.objects_file = open(os.path.join(self.objects_path, 'objects.txt'), 'r')
+        return self.objects_file

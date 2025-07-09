@@ -23,5 +23,7 @@ colors = {
     'warn_light': '#F7FD2A',
     'warn_strong': '#EEF511',
     'error_light': '#FA0A0A',
-    'error_strong': '#E10B0B'
+    'error_strong': '#E10B0B',
+    'block': '#9FFF3D',
+    'block_text': '#9E4124'
 }

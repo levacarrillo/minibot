@@ -57,6 +57,23 @@ class Service():
                     connections.append([int(words[2]), int(words[3])])
         return node_coords, node_coords_to_plot, connections
 
+    def parse_objects_file(self, objects_file):
+        if objects_file is None:
+            return None
+        lines = objects_file.readlines()
+        object_list = []
+        for line in lines:
+            words = line.split()
+            if words:
+                obj = {
+                    'name': words[0],
+                    'x': self.m_to_pixels(words[1]),
+                    'y': self.m_to_pixels(words[2])
+                }
+                object_list.append(obj)
+
+        return object_list
+
     # GUI'S SERVICES
     def get_canvas_size(self):
         return self.current_size
