@@ -30,6 +30,9 @@ class Controller:
         objects_file = self.file_manager.load_objects()
         return self.service.parse_objects_file(objects_file)
 
+    def get_object_released(self, name, robot_pose, robot_radius):
+        return self.service.get_object_released(name, robot_pose, robot_radius)
+
     # SERVICE CONTROLLERS
     def get_canvas_size(self):
         return self.service.get_canvas_size()
@@ -66,6 +69,9 @@ class Controller:
 
     def get_execution_delay(self, slider_value):
         return self.service.get_execution_delay(slider_value)
+
+    def get_magnitude_between_two_points(self, p1, p2):
+        return self.service.get_magnitude_between_two_points(p1, p2)
 
     def m_to_pixels(self, length):
         return self.service.m_to_pixels(length)

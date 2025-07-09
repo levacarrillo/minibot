@@ -73,6 +73,16 @@ class Service():
                 object_list.append(obj)
 
         return object_list
+    
+    def get_object_released(self, name, robot_pose, robot_radius):
+        r = robot_radius + 10
+        obj = {
+            'name': name,
+            'x': robot_pose['x'] + r * math.cos(-robot_pose['angle']),
+            'y': robot_pose['y'] + r * math.sin(-robot_pose['angle'])
+        }
+
+        return obj
 
     # GUI'S SERVICES
     def get_canvas_size(self):
@@ -182,6 +192,9 @@ class Service():
         # return self.redo_sys_reference(laser_max_point)
 
     # MATH CONVERTIONS
+    def get_magnitude_between_two_points(self, p1, p2):
+        return math.hypot(p2['x'] - p1['x'], p2['y'] - p1['y'])
+
     def m_to_pixels(self, length):
         return (float(length) * self.current_size['x']) / self.canvas_scale['x']
 
@@ -197,6 +210,7 @@ class Service():
         x = radius * math.cos(-angle)
         y = radius * math.sin(-angle)
         return { 'x': int(x), 'y': int(y) }
+    
 
     def degrees_to_radians(self, degrees):
         return math.radians(degrees)        

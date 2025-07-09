@@ -21,10 +21,16 @@ class Animation:
 
         self.init_pose = None
         self.execute()
-
+        self.flag = False
+    
     def execute(self):
         curr_pose = self.robot.get_pose()
         if curr_pose is not None:   # VERIFY IF ROBOT EXISTS IN CANVAS
+            # if self.robot.grasped is None and self.flag is False:
+            #     self.flag = self.context.robot.grasp('Block_A')
+            #     if self.flag:
+            #         print(f'OBJECT GRASPED->{self.robot.grasped}')
+
             goal = self.controller.get_goal_pose()
             self.delay = self.context.get_execution_delay()
 
@@ -70,6 +76,8 @@ class Animation:
                     time.sleep(self.delay)
 
                 if self.context.get_param('max_steps') <= current_step or self.controller.get_param('run_behavior') is False:
+                    # if self.robot.grasped is not None and self.context.fast_mode == 1:
+                    #     self.context.robot.release()
                     self.context.enable_button_run()
 
         self.app.after(1, self.execute)

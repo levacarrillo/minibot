@@ -13,8 +13,8 @@ class Robot:
 
         self.pose    = None
         self.radius  = None
-
         self.body    = None
+        self.grasped = None
         context.set_robot(self)
 
         self.sensors = Sensors(context)
@@ -68,3 +68,26 @@ class Robot:
 
     def delete(self):
         self.canvas.delete('robot')
+
+    def grasp(self, object_name):
+        if not self.context.objects.in_field:
+            # print('NO OBJECTS IN FIELD')
+            return False
+
+        min_distance = self.radius + self.controller.m_to_pixels(0.03)
+        
+        for obj in self.context.objects.list:
+            if obj['name'] == object_name:
+                d = self.controller.get_magnitude_between_two_points(self.pose, obj)
+                if d < min_distance:
+                    self.grasped = obj['name']
+                    self.context.objects.remove_object(self.grasped)
+                    return True
+                return False
+        print(f'OBJECT: {object_name} DOES NOT EXISTS IN FIELD.')
+        return False
+    
+    def release(self):
+        if self.grasped:
+            self.context.objects.add(self.grasped, self.pose, self.radius)
+            self.grasped = None
