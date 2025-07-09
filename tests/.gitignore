@@ -10,6 +10,8 @@
 # And these subdirectories
 !tests/
 !tests/*.py
+!tests/app/
+!tests/app/*.py
 
 !launch/
 !launch/*.launch

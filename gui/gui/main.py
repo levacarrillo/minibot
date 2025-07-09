@@ -5,8 +5,8 @@ from gui.infraestructure.ros import Ros
 from gui.controllers.controller import Controller
 
 
-def main(args=None):
-    rclpy.init(args=args)
+def main(args = None):
+    rclpy.init(args = args)
     node = Ros()
     controller = Controller(node)
     app = App(controller)
