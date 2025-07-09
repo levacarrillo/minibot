@@ -12,6 +12,12 @@
 !tests/*.py
 !tests/app/
 !tests/app/*.py
+!tests/controllers/
+!tests/controllers/*.py
+!tests/domain/
+!tests/domain/*.py
+!tests/infraestructure/
+!tests/infraestructure/*.py
 
 !launch/
 !launch/*.launch
