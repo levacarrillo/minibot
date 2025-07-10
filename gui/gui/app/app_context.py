@@ -24,6 +24,7 @@ class AppContext:
         self.buttons_section = None 
 
         self.simulation_running  = False
+        self.run_last_simulation = False
         self.show_sensors = None
         self.velocity_slider = 1
         self.fast_mode = 0
@@ -172,6 +173,10 @@ class AppContext:
         self.controller.set_ros_param('laser_threshold', float(self.get_param('laser_threshold')))
         self.controller.send_state_params()
     
+    def last_simulation(self):
+        self.run_last_simulation = True
+        
+
     def plot_map(self):
         self.clear_topological_map()
         self.polygon_list, polygon_to_plot_list = self.controller.get_map(self.get_param('map'))

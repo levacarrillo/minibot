@@ -21,7 +21,7 @@ class Animation:
 
         self.init_pose = None
         self.execute()
-        self.flag = False
+        # self.flag = False
     
     def execute(self):
         curr_pose = self.robot.get_pose()
@@ -42,6 +42,9 @@ class Animation:
             if self.context.simulation_running and goal is not None:
                 if self.init_pose is None:
                     self.init_pose = curr_pose
+                    if self.route.is_empty():
+                        self.route.init_list_poses(curr_pose)
+
                 current_step = self.controller.get_current_step()
                 self.context.panel_update_value('label_steps', current_step)
 
@@ -52,6 +55,7 @@ class Animation:
                     final_pose = self.robot.get_pose()
                     self.route.trace(self.init_pose, final_pose)
                     self.init_pose = None
+
                 else:
                     delta = goal['angle'] - self.angle_increment
                     if abs(delta) > self.angle_tolerance:
@@ -79,5 +83,13 @@ class Animation:
                     # if self.robot.grasped is not None and self.context.fast_mode == 1:
                     #     self.context.robot.release()
                     self.context.enable_button_run()
+
+            elif self.context.run_last_simulation:
+                for pose in self.route.list_poses:
+                    self.robot.plot(pose)
+                    self.context.canvas.update()
+                    time.sleep(0.1)
+                self.context.run_last_simulation = False
+
 
         self.app.after(1, self.execute)

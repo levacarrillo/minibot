@@ -13,7 +13,7 @@ class ButtonsSection:
         self.button_run      = Button(context.side_frame, width = 18, text = "Run simulation", 
                                         command = self.run_simulation, state = DISABLED)
         self.button_run_last = Button(context.side_frame, width = 18, text = "Run last simulation",
-                                        command = self.stop_simulation, state = NORMAL)
+                                        command = self.run_last_simulation, state = NORMAL)
         self.button_stop     = Button(context.side_frame, width = 18, text = "Stop simulation",
                                         command = self.stop_simulation, state = DISABLED)
 
@@ -31,6 +31,9 @@ class ButtonsSection:
     def run_simulation(self):
         self.context.disable_button_run()
         self.context.run_simulation()
+    
+    def run_last_simulation(self):
+        self.context.last_simulation()
 
     def stop_simulation(self):
         self.controller.finish_movement()
