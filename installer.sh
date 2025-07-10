@@ -11,7 +11,6 @@ apt update && apt upgrade -y
 
 # PACKAGE LIST TO INSTALL BY APT
 APT_PACKAGES=(
-  git
   vim
   tmux
   htop
