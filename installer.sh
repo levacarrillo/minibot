@@ -2,7 +2,7 @@
 
 # VERIFY IF USER IS ROOT
 if [ "$EUID" -ne 0 ]; then
-  echo "❌ PLEASE RUN THIS SCRIPT AS A ROOT (sudo ./installer.sh)"
+  echo "❌ PLEASE RUN THIS SCRIPT AS A ROOT (sudo ./tools_installer.sh)"
   exit 1
 fi
 
@@ -19,6 +19,7 @@ APT_PACKAGES=(
   xterm
   python3
   screenfetch
+  ros-jazzy-xacro
 )
 
 echo "🔧 INSTALLING PACKAGES WITH APT..."
@@ -35,7 +36,7 @@ fi
 
 # SNAP LIST TO INSTALL
 SNAP_PACKAGES=(
-  code --classic
+  code
 )
 
 echo "🔧 INSTALLING PACKAGES WITH SNAP..."
