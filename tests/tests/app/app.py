@@ -38,10 +38,10 @@ class App(tk.Tk):
         canvas_center = 70
         canvas = Canvas(content, width = 2 * canvas_center, height = 2 * canvas_center)
 
+        head_cte = 10
         d_spot_light = 62
         robot_radius = 20
         spot_light_radius = 7
-        head_cte = 10
 
         for i in range(8):
             x = canvas_center + d_spot_light * math.cos(i * math.pi / 4 - math.pi / 2)
@@ -68,11 +68,11 @@ class App(tk.Tk):
 
         polygon = canvas.create_polygon(coords, fill="black", outline="black", width = 2)
 
-        buton_arrow_left  = Button(velocity_frame, text = "<",  width = 2)
-        buton_arrow_right = Button(velocity_frame, text = ">",  width = 2)
-        buton_arrow_stop  = Button(velocity_frame, text = "||", width = 2)
-        buton_arrow_up    = Button(velocity_frame, text = "^",  width = 2)
-        buton_arrow_down  = Button(velocity_frame, text = "v",  width = 2)
+        buton_arrow_left  = Button(velocity_frame, text = "<",  width = 2, command = lambda: context.move_robot('LEFT'))
+        buton_arrow_right = Button(velocity_frame, text = ">",  width = 2, command = lambda: context.move_robot('RIGHT'))
+        buton_arrow_stop  = Button(velocity_frame, text = "||", width = 2, command = lambda: context.move_robot('STOP'))
+        buton_arrow_up    = Button(velocity_frame, text = "^",  width = 2, command = lambda: context.move_robot('FORWARD'))
+        buton_arrow_down  = Button(velocity_frame, text = "v",  width = 2, command = lambda: context.move_robot('BACKWARD'))
 
         button_stop    = Button(movement_frame, text = "Stop",  command = context.on_click_stop)
         button_start   = Button(movement_frame, text = "Start", command = context.on_click_start)

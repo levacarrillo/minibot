@@ -1,5 +1,6 @@
 import rclpy
 from rclpy.node import Node
+from geometry_msgs.msg import Twist
 from rclpy.action import ActionClient
 from interfaces.action import GoToPose
 
@@ -8,8 +9,16 @@ class Ros(Node):
     def __init__(self):
         super().__init__('tests_gui')
         self.get_logger().info('INITIALIZING GUI FOR TESTS NODE...')
+        self.publisher_ = self.create_publisher(Twist, '/cmd_vel', 10)
         self._action_client = ActionClient(self, GoToPose, 'go_to_pose')
         self._goal_handle = None
+
+    def pub_vel(self, linear, angular):
+        msg = Twist()
+        msg.linear.x = linear
+        msg.angular.z = angular
+        self.publisher_.publish(msg)
+        self.get_logger().info('MOVING AT: LINEAR->%f ANGULAR->%f' % (msg.linear.x, msg.angular.z))
 
     def send_goal(self, angle, distance):
         movement_msg = GoToPose.Goal()

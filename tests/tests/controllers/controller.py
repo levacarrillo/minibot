@@ -6,7 +6,10 @@ class Controller:
         self.ros = ros
         self.service = Service()
 
-    def move_robot(self, angle, distance):
+    def send_vel(self, linear, angular):
+        self.ros.pub_vel(linear, angular)
+
+    def send_pose(self, angle, distance):
         self.ros.send_goal(angle, distance)
     
     def cancel_movement(self):
