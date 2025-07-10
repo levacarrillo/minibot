@@ -12,3 +12,5 @@
 !mobile_base/
 !motion_planner/
 !tests/
+
+!installer.sh
