@@ -2,7 +2,7 @@
 
 # VERIFY IF USER IS ROOT
 if [ "$EUID" -ne 0 ]; then
-  echo "❌ PLEASE RUN THIS SCRIPT AS A ROOT (sudo ./tools_installer.sh)"
+  echo "❌ PLEASE RUN THIS SCRIPT AS A ROOT (sudo ./installer.sh)"
   exit 1
 fi
 
@@ -14,7 +14,6 @@ APT_PACKAGES=(
   vim
   tmux
   htop
-  curl
   xterm
   python3
   screenfetch
