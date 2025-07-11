@@ -8,7 +8,7 @@
 #include "sensor_msgs/msg/laser_scan.hpp"
 #include "tf2_ros/static_transform_broadcaster.h"
 #include "geometry_msgs/msg/transform_stamped.hpp"
-
+#include <random_numbers/random_numbers.h>
 
 class LidarSimulator : public rclcpp::Node {
     public:
@@ -29,23 +29,31 @@ class LidarSimulator : public rclcpp::Node {
         }
 
     private:
+        float min_value = 0.04f;
+        float max_value = 0.3f;
+        float angle_min = - 1.5708f;
+        float angle_max =   1.5708f;
+        float angle_increment = 0.01745f * 5;
+        float robot_radius = 0.0635f;
+        random_numbers::RandomNumberGenerator rng;
+
         void publish_scan() {
             auto msg = sensor_msgs::msg::LaserScan();
 
             msg.header.stamp = this->get_clock()->now();
             msg.header.frame_id = "laser_frame";
-            msg.angle_min = -1.57;
-            msg.angle_max = 1.57;
-            msg.angle_increment = 0.01;
-            msg.range_min = 0.2;
-            msg.range_max = 6.0;
+            msg.angle_min = this->angle_min;
+            msg.angle_max = this->angle_max;
+            msg.angle_increment = this->angle_increment;
+            msg.range_min = this->robot_radius + this->min_value;
+            msg.range_max = this->robot_radius + this->max_value;
 
             size_t num_readings = static_cast<size_t>((msg.angle_max - msg.angle_min) / msg.angle_increment);
             msg.ranges.resize(num_readings);
 
             laser_scan.clear();
             for (size_t i = 0; i < num_readings; ++i) {
-                msg.ranges[i] = 3.0 + std::sin(i * 0.1);
+                msg.ranges[i] = this->max_value + this->rng.gaussian(0.0, 0.01);;
                 laser_scan.push_back(msg.ranges[i]);
             }
 

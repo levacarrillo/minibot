@@ -15,9 +15,10 @@ find_package(interfaces REQUIRED)
 find_package(tf2 REQUIRED)
 find_package(tf2_ros REQUIRED)
 find_package(geometry_msgs REQUIRED)
+find_package(random_numbers REQUIRED)
 
 add_executable(lidar_simulator src/lidar_simulator.cpp)
-ament_target_dependencies(lidar_simulator rclcpp sensor_msgs interfaces tf2 tf2_ros geometry_msgs)
+ament_target_dependencies(lidar_simulator rclcpp sensor_msgs interfaces tf2 tf2_ros geometry_msgs random_numbers)
 
 add_executable(light_sensors_simulator src/light_sensors_simulator.cpp)
 ament_target_dependencies(light_sensors_simulator rclcpp interfaces)
