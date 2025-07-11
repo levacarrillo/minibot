@@ -66,6 +66,8 @@ class LidarSimulator : public rclcpp::Node {
             std::shared_ptr<interfaces::srv::GetScan::Response> response
         ) {
             response->scan = laser_scan;
+            response->angle_min = this->angle_min;
+            response->angle_max = this->angle_max;
         }
 
         void make_transforms() {
