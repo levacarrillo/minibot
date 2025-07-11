@@ -68,6 +68,7 @@ class LidarSimulator : public rclcpp::Node {
             response->scan = laser_scan;
             response->angle_min = this->angle_min;
             response->angle_max = this->angle_max;
+            response->max_value = this->robot_radius + this->max_value;
         }
 
         void make_transforms() {

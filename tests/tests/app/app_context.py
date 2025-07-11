@@ -63,7 +63,7 @@ class AppContext:
             lidar_norm = []
             for i in range(len(response.scan)):
                 # print(f'i->{i} value->{response.scan[i]}')
-                lidar_norm.append(response.scan[i] / 4)
+                lidar_norm.append(response.scan[i] / 0.3)
                 if response.scan[i] > max_value:
                     max_value = response.scan[i]
             # print(f'max_value->{max_value}')
