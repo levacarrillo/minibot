@@ -89,7 +89,7 @@ class App(tk.Tk):
         label_distance = Label(movement_frame, text = 'Distance:')
         radian_entry   = Entry(movement_frame, state = 'readonly', textvariable = self.radian_var, width = 9)
         angle_entry    = Spinbox(movement_frame, from_ = -180, to = 180, increment = 1, textvariable = self.angle_var, width = 4)
-        distance_entry = Spinbox(movement_frame, from_ = -100, to=100, increment = 0.1, textvariable = self.distance_var, width = 7)
+        distance_entry = Spinbox(movement_frame, from_ = -100, to=100, increment = 0.5, textvariable = self.distance_var, width = 7)
 
         content        .grid(column = 0, row = 0, padx = 10, pady = 10)
 
@@ -131,6 +131,7 @@ class App(tk.Tk):
 
         d_spot_light = 80
         spot_light_radius = 10
+        d_sensor = 60
         self.canvas.delete('spot_lights')
         self.canvas.delete('laser')
 
@@ -151,10 +152,10 @@ class App(tk.Tk):
                 step_angle = -i * math.pi / len(lidar_readings)
                 # print(f'angle->{step_angle}')
 
-                self.canvas.create_line(self.canvas_center,
-                                        self.canvas_center,
-                                        self.canvas_center + d_spot_light * (lidar_readings[i] * math.cos(step_angle)),
-                                        self.canvas_center + d_spot_light * (lidar_readings[i] * math.sin(step_angle)),
+                self.canvas.create_line(self.canvas_center + self.robot_radius * math.cos(step_angle),
+                                        self.canvas_center + self.robot_radius * math.sin(step_angle),
+                                        self.canvas_center + d_sensor * (lidar_readings[i] * math.cos(step_angle)),
+                                        self.canvas_center + d_sensor * (lidar_readings[i] * math.sin(step_angle)),
                                         fill = 'red',
                                         tag = 'laser')
 
