@@ -13,3 +13,10 @@ class Service():
             return math.radians(int(degrees))
         except:
             return 0
+
+    def format_vel(self, vel):
+        try:
+            return float(vel)
+        except:
+            return 0.0
+

@@ -8,7 +8,7 @@ class AppContext:
         self.distance = None
 
         self.linear_vel  = 0.2
-        self.angular_vel = 0.1
+        self.angular_vel = 0.3
 
     def on_click_start(self):
         self.controller.send_pose(self.radians, self.distance)
@@ -29,6 +29,17 @@ class AppContext:
             self.controller.send_vel(-self.linear_vel, 0.0)
         else: 
             print(f'MOVEMENT {movement} DOES NOT RECOGNIZED')
+
+    def format_linear_vel(self, *args):
+        linear_vel = self.app.linear_vel_var.get().replace("m/s", "")
+        self.linear_vel = self.controller.format_vel(linear_vel)
+        self.app.linear_vel_var.set(linear_vel + "m/s")
+
+    def format_angular_vel(self, *args):
+        angular_vel = self.app.angular_vel_var.get().replace("rad/s", "")
+        self.angular_vel = self.controller.format_vel(angular_vel)
+        self.app.angular_vel_var.set(angular_vel + "rad/s")
+
 
     def format_angle(self, *args):
         degrees = self.app.angle_var.get().replace("°", "")

@@ -20,3 +20,6 @@ class Controller:
 
     def degrees_to_radians(self, degrees):
         return self.service.degrees_to_radians(degrees)
+
+    def format_vel(self, vel):
+        return self.service.format_vel(vel)
