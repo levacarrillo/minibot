@@ -38,11 +38,11 @@ class App(tk.Tk):
         movement_frame = LabelFrame(content, text = 'Move to pose')
 
         label_bot_id  = Label(main_frame, text = 'Minibot 2', font = ('arial', 11, 'bold'), bg = 'white')
-        label_battery = Label(main_frame, text = 'Battery level:')
+        label_battery = Label(main_frame, text = 'Battery:')
         label_percent = Label(main_frame, text = '80%')
         battery_bar   = ttk.Progressbar(main_frame, variable = progress_var, maximum = 100)
         battery_bar.step(80)
-        button_stop    = Button(main_frame, text = 'Stop',  command = context.on_click_stop)
+        button_params = Button(main_frame, text = 'Parameters', state = DISABLED, command = context.on_click_stop)
 
         canvas_center = 110
         canvas = Canvas(content, width = 2 * canvas_center, height = 2 * canvas_center)
@@ -103,14 +103,14 @@ class App(tk.Tk):
 
         content        .grid(column = 0, row = 0, padx = 10, pady = 10)
 
-        main_frame     .grid(column = 0, row = 0, sticky = (N, W), padx = (5, 0),   pady = (5, 5), columnspan = 6)
-        label_bot_id   .grid(column = 0, row = 0, sticky = (N, W), padx = (10, 10), pady = (15, 10))
-        label_battery  .grid(column = 2, row = 0, sticky = (N, W), padx = (10, 0),  pady = (15, 10))
-        label_percent  .grid(column = 3, row = 0, sticky = (N, W), padx = (5, 5),   pady = (15, 10))
-        battery_bar    .grid(column = 4, row = 0, sticky = (N, W), padx = (0, 10),  pady = (18, 10))
-        button_stop    .grid(column = 5, row = 0, sticky = (N, W), padx = (5, 10), pady = (10, 10))
+        main_frame     .grid(column = 0, row = 0, sticky = (N, W), padx = (5, 0),   pady = (5, 5), columnspan = 5)
+        label_bot_id   .grid(column = 0, row = 0, sticky = (N, W), padx = (10, 5), pady = (15, 10))
+        label_battery  .grid(column = 1, row = 0, sticky = (N, W), padx = (10, 0),  pady = (15, 10))
+        label_percent  .grid(column = 2, row = 0, sticky = (N, W), padx = (0, 5),   pady = (15, 10))
+        battery_bar    .grid(column = 3, row = 0, sticky = (N, W), padx = (0, 10),  pady = (18, 10))
+        button_params  .grid(column = 4, row = 0, sticky = (N, W), padx = (0, 10), pady = (10, 10))
 
-        canvas         .grid(column = 0, row = 1, sticky = (N, W), padx = (5, 0), pady = (15, 10))
+        canvas         .grid(column = 0, row = 1, sticky = (N, W), padx = (5, 0), pady = (10, 10))
 
         velocity_frame    .grid(column = 3, row = 1, sticky = (N, W), padx = (5, 5),  pady = (5, 5),  columnspan = 3)
         buton_arrow_left  .grid(column = 0, row = 1, sticky = (N, W), padx = (5, 0),  pady = (0, 0),  columnspan = 2)
