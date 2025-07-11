@@ -16,6 +16,7 @@ class App(tk.Tk):
             content    = content,
             controller = controller
         )
+        self.context = context
 
         progress_var      = IntVar()
         
@@ -44,45 +45,45 @@ class App(tk.Tk):
         battery_bar.step(80)
         button_params = Button(main_frame, text = 'Parameters', state = DISABLED, command = context.on_click_stop)
 
-        canvas_center = 110
-        canvas = Canvas(content, width = 2 * canvas_center, height = 2 * canvas_center)
+        self.canvas_center = 110
+        self.canvas = Canvas(content, width = 2 * self.canvas_center, height = 2 * self.canvas_center)
 
         head_cte = 10
-        d_spot_light = 80
-        robot_radius = 20
-        spot_light_radius = 10
+        # d_spot_light = 80
+        self.robot_radius = 20
+        # spot_light_radius = 10
 
-        for i in range(8):
-            x = canvas_center + d_spot_light * math.cos(i * math.pi / 4 - math.pi / 2)
-            y = canvas_center + d_spot_light * math.sin(i * math.pi / 4 - math.pi / 2)
-            canvas.create_oval( x - spot_light_radius,
-                                y - spot_light_radius,
-                                x + spot_light_radius,
-                                y + spot_light_radius,
-                                outline = 'black')
+        # for i in range(8):
+        #     x = self.canvas_center + d_spot_light * math.cos(i * math.pi / 4 - math.pi / 2)
+        #     y = self.canvas_center + d_spot_light * math.sin(i * math.pi / 4 - math.pi / 2)
+        #     canvas.create_oval( x - spot_light_radius,
+        #                         y - spot_light_radius,
+        #                         x + spot_light_radius,
+        #                         y + spot_light_radius,
+        #                         outline = 'black')
 
         # ROBOT BODY
-        canvas.create_oval( canvas_center - robot_radius,
-                            canvas_center - robot_radius,
-                            canvas_center + robot_radius,
-                            canvas_center + robot_radius)
+        self.canvas.create_oval( self.canvas_center - self.robot_radius,
+                            self.canvas_center - self.robot_radius,
+                            self.canvas_center + self.robot_radius,
+                            self.canvas_center + self.robot_radius)
 
         # HOKUYO
-        canvas.create_oval( canvas_center - robot_radius / 5,
-                            canvas_center - robot_radius / 5,
-                            canvas_center + robot_radius / 5,
-                            canvas_center + robot_radius / 5,
+        self.canvas.create_oval( self.canvas_center - self.robot_radius / 5,
+                            self.canvas_center - self.robot_radius / 5,
+                            self.canvas_center + self.robot_radius / 5,
+                            self.canvas_center + self.robot_radius / 5,
                             fill = 'black')
         # HEAD
         coords = [
-            canvas_center,
-            canvas_center - robot_radius,
-            canvas_center - robot_radius + 8,
-            canvas_center - head_cte,
-            canvas_center + robot_radius - 8,
-            canvas_center - head_cte]
+            self.canvas_center,
+            self.canvas_center - self.robot_radius,
+            self.canvas_center - self.robot_radius + 8,
+            self.canvas_center - head_cte,
+            self.canvas_center + self.robot_radius - 8,
+            self.canvas_center - head_cte]
 
-        canvas.create_polygon(coords)
+        self.canvas.create_polygon(coords)
 
         buton_arrow_left  = Button(velocity_frame, text = '<',  width = 2, command = lambda: context.move_robot('LEFT'))
         buton_arrow_right = Button(velocity_frame, text = '>',  width = 2, command = lambda: context.move_robot('RIGHT'))
@@ -110,7 +111,7 @@ class App(tk.Tk):
         battery_bar    .grid(column = 3, row = 0, sticky = (N, W), padx = (0, 10),  pady = (18, 10))
         button_params  .grid(column = 4, row = 0, sticky = (N, W), padx = (0, 10), pady = (10, 10))
 
-        canvas         .grid(column = 0, row = 1, sticky = (N, W), padx = (5, 0), pady = (10, 10))
+        self.canvas    .grid(column = 0, row = 1, sticky = (N, W), padx = (5, 0), pady = (10, 10))
 
         velocity_frame    .grid(column = 3, row = 1, sticky = (N, W), padx = (5, 5),  pady = (5, 5),  columnspan = 3)
         buton_arrow_left  .grid(column = 0, row = 1, sticky = (N, W), padx = (5, 0),  pady = (0, 0),  columnspan = 2)
@@ -132,6 +133,26 @@ class App(tk.Tk):
         distance_entry .grid(column = 4, row = 2, sticky = (N, W), padx = (5, 5), pady = (5, 10), columnspan = 1)
         button_start   .grid(column = 5, row = 2, sticky = (N, W), padx = (5, 5), pady = (0, 10))
 
+        self.loop_for_checking()
+
+    def loop_for_checking(self):
+        id_max = self.context.get_light_max_intensity()
+        d_spot_light = 80
+        spot_light_radius = 10
+        self.canvas.delete('spot_lights')
+        for i in range(8):
+            step_angle = - i * math.pi / 4 - math.pi / 2
+            x = self.canvas_center + d_spot_light * math.cos(step_angle)
+            y = self.canvas_center + d_spot_light * math.sin(step_angle)
+            light = 'yellow' if id_max == i else '#d9d9d9'
+            self.canvas.create_oval( x - spot_light_radius,
+                                y - spot_light_radius,
+                                x + spot_light_radius,
+                                y + spot_light_radius,
+                                fill = light,
+                                outline = 'black',
+                                tag = 'spot_lights')
+        self.after(50, self.loop_for_checking)
 
     def run(self):
         self.mainloop()

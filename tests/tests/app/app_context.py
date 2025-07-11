@@ -51,3 +51,8 @@ class AppContext:
         distance_cm = self.app.distance_var.get().replace("cm", "") + "cm"
         self.distance = self.controller.cm_to_m(distance_cm.replace("cm", ""))
         self.app.distance_var.set(distance_cm)
+
+    def get_light_max_intensity(self):
+        response = self.controller.get_light_readings()
+        return response.max_index if response else None
+        

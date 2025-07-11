@@ -3,15 +3,26 @@ from rclpy.node import Node
 from geometry_msgs.msg import Twist
 from rclpy.action import ActionClient
 from interfaces.action import GoToPose
+from interfaces.srv import GetLightReadings
 
 
 class Ros(Node):
     def __init__(self):
         super().__init__('tests_gui')
         self.get_logger().info('INITIALIZING GUI FOR TESTS NODE...')
+        self._goal_handle = None
         self.publisher_ = self.create_publisher(Twist, '/cmd_vel', 10)
         self._action_client = ActionClient(self, GoToPose, 'go_to_pose')
-        self._goal_handle = None
+        self.cli = self.create_client(GetLightReadings, 'get_light_readings')
+        while not self.cli.wait_for_service(timeout_sec = 1.0):
+            self.get_logger().warn('SERVICE get_light_readings NOT AVAILABLE.')
+
+        self.req = GetLightReadings.Request()
+
+    def get_light_readings(self):
+        self.future = self.cli.call_async(self.req)
+        rclpy.spin_until_future_complete(self, self.future, timeout_sec = 0.1)
+        return self.future.result()
 
     def pub_vel(self, linear, angular):
         msg = Twist()

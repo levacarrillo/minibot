@@ -23,3 +23,6 @@ class Controller:
 
     def format_vel(self, vel):
         return self.service.format_vel(vel)
+
+    def get_light_readings(self):
+        return self.ros.get_light_readings()
