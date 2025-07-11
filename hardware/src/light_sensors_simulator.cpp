@@ -42,11 +42,15 @@ private:
         const std::shared_ptr<interfaces::srv::GetLightReadings::Request> /*request*/,
         std::shared_ptr<interfaces::srv::GetLightReadings::Response> response
     ) {
-        response->readings = readings_;
-
         auto max_it = std::max_element(readings_.begin(), readings_.end());
-        response->max_value = *max_it;
-        response->max_index = static_cast<int32_t>(std::distance(readings_.begin(), max_it));
+        if (readings_.empty() || *max_it <= 0.0f) {
+            response->max_index = -1;
+            response->max_value = std::numeric_limits<float>::quiet_NaN();
+        }
+        else {
+            response->max_value = *max_it;
+            response->max_index = static_cast<int32_t>(std::distance(readings_.begin(), max_it));
+        }
     }
 
     std::array<float, 8> readings_;
