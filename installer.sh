@@ -18,6 +18,7 @@ APT_PACKAGES=(
   python3
   screenfetch
   ros-jazzy-xacro
+  ros-jazzy-random-numbers
 )
 
 echo "🔧 INSTALLING PACKAGES WITH APT..."
