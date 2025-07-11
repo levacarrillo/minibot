@@ -126,9 +126,14 @@ class App(tk.Tk):
 
     def loop_for_checking(self):
         id_max = self.context.get_light_max_intensity()
+        lidar_readings = self.context.get_lidar_readings()
+        # print(f'size->{lidar_readings}')
+
         d_spot_light = 80
         spot_light_radius = 10
         self.canvas.delete('spot_lights')
+        self.canvas.delete('laser')
+
         for i in range(8):
             step_angle = - i * math.pi / 4 - math.pi / 2
             x = self.canvas_center + d_spot_light * math.cos(step_angle)
@@ -141,6 +146,18 @@ class App(tk.Tk):
                                 fill = light,
                                 outline = 'black',
                                 tag = 'spot_lights')
+        # if lidar_readings:
+        #     for i in range(len(lidar_readings)):
+        #         step_angle = -i * math.pi / len(lidar_readings)
+        #         # print(f'angle->{step_angle}')
+
+        #         self.canvas.create_line(self.canvas_center,
+        #                                 self.canvas_center,
+        #                                 self.canvas_center + d_spot_light * (lidar_readings[i] * math.cos(step_angle)),
+        #                                 self.canvas_center + d_spot_light * (lidar_readings[i] * math.sin(step_angle)),
+        #                                 fill = 'red',
+        #                                 tag = 'laser')
+
         self.after(50, self.loop_for_checking)
 
     def run(self):

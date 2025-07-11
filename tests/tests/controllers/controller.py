@@ -26,3 +26,6 @@ class Controller:
 
     def get_light_readings(self):
         return self.ros.get_light_readings()
+
+    def get_lidar_readings(self):
+        return self.ros.get_lidar_readings()

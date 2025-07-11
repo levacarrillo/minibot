@@ -3,7 +3,7 @@ from rclpy.node import Node
 from geometry_msgs.msg import Twist
 from rclpy.action import ActionClient
 from interfaces.action import GoToPose
-from interfaces.srv import GetLightReadings
+from interfaces.srv import GetScan, GetLightReadings
 
 
 class Ros(Node):
@@ -13,19 +13,27 @@ class Ros(Node):
         self._goal_handle = None
         self.publisher_ = self.create_publisher(Twist, '/cmd_vel', 10)
         self._action_client = ActionClient(self, GoToPose, 'go_to_pose')
-        self.cli = self.create_client(GetLightReadings, 'get_light_readings')
-        if not self.cli.wait_for_service(timeout_sec = 3.0):
-            self.get_logger().warn('SERVICE get_light_readings NOT AVAILABLE.')
+        self.light_client = self.create_client(GetLightReadings, 'get_light_readings')
+        self.lidar_client = self.create_client(GetScan, 'get_scan')
 
-        self.req = GetLightReadings.Request()
+        if not self.light_client.wait_for_service(timeout_sec = 2.0):
+            self.get_logger().warn('SERVICE /get_light_readings NOT AVAILABLE.')
+        if not self.lidar_client.wait_for_service(timeout_sec = 2.0):
+            self.get_logger().warn('SERVICE /get_scan NOT AVAILABLE.')
+
+        self.light_req = GetLightReadings.Request()
+        self.lidar_req = GetScan.Request()
         self.light_readings = None
-        self.create_timer(0.5, self.request_light_readings)
+        self.lidar_readings = None
+        self.create_timer(0.5, self.request_services)
 
-    def request_light_readings(self):
-        self.future = self.cli.call_async(self.req)
-        self.future.add_done_callback(self.handle_response)
+    def request_services(self):
+        light_future = self.light_client.call_async(self.light_req)
+        lidar_future = self.lidar_client.call_async(self.lidar_req)
+        light_future.add_done_callback(self.handle_light_response)
+        lidar_future.add_done_callback(self.handle_lidar_response)
 
-    def handle_response(self, future):
+    def handle_light_response(self, future):
         try:
             response = future.result()
             self.light_readings = response
@@ -33,10 +41,19 @@ class Ros(Node):
             # self.get_logger().error(f'THERE WAS AN ERROR TO GET LIGHT READINGS: {e}')
             self.light_readings = None
 
-
+    def handle_lidar_response(self, future):
+        try:
+            response = future.result()
+            self.lidar_readings = response
+        except Exception as e:
+            # self.get_logger().error(f'THERE WAS AN ERROR TO GET LIDAR READINGS: {e}')
+            self.lidar_readings = None
 
     def get_light_readings(self):
         return self.light_readings
+
+    def get_lidar_readings(self):
+        return self.lidar_readings
 
     def pub_vel(self, linear, angular):
         msg = Twist()

@@ -55,4 +55,18 @@ class AppContext:
     def get_light_max_intensity(self):
         response = self.controller.get_light_readings()
         return response.max_index if response else None
-        
+
+    def get_lidar_readings(self):
+        response = self.controller.get_lidar_readings()
+        if response:
+            max_value = 0.0
+            lidar_norm = []
+            for i in range(len(response.scan)):
+                # print(f'i->{i} value->{response.scan[i]}')
+                lidar_norm.append(response.scan[i] / 4)
+                if response.scan[i] > max_value:
+                    max_value = response.scan[i]
+            # print(f'max_value->{max_value}')
+            return lidar_norm
+        else:
+            return None

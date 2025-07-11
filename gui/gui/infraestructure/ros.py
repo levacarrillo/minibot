@@ -24,10 +24,10 @@ class Ros(Node):
         self._action_server = ActionServer(self, GoToPose, 'go_to_pose',
                                                         self.execute_movement_callback)
 
-        while not self.get_params_cli.wait_for_service(timeout_sec=1.0):
+        while not self.get_params_cli.wait_for_service(timeout_sec = 1.0):
             self.get_logger().warn('SERVICE /get_params NOT AVAILABLE, WAITING AGAIN...')
 
-        while not self.set_params_cli.wait_for_service(timeout_sec=1.0):
+        while not self.set_params_cli.wait_for_service(timeout_sec = 1.0):
             self.get_logger().warn('SERVICE /set_params NOT AVAILABLE, WAITING AGAIN...')
 
     def update_params(self):
