@@ -49,18 +49,7 @@ class App(tk.Tk):
         self.canvas = Canvas(content, width = 2 * self.canvas_center, height = 2 * self.canvas_center)
 
         head_cte = 10
-        # d_spot_light = 80
         self.robot_radius = 20
-        # spot_light_radius = 10
-
-        # for i in range(8):
-        #     x = self.canvas_center + d_spot_light * math.cos(i * math.pi / 4 - math.pi / 2)
-        #     y = self.canvas_center + d_spot_light * math.sin(i * math.pi / 4 - math.pi / 2)
-        #     canvas.create_oval( x - spot_light_radius,
-        #                         y - spot_light_radius,
-        #                         x + spot_light_radius,
-        #                         y + spot_light_radius,
-        #                         outline = 'black')
 
         # ROBOT BODY
         self.canvas.create_oval( self.canvas_center - self.robot_radius,

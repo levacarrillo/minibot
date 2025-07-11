@@ -14,15 +14,29 @@ class Ros(Node):
         self.publisher_ = self.create_publisher(Twist, '/cmd_vel', 10)
         self._action_client = ActionClient(self, GoToPose, 'go_to_pose')
         self.cli = self.create_client(GetLightReadings, 'get_light_readings')
-        while not self.cli.wait_for_service(timeout_sec = 1.0):
+        if not self.cli.wait_for_service(timeout_sec = 3.0):
             self.get_logger().warn('SERVICE get_light_readings NOT AVAILABLE.')
 
         self.req = GetLightReadings.Request()
+        self.light_readings = None
+        self.create_timer(0.5, self.request_light_readings)
+
+    def request_light_readings(self):
+        self.future = self.cli.call_async(self.req)
+        self.future.add_done_callback(self.handle_response)
+
+    def handle_response(self, future):
+        try:
+            response = future.result()
+            self.light_readings = response
+        except Exception as e:
+            # self.get_logger().error(f'THERE WAS AN ERROR TO GET LIGHT READINGS: {e}')
+            self.light_readings = None
+
+
 
     def get_light_readings(self):
-        self.future = self.cli.call_async(self.req)
-        rclpy.spin_until_future_complete(self, self.future, timeout_sec = 0.1)
-        return self.future.result()
+        return self.light_readings
 
     def pub_vel(self, linear, angular):
         msg = Twist()
