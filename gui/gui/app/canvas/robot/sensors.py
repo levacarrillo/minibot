@@ -34,7 +34,7 @@ class Sensors:
 
         polygon_points = polygon_list[0]
         laser_readings = []
-        self.noise = context.sensor_noise
+        self.noise = self.context.sensor_noise
         for i in range(0, num_sensors):
             laser_vector = self.controller.polar_to_cartesian_point(lidar_max_value, step_angle)
             laser_max_point = self.controller.sum_vectors(robot_pose, laser_vector)
