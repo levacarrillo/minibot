@@ -1,14 +1,35 @@
+import math
+
+
 class AppContext:
     def __init__(self, app, content, controller):
         self.app        = app
         self.content    = content
         self.controller = controller
-
+        self.canvas = None
         self.radians  = None
         self.distance = None
 
         self.linear_vel  = 0.2
         self.angular_vel = 0.3
+
+        self.status   = None
+        self.draw_panel   = None
+        self.cmd_vel  = None
+        self.cmd_pose = None
+        self.behaviors = None
+
+
+    def set_draw_panel(self, draw_panel):
+        self.draw_panel = draw_panel
+        self.canvas = draw_panel.canvas
+
+    def set_cmd_vel(self, cmd_vel):
+        self.cmd_vel = cmd_vel
+
+    def set_cmd_pose(self, cmd_pose):
+        self.cmd_pose = cmd_pose
+
 
     def on_click_start(self):
         self.controller.send_pose(self.radians, self.distance)
@@ -42,15 +63,15 @@ class AppContext:
 
 
     def format_angle(self, *args):
-        degrees = self.app.angle_var.get().replace("°", "")
-        self.app.angle_var.set(degrees + "°")
+        degrees = self.cmd_pose.angle_var.get().replace("°", "")
+        self.cmd_pose.angle_var.set(degrees + "°")
         self.radians = self.controller.degrees_to_radians(degrees)
-        self.app.radian_var.set(f"{self.radians:.4f} rad")
+        self.cmd_pose.radian_var.set(f"{self.radians:.4f} rad")
 
     def format_distance(self, *args):
-        distance_cm = self.app.distance_var.get().replace("cm", "") + "cm"
+        distance_cm = self.cmd_pose.distance_var.get().replace("cm", "") + "cm"
         self.distance = self.controller.cm_to_m(distance_cm.replace("cm", ""))
-        self.app.distance_var.set(distance_cm)
+        self.cmd_pose.distance_var.set(distance_cm)
 
     def get_light_max_intensity(self):
         response = self.controller.get_light_readings()
@@ -70,3 +91,38 @@ class AppContext:
             return lidar_norm
         else:
             return None
+
+    def loop(self):
+        id_max = self.get_light_max_intensity()
+        lidar_readings = self.get_lidar_readings()
+
+        d_spot_light = 80
+        spot_light_radius = 10
+        d_sensor = 60
+        self.canvas.delete('spot_lights')
+        self.canvas.delete('laser')
+
+        for i in range(8):
+            step_angle = - i * math.pi / 4 - math.pi / 2
+            x = 110 + d_spot_light * math.cos(step_angle)
+            y = 110 + d_spot_light * math.sin(step_angle)
+            light = 'yellow' if id_max == i else '#d9d9d9'
+            self.canvas.create_oval( x - spot_light_radius,
+                                y - spot_light_radius,
+                                x + spot_light_radius,
+                                y + spot_light_radius,
+                                fill = light,
+                                outline = 'black',
+                                tag = 'spot_lights')
+        if lidar_readings:
+            for i in range(len(lidar_readings)):
+                step_angle = -i * math.pi / len(lidar_readings)
+                # print(f'angle->{step_angle}')
+
+                self.canvas.create_line(110 + self.robot_radius * math.cos(step_angle),
+                                        110 + self.robot_radius * math.sin(step_angle),
+                                        110 + d_sensor * (lidar_readings[i] * math.cos(step_angle)),
+                                        110 + d_sensor * (lidar_readings[i] * math.sin(step_angle)),
+                                        fill = 'red',
+                                        tag = 'laser')
+        self.app.after(50, self.loop)

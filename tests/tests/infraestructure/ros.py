@@ -16,9 +16,10 @@ class Ros(Node):
         self.light_client = self.create_client(GetLightReadings, 'get_light_readings')
         self.lidar_client = self.create_client(GetScan, 'get_scan')
 
-        if not self.light_client.wait_for_service(timeout_sec = 2.0):
+        self.delay = 0.2
+        if not self.light_client.wait_for_service(timeout_sec = self.delay):
             self.get_logger().warn('SERVICE /get_light_readings NOT AVAILABLE.')
-        if not self.lidar_client.wait_for_service(timeout_sec = 2.0):
+        if not self.lidar_client.wait_for_service(timeout_sec = self.delay):
             self.get_logger().warn('SERVICE /get_scan NOT AVAILABLE.')
 
         self.light_req = GetLightReadings.Request()
