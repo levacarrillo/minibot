@@ -9,6 +9,15 @@ class App(tk.Tk):
         super().__init__()
         self.title('Mobile Robot GUI for Tests')
 
+
+        menu_bar = Menu()
+        menu_file = Menu(menu_bar, tearoff = 0)
+        menu_file.add_checkbutton(label = 'Test movements')
+        menu_file.add_checkbutton(label = 'Test behaviors')
+        menu_file.add_command(label = 'Exit')
+        menu_bar.add_cascade(label = 'Options', menu = menu_file)
+        menu_bar.add_command(label = 'Help', command = self.quit)
+        self.config(menu = menu_bar)
         content = Frame(self)
 
         context = AppContext(
@@ -16,6 +25,8 @@ class App(tk.Tk):
             content    = content,
             controller = controller
         )
+
+
         self.context = context
 
         progress_var      = IntVar()
@@ -37,13 +48,14 @@ class App(tk.Tk):
         main_frame     = LabelFrame(content, text = 'Status')
         velocity_frame = LabelFrame(content, text = 'Move robot')  
         movement_frame = LabelFrame(content, text = 'Move to pose')
+        behavior_frame = LabelFrame(content, text = 'Behaviors')
 
-        label_bot_id  = Label(main_frame, text = 'Minibot 2', font = ('arial', 11, 'bold'), bg = 'white')
+        label_bot_id  = Label(main_frame, text = 'Minibot 2', font = ('arial', 11, 'bold'))
         label_battery = Label(main_frame, text = 'Battery:')
         label_percent = Label(main_frame, text = '80%')
         battery_bar   = ttk.Progressbar(main_frame, variable = progress_var, maximum = 100)
         battery_bar.step(80)
-        button_params = Button(main_frame, text = 'Parameters', state = DISABLED, command = context.on_click_stop)
+        button_reset  = Button(main_frame, text = 'Reset config')
 
         self.canvas_center = 110
         self.canvas = Canvas(content, width = 2 * self.canvas_center, height = 2 * self.canvas_center)
@@ -91,14 +103,21 @@ class App(tk.Tk):
         angle_entry    = Spinbox(movement_frame, from_ = -180, to = 180, increment = 1, textvariable = self.angle_var, width = 4)
         distance_entry = Spinbox(movement_frame, from_ = -100, to=100, increment = 0.5, textvariable = self.distance_var, width = 7)
 
+        label_behavior = Label(behavior_frame, text = 'Select:')
+        cb_behavior =    ttk.Combobox(behavior_frame, values = [], width = 14)
+        label_step = Label(behavior_frame, text = 'Step:')
+        label_curr_step = Label(behavior_frame, text = '123')
+        button_params = Button(behavior_frame, text = 'Params', command = self.open_params_window)
+        button_start_behavior = Button(behavior_frame, text = 'Start')
+
         content        .grid(column = 0, row = 0, padx = 10, pady = 10)
 
         main_frame     .grid(column = 0, row = 0, sticky = (N, W), padx = (5, 0),   pady = (5, 5), columnspan = 5)
         label_bot_id   .grid(column = 0, row = 0, sticky = (N, W), padx = (10, 5), pady = (15, 10))
         label_battery  .grid(column = 1, row = 0, sticky = (N, W), padx = (10, 0),  pady = (15, 10))
         label_percent  .grid(column = 2, row = 0, sticky = (N, W), padx = (0, 5),   pady = (15, 10))
-        battery_bar    .grid(column = 3, row = 0, sticky = (N, W), padx = (0, 10),  pady = (18, 10))
-        button_params  .grid(column = 4, row = 0, sticky = (N, W), padx = (0, 10), pady = (10, 10))
+        battery_bar    .grid(column = 3, row = 0, sticky = (N, W), padx = (0, 7),  pady = (18, 10))
+        button_reset   .grid(column = 4, row = 0, sticky = (N, W), padx = (0, 10),  pady = (5, 10), columnspan = 2)
 
         self.canvas    .grid(column = 0, row = 1, sticky = (N, W), padx = (5, 0), pady = (10, 10))
 
@@ -121,6 +140,15 @@ class App(tk.Tk):
         label_distance .grid(column = 3, row = 2, sticky = (N, W), padx = (5, 0), pady = (5, 10), columnspan = 1)
         distance_entry .grid(column = 4, row = 2, sticky = (N, W), padx = (5, 5), pady = (5, 10), columnspan = 1)
         button_start   .grid(column = 5, row = 2, sticky = (N, W), padx = (5, 5), pady = (0, 10))
+
+        behavior_frame .grid(column = 0, row = 3, sticky = (N, W), padx = (5, 5), pady = (5, 5), columnspan = 5)
+
+        label_behavior .grid(column = 0, row = 0, sticky = (N, W), padx = (5, 0), pady = (5, 10), columnspan = 1)
+        cb_behavior    .grid(column = 1, row = 0, sticky = (N, W), padx = (5, 0), pady = (5, 10), columnspan = 1)
+        label_step     .grid(column = 2, row = 0, sticky = (N, W), padx = (5, 0), pady = (15, 0), columnspan = 1)
+        label_curr_step     .grid(column = 3, row = 0, sticky = (N, W), padx = (5, 0), columnspan = 1)
+        button_params  .grid(column = 4, row = 0, sticky = (N, W), padx = (5, 0), columnspan = 1)
+        button_start_behavior.grid(column = 5, row = 0, sticky = (N, W), padx = (5, 5), columnspan = 1)
 
         self.loop_for_checking()
 
@@ -160,6 +188,51 @@ class App(tk.Tk):
                                         tag = 'laser')
 
         self.after(50, self.loop_for_checking)
+
+    def open_params_window(self):
+        window = tk.Toplevel(self)
+        window.title('Parameters used for Motion Planner')
+
+        params_frame = LabelFrame(window, text = 'Parameters')
+        label_linear_vel        = Label(params_frame, text = 'Linear velocity:')
+        label_angular_vel       = Label(params_frame, text = 'Angular velocity:')
+        label_max_advance       = Label(params_frame, text = 'Max advance:')
+        label_turn_angle        = Label(params_frame, text = 'Turn angle:')
+        label_light_threshold   = Label(params_frame, text = 'Light threshold:')
+        label_laser_threhold    = Label(params_frame, text = 'Laser threshold:')
+        label_max_steps         = Label(params_frame, text = 'Max steps:')
+
+        sp_linear_vel  = Spinbox(params_frame, from_ = 0.0, to = 2.0, increment = 0.01, textvariable = self.linear_vel_var,  width = 8)
+        sp_angular_vel = Spinbox(params_frame, from_ = 0.0, to = 2.0, increment = 0.01, textvariable = self.angular_vel_var, width = 8)
+        sp_max_advance = Spinbox(params_frame, from_ = -100, to=100, increment = 0.5, textvariable = self.distance_var, width = 7)
+        sp_turn_angle  = Spinbox(params_frame, from_ = -180, to = 180, increment = 1, textvariable = self.angle_var, width = 4)
+        sp_light_threshold = Spinbox(params_frame, from_ = 0, to = 10, increment = 0.01, width = 4)
+        sp_laser_threshold = Spinbox(params_frame, from_ = 0, to = 10, increment = 0.01, width = 4)
+        sp_max_steps  = Spinbox(params_frame, from_ = 0, to = 150, increment = 1, width = 4)
+
+        button_exit = Button(params_frame, text = 'Close', command = window.destroy)
+        buton_set  = Button(params_frame, text = 'Set')
+
+        params_frame            .grid(column = 0, row = 0, sticky = (N, W), padx = (10, 10), pady = (10, 10), columnspan = 1)
+        label_linear_vel        .grid(column = 0, row = 0, sticky = (N, W), padx = (5, 0), pady = (15, 0), columnspan = 1)
+        label_angular_vel       .grid(column = 0, row = 1, sticky = (N, W), padx = (5, 0), pady = (15, 0), columnspan = 1)
+        label_light_threshold   .grid(column = 0, row = 2, sticky = (N, W), padx = (5, 0), pady = (15, 0), columnspan = 1)
+        label_laser_threhold    .grid(column = 0, row = 3, sticky = (N, W), padx = (5, 0), pady = (15, 0), columnspan = 1)
+        label_max_advance       .grid(column = 2, row = 0, sticky = (N, W), padx = (5, 0), pady = (15, 0), columnspan = 1)
+        label_turn_angle        .grid(column = 2, row = 1, sticky = (N, W), padx = (5, 0), pady = (15, 0), columnspan = 1)
+        label_max_steps         .grid(column = 2, row = 2, sticky = (N, W), padx = (5, 0), pady = (15, 0), columnspan = 1)
+
+        sp_linear_vel           .grid(column = 1, row = 0, sticky = (N, W), padx = (5, 5), pady = (15, 0), columnspan = 1)
+        sp_angular_vel          .grid(column = 1, row = 1, sticky = (N, W), padx = (5, 5), pady = (15, 0), columnspan = 1)
+        sp_light_threshold      .grid(column = 1, row = 2, sticky = (N, W), padx = (5, 5), pady = (15, 0), columnspan = 1)
+        sp_laser_threshold      .grid(column = 1, row = 3, sticky = (N, W), padx = (5, 5), pady = (15, 0), columnspan = 1)
+        sp_max_advance          .grid(column = 3, row = 0, sticky = (N, W), padx = (5, 5), pady = (15, 0), columnspan = 1)
+        sp_turn_angle           .grid(column = 3, row = 1, sticky = (N, W), padx = (5, 5), pady = (15, 0), columnspan = 1)
+        sp_max_steps            .grid(column = 3, row = 2, sticky = (N, W), padx = (5, 5), pady = (15, 0), columnspan = 1)
+
+        button_exit             .grid(column = 1, row = 7, sticky = (N, E), padx = (5, 0), pady = (15, 10), columnspan = 1)
+        buton_set              .grid(column = 2, row = 7, sticky = (N, W), padx = (5, 0), pady = (15, 10), columnspan = 1)
+
 
     def run(self):
         self.mainloop()
