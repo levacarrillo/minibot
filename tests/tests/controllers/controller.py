@@ -24,6 +24,9 @@ class Controller:
     def format_vel(self, vel):
         return self.service.format_vel(vel)
 
+    def get_spot_light_coords(self, id, angle_min, canvas_edge):
+        return self.service.get_spot_light_coords(id, angle_min, canvas_edge)
+
     def get_light_readings(self):
         return self.ros.get_light_readings()
 
