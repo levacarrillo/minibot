@@ -116,28 +116,18 @@ class AppContext:
         return coords
 
     def loop(self):
+        self.draw_panel.clear()
         id_max = self.get_light_max_intensity()
-        # lidar_readings = self.get_lidar_readings()
-
-        d_sensor = 60
-        self.canvas.delete('spot_lights')
-        self.canvas.delete('laser')
+        lidar_readings = self.get_lidar_readings()
         
-
         for i in range(8):
             coords = self.controller.get_spot_light_coords(i, -1.5708, self.draw_panel.edge)
-            light = 'yellow' if id_max == i else '#d9d9d9'    
+            light = 'yellow' if id_max == i else None   
             self.draw_panel.plot_spot_light(coords, color = light)
 
-        # if lidar_readings:
-        #     for i in range(len(lidar_readings)):
-        #         step_angle = -i * math.pi / len(lidar_readings)
-        #         # print(f'angle->{step_angle}')
+        if lidar_readings:
+            for i in range(len(lidar_readings)):
+                coords = self.controller.get_laser_coords(i, lidar_readings[i], len(lidar_readings), self.draw_panel.edge)
+                self.draw_panel.plot_laser(coords)
 
-        #         self.canvas.create_line(110 + self.robot_radius * math.cos(step_angle),
-        #                                 110 + self.robot_radius * math.sin(step_angle),
-        #                                 110 + d_sensor * (lidar_readings[i] * math.cos(step_angle)),
-        #                                 110 + d_sensor * (lidar_readings[i] * math.sin(step_angle)),
-        #                                 fill = 'red',
-        #                                 tag = 'laser')
         self.app.after(50, self.loop)

@@ -27,6 +27,9 @@ class Controller:
     def get_spot_light_coords(self, id, angle_min, canvas_edge):
         return self.service.get_spot_light_coords(id, angle_min, canvas_edge)
 
+    def get_laser_coords(self, id, reading, num_readings, edge):
+        return self.service.get_laser_coords(id, reading, num_readings, edge)
+
     def get_light_readings(self):
         return self.ros.get_light_readings()
 
