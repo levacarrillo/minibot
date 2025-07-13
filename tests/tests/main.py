@@ -2,14 +2,14 @@ import rclpy
 import threading
 from tests.app.app import App
 from tests.infraestructure.ros import Ros
-from tests.controllers.controller import Controller
+from tests.domain.service import Service
 
 
 def main(args = None):
     rclpy.init(args = args)
     node = Ros()
-    controller = Controller(node)
-    app = App(controller)
+    service = Service()
+    app = App(service, node)
 
     def ros_spin():
         while True:

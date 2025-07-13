@@ -8,16 +8,17 @@ from tests.app.components.draw_panel import *
 
 
 class App(Tk):
-    def __init__(self, controller):
+    def __init__(self, service, node):
         super().__init__()
         self.title('Mobile Robot GUI for testing')
 
         content = Frame(self).place()
 
         context = AppContext(
-            app        = self,
-            content    = content,
-            controller = controller
+            app     = self,
+            content = content,
+            service = service,
+            ros     = node
         )
 
         StatusPanel(context)

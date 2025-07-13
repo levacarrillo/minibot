@@ -1,8 +1,10 @@
 class AppContext:
-    def __init__(self, app, content, controller):
-        self.app        = app
-        self.content    = content
-        self.controller = controller
+    def __init__(self, app, content, service, ros):
+        self.app     = app
+        self.content = content
+        self.service = service
+        self.ros     = ros
+
         self.canvas = None
         self.radians  = None
         self.distance = None
@@ -29,62 +31,61 @@ class AppContext:
 
 
     def on_click_start(self):
-        self.controller.send_pose(self.radians, self.distance)
+        self.ros.send_goal(self.radians, self.distance)
 
     def on_click_stop(self):
-        self.controller.cancel_movement()
+        self.ros.cancel_goal()
 
     def move_robot(self, movement):
         if movement == 'LEFT':
-            self.controller.send_vel(0.0,  self.angular_vel)
+            self.ros.pub_vel(0.0,  self.angular_vel)
         elif movement == 'RIGHT':
-            self.controller.send_vel(0.0, -self.angular_vel)
+            self.ros.pub_vel(0.0, -self.angular_vel)
         elif movement == 'STOP':
-            self.controller.send_vel(0.0, 0.0)
+            self.ros.pub_vel(0.0, 0.0)
         elif movement == 'FORWARD':
-            self.controller.send_vel(self.linear_vel, 0.0)
+            self.ros.pub_vel(self.linear_vel, 0.0)
         elif movement == 'BACKWARD':
-            self.controller.send_vel(-self.linear_vel, 0.0)
+            self.ros.pub_vel(-self.linear_vel, 0.0)
         else: 
             print(f'MOVEMENT {movement} DOES NOT RECOGNIZED')
 
     def format_linear_vel(self, *args):
         linear_vel = self.app.linear_vel_var.get().replace("m/s", "")
-        self.linear_vel = self.controller.format_vel(linear_vel)
+        self.linear_vel = self.service.format_vel(vel)
         self.app.linear_vel_var.set(linear_vel + "m/s")
 
     def format_angular_vel(self, *args):
         angular_vel = self.app.angular_vel_var.get().replace("rad/s", "")
-        self.angular_vel = self.controller.format_vel(angular_vel)
+        self.angular_vel = self.service.format_vel(angular_vel)
         self.app.angular_vel_var.set(angular_vel + "rad/s")
 
 
     def format_angle(self, *args):
         degrees = self.cmd_pose.angle_var.get().replace("°", "")
         self.cmd_pose.angle_var.set(degrees + "°")
-        self.radians = self.controller.degrees_to_radians(degrees)
+        self.radians = self.service.degrees_to_radians(degrees)
         self.cmd_pose.radian_var.set(f"{self.radians:.4f} rad")
 
     def format_distance(self, *args):
         distance_cm = self.cmd_pose.distance_var.get().replace("cm", "") + "cm"
-        self.distance = self.controller.cm_to_m(distance_cm.replace("cm", ""))
+        self.distance = self.service.cm_to_m(distance_cm.replace("cm", ""))
         self.cmd_pose.distance_var.set(distance_cm)
 
     def get_light_max_intensity(self):
-        response = self.controller.get_light_readings()
+        response = self.ros.get_light_readings()
         return response.max_index if response else None
 
     def get_lidar_readings(self):
-        response = self.controller.get_lidar_readings()
+        response = self.ros.get_lidar_readings()
         if response:
             max_value = 0.0
             lidar_norm = []
             for i in range(len(response.scan)):
-                # print(f'i->{i} value->{response.scan[i]}')
                 lidar_norm.append(response.scan[i] / 0.3)
                 if response.scan[i] > max_value:
                     max_value = response.scan[i]
-            # print(f'max_value->{max_value}')
+
             return lidar_norm
         else:
             return None
@@ -121,13 +122,13 @@ class AppContext:
         lidar_readings = self.get_lidar_readings()
         
         for i in range(8):
-            coords = self.controller.get_spot_light_coords(i, -1.5708, self.draw_panel.edge)
+            coords = self.service.get_spot_light_coords(i, -1.5708, self.draw_panel.edge)
             light = 'yellow' if id_max == i else None   
             self.draw_panel.plot_spot_light(coords, color = light)
 
         if lidar_readings:
             for i in range(len(lidar_readings)):
-                coords = self.controller.get_laser_coords(i, lidar_readings[i], len(lidar_readings), self.draw_panel.edge)
+                coords = self.service.get_laser_coords(i, lidar_readings[i], len(lidar_readings), self.draw_panel.edge)
                 self.draw_panel.plot_laser(coords)
 
         self.app.after(50, self.loop)
