@@ -4,11 +4,12 @@ from tkinter import *
 class DrawPanel:
     def __init__(self, context):
         self.edge = 220
-        self.canvas = Canvas(context.content, width = self.edge, height = self.edge)
+        self.canvas = Canvas(context.content, width  = self.edge, 
+                                              height = self.edge)
 
         # ROBOT BODY
-        self.canvas.create_oval(  *context.get_body_coords(self.edge))
         self.canvas.create_polygon(context.get_head_coords(self.edge))
+        self.canvas.create_oval(  *context.get_body_coords(self.edge))
         self.canvas.create_oval(   context.get_hokuyo_coords(self.edge),
                                                         fill = 'black')
 
