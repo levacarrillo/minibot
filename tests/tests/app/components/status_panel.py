@@ -17,3 +17,5 @@ class StatusPanel:
         self.label_battery .grid(column = 1, row = 0, sticky = (N, W), padx = (10, 5),  pady = (15, 10), columnspan = 2)
         self.battery_bar   .grid(column = 4, row = 0, sticky = (N, W), padx = (0, 8),  pady = (18, 10))
         self.button_reset  .grid(column = 5, row = 0, sticky = (N, W), padx = (0, 10),  pady = (10, 10), columnspan = 2)
+
+        context.set_status_panel(self)

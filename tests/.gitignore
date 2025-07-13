@@ -14,8 +14,7 @@
 !tests/app/*.py
 !tests/app/components/
 !tests/app/components/*.py
-!tests/controllers/
-!tests/controllers/*.py
+
 !tests/domain/
 !tests/domain/*.py
 !tests/infraestructure/

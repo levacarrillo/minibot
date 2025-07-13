@@ -30,7 +30,7 @@ class CmdVelPanel:
         self.label_angular_vel .grid(column = 0, row = 4, sticky = (N, W), padx = (5, 0), pady = (5, 10),  columnspan = 3)
         self.angular_vel_entry .grid(column = 3, row = 4, sticky = (N, W), padx = (5, 10), pady = (5, 10), columnspan = 3)
 
-        context.set_cmd_vel(self)
+        context.set_cmd_vel_panel(self)
 
         self.linear_vel_var  .trace_add('write', context.format_linear_vel)
         self.angular_vel_var .trace_add('write', context.format_angular_vel)

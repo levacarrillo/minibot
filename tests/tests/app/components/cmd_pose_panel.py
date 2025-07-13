@@ -25,7 +25,7 @@ class CmdPosePanel:
         self.distance_entry  .grid(column = 4, row = 2, sticky = (N, W), padx = (5, 5), pady = (5, 10), columnspan = 1)
         self.button_start    .grid(column = 5, row = 2, sticky = (N, W), padx = (5, 5), pady = (0, 10))
 
-        context.set_cmd_pose(self)
+        context.set_cmd_pose_panel(self)
 
         self.angle_var     .trace_add('write', context.format_angle)
         self.distance_var  .trace_add('write', context.format_distance)

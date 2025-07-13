@@ -26,4 +26,3 @@ class DrawPanel:
     def clear(self):
         self.canvas.delete('laser')
         self.canvas.delete('spot_lights')
-

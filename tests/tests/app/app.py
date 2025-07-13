@@ -1,10 +1,10 @@
 from tkinter import Tk, Frame
 from tests.app.app_context import AppContext
-from tests.app.components.status_panel import *
-from tests.app.components.behaviors_panel import *
-from tests.app.components.cmd_pose_panel import *
-from tests.app.components.cmd_vel_panel import *
 from tests.app.components.draw_panel import *
+from tests.app.components.status_panel import *
+from tests.app.components.cmd_vel_panel import *
+from tests.app.components.cmd_pose_panel import *
+from tests.app.components.behaviors_panel import *
 
 
 class App(Tk):
