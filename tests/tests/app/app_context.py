@@ -79,15 +79,14 @@ class AppContext:
     def on_click_stop(self):
         self.ros.cancel_goal()
 
-    def get_head_coords(self, edge):
-        return self.service.get_head_coords(edge)
+    def get_head_coords(self, width):
+        return self.service.get_head_coords(width)
 
-    def get_body_coords(self, edge):
-        return self.service.get_body_coords(edge)
+    def get_body_coords(self, width):
+        return self.service.get_body_coords(width)
 
-    def get_hokuyo_coords(self, edge):
-        return self.service.get_hokuyo_coords(edge)
-
+    def get_hokuyo_coords(self, width):
+        return self.service.get_hokuyo_coords(width)
 
     def get_lights_max_intensity(self):
         return self.service.validate_lights_response(self.ros.get_light_readings())
@@ -97,18 +96,17 @@ class AppContext:
 
     def loop(self):
         id_max = self.get_lights_max_intensity()
-        angle_range, lidar_readings, num_readings = self.get_lidar_readings()
-        
+        lidar_params = self.get_lidar_readings()
+        width = self.draw_panel.width
         self.draw_panel.clear()
 
         for i in range(8):
-            coords = self.service.get_spot_light_coords(i, self.draw_panel.edge)
+            coords = self.service.get_spot_light_coords(i, width)
             light = 'yellow' if id_max == i else None   
             self.draw_panel.plot_spot_light(coords, color = light)
 
-        if num_readings:
-            for i in range(num_readings):
-                coords = self.service.get_laser_coords(i, lidar_readings[i], num_readings, self.draw_panel.edge)
-                self.draw_panel.plot_laser(coords)
+        for i in range(lidar_params['num_readings']):
+            coords = self.service.get_laser_coords(i, lidar_params, width)
+            self.draw_panel.plot_laser(coords)
 
         self.app.after(50, self.loop)

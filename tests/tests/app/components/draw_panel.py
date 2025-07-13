@@ -3,14 +3,14 @@ from tkinter import *
 
 class DrawPanel:
     def __init__(self, context):
-        self.edge = 220
-        self.canvas = Canvas(context.content, width  = self.edge, 
-                                              height = self.edge)
+        self.width = 220
+        self.canvas = Canvas(context.content, width  = self.width, 
+                                              height = self.width)
 
         # ROBOT BODY
-        self.canvas.create_polygon(context.get_head_coords(self.edge))
-        self.canvas.create_oval(  *context.get_body_coords(self.edge))
-        self.canvas.create_oval(   context.get_hokuyo_coords(self.edge),
+        self.canvas.create_polygon(context.get_head_coords(self.width))
+        self.canvas.create_oval(  *context.get_body_coords(self.width))
+        self.canvas.create_oval(   context.get_hokuyo_coords(self.width),
                                                         fill = 'black')
 
         self.canvas.grid(column = 0, row = 1, sticky = (N, W),
