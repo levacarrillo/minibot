@@ -5,25 +5,27 @@ class AppContext:
         self.service = service
         self.ros     = ros
 
-        self.canvas   = None
-        self.radians  = None
-        self.distance = None
-
-        self.linear_vel  = None
-        self.angular_vel = None
-
+        # FRAMES
         self.status_panel    = None
         self.draw_panel      = None
         self.cmd_vel_panel   = None
         self.cmd_pose_panel  = None
         self.behaviors_panel = None
 
+
+        # VELOCITY COMMANDS
+        self.linear_vel  = None
+        self.angular_vel = None
+
+        # POSITION COMMANDS
+        self.radians  = None
+        self.distance = None
+
     def set_status_panel(self, status_panel):
         self.status_panel = status_panel
 
     def set_draw_panel(self, draw_panel):
         self.draw_panel = draw_panel
-        self.canvas = draw_panel.canvas
 
     def set_cmd_vel_panel(self, cmd_vel_panel):
         self.cmd_vel_panel = cmd_vel_panel
