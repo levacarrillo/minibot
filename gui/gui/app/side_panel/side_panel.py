@@ -1,8 +1,8 @@
 from tkinter import *
-from gui.app.side_panel.environment_section import EnvironmentSection
-from gui.app.side_panel.sensors_section import SensorsSection
-from gui.app.side_panel.robot_section import RobotSection
-from gui.app.side_panel.buttons_section import ButtonsSection
+from gui.app.side_panel.robot_section import *
+from gui.app.side_panel.sensors_section import *
+from gui.app.side_panel.buttons_section import *
+from gui.app.side_panel.environment_section import *
 
 
 class SidePanel:

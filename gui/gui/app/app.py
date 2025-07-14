@@ -1,10 +1,10 @@
 import tkinter as tk
 from tkinter import Frame, BOTH
+from gui.config.colors import *
+from gui.app.menu.menu_bar import *
+from gui.app.canvas.canvas_panel import *
 from gui.app.app_context import AppContext
-from gui.config.colors import colors
-from gui.app.menu.menu_bar import MenuBar
-from gui.app.canvas.canvas_panel import CanvasPanel
-from gui.app.side_panel.side_panel import SidePanel
+from gui.app.side_panel.side_panel import *
 
 
 class App(tk.Tk):
