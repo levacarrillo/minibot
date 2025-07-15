@@ -97,6 +97,10 @@ class AppContext:
         return self.service.norm_lidar_response(self.ros.get_lidar_readings())
 
     def loop(self):
+        battery_charge = self.ros.get_battery_charge()
+        self.status_panel.progress_var.set(battery_charge)
+        self.status_panel.robot_name_var.set(self.ros.get_robot_name())
+        self.status_panel.battery_percentage_var.set(f'Battery: {battery_charge}%')
         id_max = self.get_lights_max_intensity()
         lidar_params = self.get_lidar_readings()
         width = self.draw_panel.width

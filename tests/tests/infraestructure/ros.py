@@ -1,9 +1,10 @@
 import rclpy
 from rclpy.node import Node
+from interfaces.msg import *
+from interfaces.srv import *
+from interfaces.action import *
 from geometry_msgs.msg import Twist
 from rclpy.action import ActionClient
-from interfaces.action import GoToPose
-from interfaces.srv import GetScan, GetLightReadings
 
 
 class Ros(Node):
@@ -15,6 +16,8 @@ class Ros(Node):
         self._action_client = ActionClient(self, GoToPose, 'go_to_pose')
         self.light_client = self.create_client(GetLightReadings, 'get_light_readings')
         self.lidar_client = self.create_client(GetScan, 'get_scan')
+        self.subscription = self.create_subscription(RobotStatus, 'robot_status', self.listener_callback, 10)
+        self.subscription
 
         self.delay = 0.2
         if not self.light_client.wait_for_service(timeout_sec = self.delay):
@@ -26,7 +29,19 @@ class Ros(Node):
         self.lidar_req = GetScan.Request()
         self.light_readings = None
         self.lidar_readings = None
+        self.robot_name = None
+        self.battery_charge_percentage = None
         self.create_timer(0.5, self.request_services)
+
+    def listener_callback(self, msg):
+        self.robot_name = msg.robot_name
+        self.battery_charge_percentage = msg.battery_charge_percentage
+    
+    def get_robot_name(self):
+        return self.robot_name
+
+    def get_battery_charge(self):
+        return self.battery_charge_percentage
 
     def request_services(self):
         light_future = self.light_client.call_async(self.light_req)

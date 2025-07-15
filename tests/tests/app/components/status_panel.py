@@ -5,9 +5,12 @@ from tkinter import ttk
 class StatusPanel:
     def __init__(self, context):
         self.progress_var  = IntVar(value = 100)
+        self.robot_name_var = StringVar(value = 'No robot')
+        self.battery_percentage_var = StringVar(value = f'Battery: {self.progress_var.get()}%')
+
         frame         = LabelFrame(context.content, text = 'Status')
-        label_bot_id  = Label(frame, text = 'Minibot 2', font = ('arial', 11, 'bold'))
-        label_battery = Label(frame, text = f'Battery: {self.progress_var.get()}%')
+        label_bot_id  = Label(frame, textvariable = self.robot_name_var, font = ('arial', 11, 'bold'))
+        label_battery = Label(frame, textvariable = self.battery_percentage_var)
         battery_bar   = ttk.Progressbar(frame, variable = self.progress_var, maximum = 100)
         button_reset  = Button(frame, text = 'Reset config')
 
