@@ -1,10 +1,13 @@
 #include "rclcpp/rclcpp.hpp"
 #include "rclcpp_action/rclcpp_action.hpp"
+#include "interfaces/srv/set_vel_params.hpp"
 #include "interfaces/action/go_to_pose.hpp"
 #include "geometry_msgs/msg/twist.hpp"
 
+
 using namespace std::placeholders;
 using GoToPose = interfaces::action::GoToPose;
+using SetVelParams = interfaces::srv::SetVelParams;
 using GoalHandleGoToPose = rclcpp_action::ServerGoalHandle<GoToPose>;
 
 class PoseCommander : public rclcpp::Node {
@@ -15,7 +18,10 @@ public:
         this->declare_parameter("linear_velocity", this->linear_velocity);
         this->declare_parameter("angular_velocity", this->angular_velocity);
         cmd_vel_pub_ = this->create_publisher<geometry_msgs::msg::Twist>("/cmd_vel", 10);
-
+        service_ = this->create_service<interfaces::srv::SetVelParams>(
+            "set_vel_params",
+            std::bind(&PoseCommander::handler_velocity, this, _1, _2)
+        );
         action_server_ = rclcpp_action::create_server<GoToPose>(
             this,
             "go_to_pose",
@@ -28,12 +34,21 @@ public:
 private:
     float linear_velocity;
     float angular_velocity;
-    rclcpp::Publisher<geometry_msgs::msg::Twist>::SharedPtr cmd_vel_pub_;
     rclcpp_action::Server<GoToPose>::SharedPtr action_server_;
+    rclcpp::Service<SetVelParams>::SharedPtr service_;
+    rclcpp::Publisher<geometry_msgs::msg::Twist>::SharedPtr cmd_vel_pub_;
+
+    void handler_velocity(const std::shared_ptr<interfaces::srv::SetVelParams::Request> request,
+        std::shared_ptr<interfaces::srv::SetVelParams::Response> response)
+    {
+        this->set_parameter(rclcpp::Parameter("linear_velocity",  request->linear_velocity));
+        this->set_parameter(rclcpp::Parameter("angular_velocity", request->angular_velocity));
+        response->success = true;
+    }
 
     rclcpp_action::GoalResponse handle_goal(
         const rclcpp_action::GoalUUID &/*uuid*/,
-        std::shared_ptr<const GoToPose::Goal> goal) {
+        std::shared_ptr<const GoToPose::Goal> /* goal */) {
         // RCLCPP_INFO(this->get_logger(), "GOAL RECEIVED: TWIST->%.2f rad, ADVANCE->%.2f m", goal->angle, goal->distance);
         return rclcpp_action::GoalResponse::ACCEPT_AND_EXECUTE;
     }
@@ -53,6 +68,8 @@ private:
         this->linear_velocity  = this->get_parameter("linear_velocity").as_double();
         this->angular_velocity = this->get_parameter("angular_velocity").as_double();
 
+        RCLCPP_INFO(this->get_logger(), "MOVING WITH: linear_velocity->%f and angular_velocity->%f", 
+                                                        this->linear_velocity, this->angular_velocity);
         auto feedback = std::make_shared<GoToPose::Feedback>();
         auto result = std::make_shared<GoToPose::Result>();
 
