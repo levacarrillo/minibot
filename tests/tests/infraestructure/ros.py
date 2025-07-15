@@ -16,19 +16,26 @@ class Ros(Node):
         self._action_client = ActionClient(self, GoToPose, 'go_to_pose')
         self.light_client = self.create_client(GetLightReadings, 'get_light_readings')
         self.lidar_client = self.create_client(GetScan, 'get_scan')
+        self.mp_client    = self.create_client(GetParams, 'get_params')
         self.subscription = self.create_subscription(RobotStatus, 'robot_status', self.listener_callback, 10)
         self.subscription
 
-        self.delay = 0.2
-        if not self.light_client.wait_for_service(timeout_sec = self.delay):
+        delay = 0.2
+        if not self.light_client.wait_for_service(timeout_sec = delay):
             self.get_logger().warn('SERVICE /get_light_readings NOT AVAILABLE.')
-        if not self.lidar_client.wait_for_service(timeout_sec = self.delay):
+        if not self.lidar_client.wait_for_service(timeout_sec = delay):
             self.get_logger().warn('SERVICE /get_scan NOT AVAILABLE.')
+        if not self.mp_client.wait_for_service(timeout_sec = delay):
+            self.get_logger().warn('SERVICE /get_params NOT AVAILABLE.')
 
         self.light_req = GetLightReadings.Request()
         self.lidar_req = GetScan.Request()
+        self.mp_req    = GetParams.Request()
+
         self.light_readings = None
         self.lidar_readings = None
+        self.mp_params = None
+
         self.robot_name = None
         self.battery_charge_percentage = None
         self.create_timer(0.5, self.request_services)
@@ -46,8 +53,11 @@ class Ros(Node):
     def request_services(self):
         light_future = self.light_client.call_async(self.light_req)
         lidar_future = self.lidar_client.call_async(self.lidar_req)
+        mp_future    = self.mp_client.call_async(self.mp_req)
+
         light_future.add_done_callback(self.handle_light_response)
         lidar_future.add_done_callback(self.handle_lidar_response)
+        mp_future.add_done_callback(self.handle_mp_response)
 
     def handle_light_response(self, future):
         try:
@@ -65,11 +75,23 @@ class Ros(Node):
             # self.get_logger().error(f'THERE WAS AN ERROR TO GET LIDAR READINGS: {e}')
             self.lidar_readings = None
 
+    def handle_mp_response(self, future):
+        try:
+            response = future.result()
+            self.mp_params = response
+        except Exception as e:
+            # self.get_logger().error(f'THERE WAS AN ERROR TO GET MP PARAMS: {e}')
+            self.mp_params = None
+
     def get_light_readings(self):
         return self.light_readings
 
     def get_lidar_readings(self):
         return self.lidar_readings
+
+    def get_mp_params(self):
+        self.get_logger().info(f'params->{self.mp_params}')
+        return self.mp_params
 
     def pub_vel(self, linear, angular):
         msg = Twist()

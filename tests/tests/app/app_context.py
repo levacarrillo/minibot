@@ -21,6 +21,9 @@ class AppContext:
         self.radians  = None
         self.distance = None
 
+        # BEHAVIOR PARAMS
+        self.behavior_list = None
+
     def set_status_panel(self, status_panel):
         self.status_panel = status_panel
 
@@ -96,11 +99,30 @@ class AppContext:
     def get_lidar_readings(self):
         return self.service.norm_lidar_response(self.ros.get_lidar_readings())
 
+    def get_mp_params(self):
+        params = self.ros.get_mp_params()
+        if params is not None:
+            self.behavior_list = params.behavior_list
+            self.behavior_list.remove('') if '' in self.behavior_list else None
+            self.behavior_list.remove('UNKNOWN') if 'UNKNOWN' in self.behavior_list else None
+            
+            self.behaviors_panel.max_steps.set(params.max_steps)
+
+            self.behaviors_panel.list = self.behavior_list
+            self.behaviors_panel.behavior.set('USER_SM')
+            self.behaviors_panel.cb_behavior.config(values = self.behavior_list)
+            # self.behaviors_panel.cb_behavior.set('USER_SM')
+            # self.ros.get_logger().warn(f'behavior_list->{self.behavior_list}')
+            # self.ros.get_logger().warn(f'behavior->{params.behavior}')
+            self.ros.get_logger().warn(f'max_steps->{params.max_steps}')
+
+
     def loop(self):
         battery_charge = self.ros.get_battery_charge()
         self.status_panel.progress_var.set(battery_charge)
         self.status_panel.robot_name_var.set(self.ros.get_robot_name())
         self.status_panel.battery_percentage_var.set(f'Battery: {battery_charge}%')
+
         id_max = self.get_lights_max_intensity()
         lidar_params = self.get_lidar_readings()
         width = self.draw_panel.width
@@ -114,5 +136,8 @@ class AppContext:
         for i in range(lidar_params['num_readings']):
             coords = self.service.get_laser_coords(i, lidar_params, width)
             self.draw_panel.plot_laser(coords)
+
+        if self.behavior_list is None:
+            self.get_mp_params()
 
         self.app.after(50, self.loop)
