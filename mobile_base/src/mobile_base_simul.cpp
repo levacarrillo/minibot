@@ -1,8 +1,12 @@
+#include <chrono>
 #include "rclcpp/rclcpp.hpp"
 #include "geometry_msgs/msg/twist.hpp"
-#include "geometry_msgs/msg/transform_stamped.hpp"
-#include "tf2_ros/transform_broadcaster.h"
 #include "tf2/LinearMath/Quaternion.h"
+#include "tf2_ros/transform_broadcaster.h"
+#include "geometry_msgs/msg/transform_stamped.hpp"
+
+
+using namespace std::chrono;
 
 class MobileBaseSimul : public rclcpp::Node {
 public:
@@ -19,11 +23,13 @@ public:
         );
 
         last_time_ = this->now();
+        last_msg_time_ = steady_clock::now();
     }
 
 private:
     void cmdVelCallback(const geometry_msgs::msg::Twist::SharedPtr msg) {
         current_twist_ = *msg;
+        last_msg_time_ = steady_clock::now();
     }
 
     void updatePosition() {
@@ -31,12 +37,17 @@ private:
         double dt = (current_time - last_time_).seconds();
         last_time_ = current_time;
 
-        double vx = current_twist_.linear.x;
-        double wz = current_twist_.angular.z;
+        auto now = steady_clock::now();
+        auto duration_movement = duration_cast<seconds>(now - last_msg_time_);
 
-        x_ += vx * cos(theta_) * dt;
-        y_ += vx * sin(theta_) * dt;
-        theta_ += wz * dt;
+        if (duration_movement.count() < 2) {
+            double vx = current_twist_.linear.x;
+            double wz = current_twist_.angular.z;
+    
+            x_ += vx * cos(theta_) * dt;
+            y_ += vx * sin(theta_) * dt;
+            theta_ += wz * dt;
+        }
 
         geometry_msgs::msg::TransformStamped transform;
         transform.header.stamp = current_time;
@@ -60,6 +71,7 @@ private:
     rclcpp::Subscription<geometry_msgs::msg::Twist>::SharedPtr cmd_vel_sub_;
     std::shared_ptr<tf2_ros::TransformBroadcaster> tf_broadcaster_;
     rclcpp::TimerBase::SharedPtr timer_;
+    steady_clock::time_point last_msg_time_;
 
     geometry_msgs::msg::Twist current_twist_;
     rclcpp::Time last_time_;
