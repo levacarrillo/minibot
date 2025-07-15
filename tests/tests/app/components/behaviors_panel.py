@@ -7,7 +7,7 @@ class BehaviorsPanel:
         self.list = []
         self.behavior = StringVar()
         self.max_steps = IntVar()
-        self.run_stop = StringVar()
+        self.run_stop = StringVar(value = 'Run')
 
         frame  = LabelFrame(context.content, text = 'Behaviors')
         self.cb_behavior = ttk.Combobox(frame, textvariable = self.behavior, values = self.list, width = 16)
