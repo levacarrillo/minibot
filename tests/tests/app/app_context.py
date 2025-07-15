@@ -23,6 +23,7 @@ class AppContext:
 
         # BEHAVIOR PARAMS
         self.behavior_list = None
+        self.is_executing = False
 
     def set_status_panel(self, status_panel):
         self.status_panel = status_panel
@@ -78,11 +79,11 @@ class AppContext:
         self.distance = self.service.cm_to_m(distance_cm.replace("cm", ""))
         self.cmd_pose_panel.distance_var.set(distance_cm)
 
-    def on_click_start(self):
-        self.ros.send_goal(self.radians, self.distance)
-
-    def on_click_stop(self):
-        self.ros.cancel_goal()
+    def on_click_run_stop(self):
+        if self.is_executing:
+            self.ros.cancel_goal()
+        else:
+            self.ros.send_goal(self.radians, self.distance)
 
     def get_head_coords(self, width):
         return self.service.get_head_coords(width)
@@ -122,6 +123,13 @@ class AppContext:
         self.status_panel.progress_var.set(battery_charge)
         self.status_panel.robot_name_var.set(self.ros.get_robot_name())
         self.status_panel.battery_percentage_var.set(f'Battery: {battery_charge}%')
+        
+        self.is_executing = self.ros.movement_is_executing()
+
+        if self.is_executing is False:
+            self.cmd_pose_panel.run_stop.set('Run')
+        else:
+            self.cmd_pose_panel.run_stop.set('Stop')
 
         id_max = self.get_lights_max_intensity()
         lidar_params = self.get_lidar_readings()

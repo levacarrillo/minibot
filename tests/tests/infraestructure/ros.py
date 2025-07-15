@@ -40,6 +40,8 @@ class Ros(Node):
         self.battery_charge_percentage = None
         self.create_timer(0.5, self.request_services)
 
+        self.executing_movement = False
+
     def listener_callback(self, msg):
         self.robot_name = msg.robot_name
         self.battery_charge_percentage = msg.battery_charge_percentage
@@ -105,8 +107,12 @@ class Ros(Node):
         movement_msg.angle = angle
         movement_msg.distance = distance
         self._action_client.wait_for_server()
+        self.executing_movement = True
         self._send_goal_future = self._action_client.send_goal_async(movement_msg, feedback_callback = self.feedback_callback)
         self._send_goal_future.add_done_callback(self.goal_response_callback)
+
+    def movement_is_executing(self):
+        return self.executing_movement
 
     def goal_response_callback(self, future):
         self._goal_handle = future.result()
@@ -121,6 +127,7 @@ class Ros(Node):
 
     def get_result_callback(self, future):
         result = future.result().result
+        self.executing_movement = False
         # self.get_logger().info('RESULT: {0}'.format(result.success))
 
     def feedback_callback(self, feedback_msg):
