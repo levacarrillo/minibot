@@ -7,6 +7,9 @@
 !package.xml
 
 # And these subdirectories
+!config/
+!config/*.yaml
+
 !include/
 !include/hardware/
 

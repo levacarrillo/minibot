@@ -16,6 +16,12 @@ def generate_launch_description():
         'minibot.urdf.xacro'
     )
 
+    params_path = os.path.join(
+        get_package_share_directory('hardware'),
+        'config',
+        'params.yaml'
+    )
+    print(f'params_path->{params_path}')
     robot_description_config = xacro.process_file(xacro_file)
     robot_description = {'robot_description': robot_description_config.toxml()}
 
@@ -57,6 +63,14 @@ def generate_launch_description():
             executable='light_sensors_simulator',
             name='light_sensors_simulator',
             output='screen',
+            condition=IfCondition(use_sim)
+        ),
+        Node(
+            package='hardware',
+            executable='robot_introspection',
+            name='robot_introspection',
+            output='screen',
+            parameters=[params_path],
             condition=IfCondition(use_sim)
         ),
         # Node(

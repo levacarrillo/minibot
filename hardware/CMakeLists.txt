@@ -23,14 +23,23 @@ ament_target_dependencies(lidar_simulator rclcpp sensor_msgs interfaces tf2 tf2_
 add_executable(light_sensors_simulator src/light_sensors_simulator.cpp)
 ament_target_dependencies(light_sensors_simulator rclcpp interfaces)
 
+add_executable(robot_introspection src/robot_introspection.cpp)
+ament_target_dependencies(robot_introspection rclcpp interfaces)
+
 install(TARGETS
   lidar_simulator
   light_sensors_simulator
+  robot_introspection
   DESTINATION lib/${PROJECT_NAME}
 )
 
 install(
   DIRECTORY launch
+  DESTINATION share/${PROJECT_NAME}/
+)
+
+install(
+  DIRECTORY config
   DESTINATION share/${PROJECT_NAME}/
 )
 

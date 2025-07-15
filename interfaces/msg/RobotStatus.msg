@@ -1,0 +1,8 @@
+uint8 robot_id
+string robot_name
+uint32 temperature
+float32 battery_voltage
+float32 battery_capacity
+uint8 battery_cells_number
+uint8 battery_charge_percentage
+string battery_supply_status
