@@ -5,6 +5,10 @@ class ParamsPopUp:
         window = Toplevel(context.app)
         window.title('Parameters used for Motion Planner')
 
+        self.linear_vel = DoubleVar()
+        self.angular_vel = DoubleVar()
+        self.max_advance = DoubleVar()
+
         params_frame            = LabelFrame(window,  text = 'Parameters')
         label_linear_vel        = Label(params_frame, text = 'Linear velocity:')
         label_angular_vel       = Label(params_frame, text = 'Angular velocity:')
@@ -13,10 +17,10 @@ class ParamsPopUp:
         label_light_threshold   = Label(params_frame, text = 'Light threshold:')
         label_laser_threhold    = Label(params_frame, text = 'Laser threshold:')
 
-        sp_linear_vel      = Spinbox(params_frame, from_= 0.0,  to = 2.0, increment = 0.01, width = 8)
-        sp_angular_vel     = Spinbox(params_frame, from_= 0.0,  to = 2.0, increment = 0.01, width = 8)
+        sp_linear_vel      = Spinbox(params_frame, textvariable = self.linear_vel, from_= 0.0,  to = 2.0, increment = 0.01, width = 8)
+        sp_angular_vel     = Spinbox(params_frame, textvariable = self.angular_vel, from_= 0.0,  to = 2.0, increment = 0.01, width = 8)
         sp_light_threshold = Spinbox(params_frame, from_= 0,    to = 10,  increment = 0.01, width = 8)
-        sp_max_advance     = Spinbox(params_frame, from_= -100, to = 100, increment = 0.5,  width = 7)
+        sp_max_advance     = Spinbox(params_frame, textvariable = self.max_advance, from_= -100, to = 100, increment = 0.5,  width = 7)
         sp_turn_angle      = Spinbox(params_frame, from_= -180, to = 180, increment = 1,    width = 7)
         sp_laser_threshold = Spinbox(params_frame, from_= 0,    to = 10,  increment = 0.01, width = 7)
 
@@ -40,3 +44,5 @@ class ParamsPopUp:
 
         button_exit             .grid(column = 2, row = 4, sticky = (N, E), padx = (0, 0), pady = (15, 10), columnspan = 1)
         buton_set               .grid(column = 3, row = 4, sticky = (N, E), padx = (0, 5), pady = (15, 10), columnspan = 1)
+
+        context.set_params_pop_up(self)

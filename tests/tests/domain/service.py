@@ -87,3 +87,22 @@ class Service():
             width * (1 / 2 + 4 * reading * math.sin(step_angle) / 11)]
 
         return coords
+
+    def format_params(self, params):
+        if params is not None:
+            behavior_list = params.behavior_list
+            behavior_list.remove('') if '' in behavior_list else None
+            behavior_list.remove('UNKNOWN') if 'UNKNOWN' in behavior_list else None
+
+            return {
+                'behavior': params.behavior,
+                'run_behavior': params.run_behavior,
+                'behavior_list': params.behavior_list,
+                'step': params.step,
+                'max_steps': params.max_steps,
+                'max_advance': params.max_advance,
+                'max_turn_angle': params.max_turn_angle,
+                'light_threshold': params.light_threshold,
+                'laser_threshold': params.laser_threshold
+            }
+        return None

@@ -11,6 +11,7 @@ class AppContext:
         self.cmd_vel_panel   = None
         self.cmd_pose_panel  = None
         self.behaviors_panel = None
+        self.params_pop_up   = None
 
 
         # VELOCITY COMMANDS
@@ -24,6 +25,9 @@ class AppContext:
         # BEHAVIOR PARAMS
         self.behavior_list = None
         self.is_executing = False
+
+        self.params = None
+        self.init_params = self.params
 
     def set_status_panel(self, status_panel):
         self.status_panel = status_panel
@@ -43,6 +47,9 @@ class AppContext:
 
     def set_behaviors_panel(self, behaviors_panel):
         self.behaviors_panel = behaviors_panel
+
+    def set_params_pop_up(self, params_pop_up):
+        self.params_pop_up = params_pop_up
 
     def move_robot(self, movement):
         if movement == 'LEFT':
@@ -101,21 +108,17 @@ class AppContext:
         return self.service.norm_lidar_response(self.ros.get_lidar_readings())
 
     def get_mp_params(self):
-        params = self.ros.get_mp_params()
-        if params is not None:
-            self.behavior_list = params.behavior_list
-            self.behavior_list.remove('') if '' in self.behavior_list else None
-            self.behavior_list.remove('UNKNOWN') if 'UNKNOWN' in self.behavior_list else None
-            
-            self.behaviors_panel.max_steps.set(params.max_steps)
+        self.params = self.service.format_params(self.ros.get_mp_params())
+        if self.params is not None:
+            self.behaviors_panel.max_steps.set(self.params['max_steps'])
+            self.behaviors_panel.behavior.set(self.params['behavior'])
+            self.behaviors_panel.cb_behavior['values'] = self.params['behavior_list']
 
-            self.behaviors_panel.list = self.behavior_list
-            self.behaviors_panel.cb_behavior.config(values = self.behavior_list)
-            self.behaviors_panel.cb_behavior.current(0)
-            # self.behaviors_panel.cb_behavior.set('USER_SM')
-            # self.ros.get_logger().warn(f'behavior_list->{self.behavior_list}')
-            # self.ros.get_logger().warn(f'behavior->{params.behavior}')
-            self.ros.get_logger().warn(f'max_steps->{params.max_steps}')
+            # self.params_pop_up.linear_vel.set(self.params['linear_velocity'])
+            # self.params_pop_up.angular_vel.set(self.params['angular_velocity'])
+            # self.params_pop_up.max_advance.set(self.params['max_advance'])
+
+            self.ros.get_logger().warn(f'params->{self.params}')
 
 
     def loop(self):
@@ -145,7 +148,7 @@ class AppContext:
             coords = self.service.get_laser_coords(i, lidar_params, width)
             self.draw_panel.plot_laser(coords)
 
-        if self.behavior_list is None:
+        if self.params is None:
             self.get_mp_params()
 
         self.app.after(50, self.loop)

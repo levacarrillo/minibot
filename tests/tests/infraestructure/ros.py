@@ -80,6 +80,7 @@ class Ros(Node):
     def handle_mp_response(self, future):
         try:
             response = future.result()
+            # self.get_logger().warn(f'response->{response.step}')
             self.mp_params = response
         except Exception as e:
             # self.get_logger().error(f'THERE WAS AN ERROR TO GET MP PARAMS: {e}')
@@ -92,7 +93,7 @@ class Ros(Node):
         return self.lidar_readings
 
     def get_mp_params(self):
-        self.get_logger().info(f'params->{self.mp_params}')
+        # self.get_logger().info(f'params->{self.mp_params}')
         return self.mp_params
 
     def pub_vel(self, linear, angular):
