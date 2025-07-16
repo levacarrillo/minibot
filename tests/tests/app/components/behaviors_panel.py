@@ -2,6 +2,7 @@ from tkinter import *
 from tkinter import ttk
 from tests.app.components.params_pop_up import *
 
+
 class BehaviorsPanel:
     def __init__(self, context):
         self.behavior = StringVar()
@@ -15,7 +16,7 @@ class BehaviorsPanel:
         sp_max_steps = Spinbox(frame, textvariable = self.max_steps, from_= 0, to = 150, increment = 1, width = 4)
 
         button_params = Button(frame, text = 'Params', command = lambda: ParamsPopUp(context))
-        button_run    = Button(frame, textvariable = self.run_stop, width = 4)
+        button_run    = Button(frame, textvariable = self.run_stop, command = context.on_click_run_stop_behavior, width = 4)
 
         frame          .grid(column = 0, row = 3, sticky = (N, W), padx = (5, 5), pady = (5, 5),  columnspan = 5)
         self.cb_behavior.grid(column = 0, row = 0, sticky = (N, W), padx = (5, 0), pady = (5, 10), columnspan = 1)

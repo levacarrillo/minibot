@@ -120,6 +120,12 @@ class AppContext:
 
             self.ros.get_logger().warn(f'params->{self.params}')
 
+    def on_click_run_stop_behavior(self):
+        if self.ros.get_behavior_running() is False:
+            self.params['run_behavior'] = True
+        else:
+            self.params['run_behavior'] = False
+        self.ros.send_request(self.params)
 
     def loop(self):
         battery_charge = self.ros.get_battery_charge()
@@ -133,6 +139,11 @@ class AppContext:
             self.cmd_pose_panel.run_stop.set('Run')
         else:
             self.cmd_pose_panel.run_stop.set('Stop')
+
+        if self.ros.get_behavior_running() is False:
+            self.behaviors_panel.run_stop.set('Run')
+        else:
+            self.behaviors_panel.run_stop.set('Stop')
 
         id_max = self.get_lights_max_intensity()
         lidar_params = self.get_lidar_readings()

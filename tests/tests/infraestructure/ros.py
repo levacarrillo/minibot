@@ -17,6 +17,7 @@ class Ros(Node):
         self.light_client = self.create_client(GetLightReadings, 'get_light_readings')
         self.lidar_client = self.create_client(GetScan, 'get_scan')
         self.mp_client    = self.create_client(GetParams, 'get_params')
+        self.params_client = self.create_client(SetParams, 'set_params')
         self.subscription = self.create_subscription(RobotStatus, 'robot_status', self.listener_callback, 10)
         self.subscription
 
@@ -27,10 +28,13 @@ class Ros(Node):
             self.get_logger().warn('SERVICE /get_scan NOT AVAILABLE.')
         if not self.mp_client.wait_for_service(timeout_sec = delay):
             self.get_logger().warn('SERVICE /get_params NOT AVAILABLE.')
+        if not self.params_client.wait_for_service(timeout_sec = delay):
+            self.get_logger().warn('SERVICE /set_params NOT AVAILABLE.')
 
         self.light_req = GetLightReadings.Request()
         self.lidar_req = GetScan.Request()
         self.mp_req    = GetParams.Request()
+        self.params_req = SetParams.Request()
 
         self.light_readings = None
         self.lidar_readings = None
@@ -41,6 +45,19 @@ class Ros(Node):
         self.create_timer(0.5, self.request_services)
 
         self.executing_movement = False
+
+    def send_request(self, params):
+        self.get_logger().info(f'params.run_behavior->{params['run_behavior']}')
+        self.params_req.run_behavior = params['run_behavior']
+        self.params_req.behavior = 'USER_SM'
+        self.params_req.step = 0
+        self.params_req.max_steps = 6
+        self.params_req.max_advance = 0.4
+        self.params_req.max_turn_angle = 0.5
+        self.future = self.params_client.call_async(self.params_req)
+        rclpy.spin_until_future_complete(self, self.future)
+        return self.future.result()
+
 
     def listener_callback(self, msg):
         self.robot_name = msg.robot_name
@@ -80,7 +97,7 @@ class Ros(Node):
     def handle_mp_response(self, future):
         try:
             response = future.result()
-            # self.get_logger().warn(f'response->{response.step}')
+            # self.get_logger().warn(f'response->{response}')
             self.mp_params = response
         except Exception as e:
             # self.get_logger().error(f'THERE WAS AN ERROR TO GET MP PARAMS: {e}')
@@ -91,6 +108,12 @@ class Ros(Node):
 
     def get_lidar_readings(self):
         return self.lidar_readings
+
+    def get_behavior_running(self):
+        if self.mp_params is not None:
+            # self.get_logger().info(f'behavior running: {self.mp_params.run_behavior}')
+            return self.mp_params.run_behavior
+        return False
 
     def get_mp_params(self):
         # self.get_logger().info(f'params->{self.mp_params}')
