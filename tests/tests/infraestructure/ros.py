@@ -115,6 +115,12 @@ class Ros(Node):
             return self.mp_params.run_behavior
         return False
 
+    def get_current_step(self):
+        if self.mp_params is not None:
+            # self.get_logger().info(f'current_step: {self.mp_params.step}')
+            return self.mp_params.step
+        return 0
+
     def get_mp_params(self):
         # self.get_logger().info(f'params->{self.mp_params}')
         return self.mp_params

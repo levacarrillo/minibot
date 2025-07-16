@@ -144,6 +144,7 @@ class AppContext:
             self.behaviors_panel.run_stop.set('Run')
         else:
             self.behaviors_panel.run_stop.set('Stop')
+            self.behaviors_panel.max_steps.set(self.ros.get_current_step())
 
         id_max = self.get_lights_max_intensity()
         lidar_params = self.get_lidar_readings()
@@ -158,6 +159,8 @@ class AppContext:
         for i in range(lidar_params['num_readings']):
             coords = self.service.get_laser_coords(i, lidar_params, width)
             self.draw_panel.plot_laser(coords)
+
+
 
         if self.params is None:
             self.get_mp_params()
