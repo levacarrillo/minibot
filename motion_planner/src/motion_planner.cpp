@@ -195,9 +195,9 @@ void MotionPlanner::move_robot(Movement movement) {
   auto result = result_future.get();
   if (result.code == rclcpp_action::ResultCode::SUCCEEDED) {
     RCLCPP_INFO(this->get_logger(), "MOVEMENT FINISHED SUCCESSFULLY");
+    if (this->movement_params.step < this->movement_params.max_steps) this->increase_steps();
   } else {
     RCLCPP_ERROR(this->get_logger(), "MOVEMENT FINISHED WITH AN ERROR");
   }
 
-  this->increase_steps();
 }
