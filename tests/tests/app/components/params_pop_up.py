@@ -14,6 +14,7 @@ class ParamsPopUp:
         self.lidar_threshold = StringVar(value = '0.3')
         self.max_steps       = IntVar(value = 100)
 
+
         params_frame          = LabelFrame(self.window,  text = 'Parameters')
         label_linear_vel      = Label(params_frame, text = 'Linear velocity:')
         label_angular_vel     = Label(params_frame, text = 'Angular velocity:')
@@ -56,3 +57,9 @@ class ParamsPopUp:
         buton_set             .grid(column = 3, row = 4, sticky = (N, E), padx = (0, 5), pady = (15, 10), columnspan = 1)
 
         context.set_params_pop_up(self)
+        context.format_parameters()
+
+        self.linear_vel       .trace_add('write', context.format_parameters)
+        self.angular_vel      .trace_add('write', context.format_parameters)
+        self.max_advance      .trace_add('write', context.format_parameters)
+        self.max_turn_angle   .trace_add('write', context.format_parameters)

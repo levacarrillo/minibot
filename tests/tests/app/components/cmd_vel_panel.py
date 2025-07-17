@@ -4,8 +4,8 @@ from tkinter import *
 class CmdVelPanel:
     def __init__(self, context):
 
-        self.linear_vel_var  = StringVar(value = '0.20m/s')
-        self.angular_vel_var = StringVar(value = '0.30rad/s')
+        self.linear_vel  = StringVar(value = '0.20m/s')
+        self.angular_vel = StringVar(value = '0.30rad/s')
 
         frame = LabelFrame(context.content, text = 'Move robot')
 
@@ -16,8 +16,8 @@ class CmdVelPanel:
         buton_arrow_stop  = Button( frame, text = '||', width = 2, command = lambda: context.move_robot('STOP'))
         buton_arrow_up    = Button( frame, text = '^',  width = 2, command = lambda: context.move_robot('FORWARD'))
         buton_arrow_down  = Button( frame, text = 'v',  width = 2, command = lambda: context.move_robot('BACKWARD'))
-        linear_vel_entry  = Spinbox(frame, from_ = 0.0, to = 2.0, increment = 0.01, textvariable = self.linear_vel_var,  width = 8)
-        angular_vel_entry = Spinbox(frame, from_ = 0.0, to = 2.0, increment = 0.01, textvariable = self.angular_vel_var, width = 8)
+        linear_vel_entry  = Spinbox(frame, from_ = 0.0, to = 2.0, increment = 0.01, textvariable = self.linear_vel,  width = 8)
+        angular_vel_entry = Spinbox(frame, from_ = 0.0, to = 2.0, increment = 0.01, textvariable = self.angular_vel, width = 8)
 
         frame             .grid(column = 3, row = 1, sticky = (N, W), padx = (5, 5),  pady = (5, 5),  columnspan = 3)
         buton_arrow_left  .grid(column = 0, row = 1, sticky = (N, W), padx = (5, 0),  pady = (0, 0),  columnspan = 2)
@@ -32,5 +32,6 @@ class CmdVelPanel:
 
         context.set_cmd_vel_panel(self)
 
-        self.linear_vel_var  .trace_add('write', context.format_linear_vel)
-        self.angular_vel_var .trace_add('write', context.format_angular_vel)
+        context.format_cmd_vel()
+        self.linear_vel  .trace_add('write', context.format_cmd_vel)
+        self.angular_vel .trace_add('write', context.format_cmd_vel)

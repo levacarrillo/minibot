@@ -132,10 +132,10 @@ class Ros(Node):
         self.publisher_.publish(msg)
         self.get_logger().info('MOVING AT: LINEAR->%f ANGULAR->%f' % (msg.linear.x, msg.angular.z))
 
-    def send_goal(self, angle, distance):
+    def send_goal(self, pose):
         movement_msg = GoToPose.Goal()
-        movement_msg.angle = angle
-        movement_msg.distance = distance
+        movement_msg.angle = pose['angle']
+        movement_msg.distance = pose['distance']
         self._action_client.wait_for_server()
         self.executing_movement = True
         self._send_goal_future = self._action_client.send_goal_async(movement_msg, feedback_callback = self.feedback_callback)

@@ -3,12 +3,10 @@ from tkinter import *
 
 class CmdPosePanel:
     def __init__(self, context):
-
-        self.run_stop = StringVar()
+        self.run_stop     = StringVar()
         self.radian_var   = StringVar()
         self.angle_var    = StringVar(value = '0°')
         self.distance_var = StringVar(value = '0.0cm')
-
 
         frame          = LabelFrame(context.content, text = 'Move to pose')
         label_angle    = Label(frame,   text  = 'Angle:')
@@ -28,6 +26,7 @@ class CmdPosePanel:
 
         context.set_cmd_pose_panel(self)
 
+        context.format_cmd_pose()
         button_start       .config(command   = context.on_click_run_stop)
-        self.angle_var     .trace_add('write', context.format_angle)
-        self.distance_var  .trace_add('write', context.format_distance)
+        self.angle_var     .trace_add('write', context.format_cmd_pose)
+        self.distance_var  .trace_add('write', context.format_cmd_pose)

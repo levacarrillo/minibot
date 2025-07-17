@@ -15,19 +15,22 @@ class AppContext:
 
 
         # VELOCITY COMMANDS
-        self.linear_vel  = None
-        self.angular_vel = None
+        self.cmd_vel = {
+            'linear_vel': None,
+            'angular_vel': None
+        }
 
         # POSITION COMMANDS
-        self.radians  = None
-        self.distance = None
+        self.cmd_pose = {
+            'angle': None,
+            'distance': None
+        }
 
         # BEHAVIOR PARAMS
         self.behavior_list = None
         self.is_executing = False
 
         self.params = None
-        self.init_params = self.params
 
     def set_status_panel(self, status_panel):
         self.status_panel = status_panel
@@ -37,13 +40,9 @@ class AppContext:
 
     def set_cmd_vel_panel(self, cmd_vel_panel):
         self.cmd_vel_panel = cmd_vel_panel
-        self.format_linear_vel()
-        self.format_angular_vel()
 
     def set_cmd_pose_panel(self, cmd_pose_panel):
         self.cmd_pose_panel = cmd_pose_panel
-        self.format_angle()
-        self.format_distance()
 
     def set_behaviors_panel(self, behaviors_panel):
         self.behaviors_panel = behaviors_panel
@@ -54,46 +53,55 @@ class AppContext:
     def on_restore_config(self):
         print('restoring...')
 
+    def format_cmd_vel(self, *args):
+        linear_vel = self.cmd_vel_panel.linear_vel.get().replace('m/s', '')
+        self.cmd_vel['linear_vel'] = self.service.validate_vel(linear_vel)
+        self.cmd_vel_panel.linear_vel.set(linear_vel + 'm/s')
+
+        angular_vel = self.cmd_vel_panel.angular_vel.get().replace('rad/s', '')
+        self.cmd_vel['angular_vel'] = self.service.validate_vel(angular_vel)
+        self.cmd_vel_panel.angular_vel.set(angular_vel + 'rad/s')
+
     def move_robot(self, movement):
         if movement == 'LEFT':
-            self.ros.pub_vel(0.0,  self.angular_vel)
+            self.ros.pub_vel(0.0,  self.cmd_vel['angular_vel'])
         elif movement == 'RIGHT':
-            self.ros.pub_vel(0.0, -self.angular_vel)
+            self.ros.pub_vel(0.0, -self.cmd_vel['angular_vel'])
         elif movement == 'STOP':
             self.ros.pub_vel(0.0, 0.0)
         elif movement == 'FORWARD':
-            self.ros.pub_vel(self.linear_vel, 0.0)
+            self.ros.pub_vel(self.cmd_vel['linear_vel'], 0.0)
         elif movement == 'BACKWARD':
-            self.ros.pub_vel(-self.linear_vel, 0.0)
+            self.ros.pub_vel(-self.cmd_vel['linear_vel'], 0.0)
         else: 
             print(f'MOVEMENT {movement} DOES NOT RECOGNIZED')
 
-    def format_linear_vel(self, *args):
-        linear_vel = self.cmd_vel_panel.linear_vel_var.get().replace("m/s", "")
-        self.linear_vel = self.service.validate_vel(linear_vel)
-        self.cmd_vel_panel.linear_vel_var.set(linear_vel + "m/s")
+    def format_cmd_pose(self, *args):
+        degrees = self.cmd_pose_panel.angle_var.get().replace('°', '')
+        self.cmd_pose_panel.angle_var.set(degrees + '°')
+        self.cmd_pose['angle'] = self.service.degrees_to_radians(degrees)
+        self.cmd_pose_panel.radian_var.set(f'{self.cmd_pose['angle']:.4f} rad')
 
-    def format_angular_vel(self, *args):
-        angular_vel = self.cmd_vel_panel.angular_vel_var.get().replace("rad/s", "")
-        self.angular_vel = self.service.validate_vel(angular_vel)
-        self.cmd_vel_panel.angular_vel_var.set(angular_vel + "rad/s")
-
-    def format_angle(self, *args):
-        degrees = self.cmd_pose_panel.angle_var.get().replace("°", "")
-        self.cmd_pose_panel.angle_var.set(degrees + "°")
-        self.radians = self.service.degrees_to_radians(degrees)
-        self.cmd_pose_panel.radian_var.set(f"{self.radians:.4f} rad")
-
-    def format_distance(self, *args):
-        distance_cm = self.cmd_pose_panel.distance_var.get().replace("cm", "") + "cm"
-        self.distance = self.service.cm_to_m(distance_cm.replace("cm", ""))
+        distance_cm = self.cmd_pose_panel.distance_var.get().replace('cm', '') + 'cm'
+        self.cmd_pose['distance'] = self.service.cm_to_m(distance_cm.replace('cm', ''))
         self.cmd_pose_panel.distance_var.set(distance_cm)
+
+    def format_parameters(self, *args):
+        linear_vel  = self.params_pop_up.linear_vel.get().replace('m/s', '') + 'm/s'
+        angular_vel = self.params_pop_up.angular_vel.get().replace('rad/s', '') + 'rad/s'
+        max_advance = self.params_pop_up.max_advance.get().replace('cm', '') + 'cm'
+        max_turn_angle = self.params_pop_up.max_turn_angle.get().replace('rad', '') + 'rad'
+
+        self.params_pop_up.linear_vel.set(linear_vel)
+        self.params_pop_up.angular_vel.set(angular_vel)
+        self.params_pop_up.max_advance.set(max_advance)
+        self.params_pop_up.max_turn_angle.set(max_turn_angle)
 
     def on_click_run_stop(self):
         if self.is_executing:
             self.ros.cancel_goal()
         else:
-            self.ros.send_goal(self.radians, self.distance)
+            self.ros.send_goal(self.cmd_pose)
 
     def get_head_coords(self, width):
         return self.service.get_head_coords(width)
