@@ -63,15 +63,15 @@ class AppContext:
 
     def move_robot(self, movement):
         if movement == 'LEFT':
-            self.ros.pub_vel(0.0,  self.cmd_vel['angular_vel'])
+            self.ros.pubish_velocity(0.0,  self.cmd_vel['angular_vel'])
         elif movement == 'RIGHT':
-            self.ros.pub_vel(0.0, -self.cmd_vel['angular_vel'])
+            self.ros.pubish_velocity(0.0, -self.cmd_vel['angular_vel'])
         elif movement == 'STOP':
-            self.ros.pub_vel(0.0, 0.0)
+            self.ros.pubish_velocity(0.0, 0.0)
         elif movement == 'FORWARD':
-            self.ros.pub_vel(self.cmd_vel['linear_vel'], 0.0)
+            self.ros.pubish_velocity(self.cmd_vel['linear_vel'], 0.0)
         elif movement == 'BACKWARD':
-            self.ros.pub_vel(-self.cmd_vel['linear_vel'], 0.0)
+            self.ros.pubish_velocity(-self.cmd_vel['linear_vel'], 0.0)
         else: 
             print(f'MOVEMENT {movement} DOES NOT RECOGNIZED')
 
@@ -105,7 +105,7 @@ class AppContext:
         self.params_pop_up.angular_vel.set(angular_vel + 'rads/s')
         self.params_pop_up.max_advance.set(max_advance + 'm')
         self.params_pop_up.max_turn_angle.set(max_turn_angle + 'rad')
-        self.params = self.service.format_params(self.ros.get_mp_params())
+        self.params = self.service.format_params(self.ros.get_motion_planner_params())
 
     def set_initial_params(self):
         if self.params is not None:
@@ -135,7 +135,7 @@ class AppContext:
         if self.movement_is_executing:
             self.ros.cancel_goal()
         else:
-            self.ros.send_goal(self.cmd_pose)
+            self.ros.send_goal_pose(self.cmd_pose)
 
     def on_click_behavior(self):
         if self.ros.get_behavior_running() is False:
@@ -143,7 +143,7 @@ class AppContext:
             self.params['behavior'] = self.behaviors_panel.behavior_list.get()
         else:
             self.params['run_behavior'] = False
-        self.ros.send_request(self.params)
+        self.ros.send_motion_planner_req(self.params)
 
     def on_click_set_params(self):
         self.params['max_steps'] = self.params_pop_up.max_steps.get()
