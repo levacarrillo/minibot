@@ -3,8 +3,8 @@ from tkinter import *
 
 class ParamsPopUp:
     def __init__(self, context):
-        window = Toplevel(context.app)
-        window.title('Parameters used for Motion Planner')
+        self.window = Toplevel(context.app)
+        self.window.title('Parameters used for Motion Planner')
 
         self.linear_vel      = StringVar(value = '0.20m/s')
         self.angular_vel     = StringVar(value = '0.30rad/s')
@@ -14,7 +14,7 @@ class ParamsPopUp:
         self.lidar_threshold = StringVar(value = '0.3')
         self.max_steps       = IntVar(value = 100)
 
-        params_frame          = LabelFrame(window,  text = 'Parameters')
+        params_frame          = LabelFrame(self.window,  text = 'Parameters')
         label_linear_vel      = Label(params_frame, text = 'Linear velocity:')
         label_angular_vel     = Label(params_frame, text = 'Angular velocity:')
         label_max_advance     = Label(params_frame, text = 'Max advance:')
@@ -31,8 +31,8 @@ class ParamsPopUp:
         sp_laser_threshold = Spinbox(params_frame, textvariable = self.lidar_threshold, from_= 0,    to = 10,  increment = 0.01, width = 7)
         sp_turn_angle      = Spinbox(params_frame, textvariable = self.max_turn_angle, from_=-3.1716, to=3.1416, increment = 0.01745, width = 7)
 
-        button_exit = Button(params_frame, text = 'Close', command = window.destroy)
-        buton_set   = Button(params_frame, text = 'Set',   command = window.destroy, width = 4)
+        button_exit = Button(params_frame, text = 'Close', command = self.window.destroy)
+        buton_set   = Button(params_frame, text = 'Set',   command = context.on_click_set_params, width = 4)
 
         params_frame          .grid(column = 0, row = 0, sticky = (N, W), padx = (10, 10), pady = (10, 10), columnspan = 1)
         label_linear_vel      .grid(column = 0, row = 0, sticky = (N, W), padx = (5, 0), pady = (15, 0), columnspan = 1)

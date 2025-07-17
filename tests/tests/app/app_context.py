@@ -130,6 +130,9 @@ class AppContext:
             self.params['run_behavior'] = False
         self.ros.send_request(self.params)
 
+    def on_click_set_params(self):
+        self.params_pop_up.window.destroy()
+
     def loop(self):
         battery_charge = self.ros.get_battery_charge()
         self.status_panel.progress_var.set(battery_charge)
