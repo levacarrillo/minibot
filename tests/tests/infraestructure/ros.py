@@ -174,7 +174,6 @@ class Ros(Node):
             return
 
         # self.get_logger().info('GOAL ACCEPTED SUCCESSFULLY')
-
         self._get_result_future = self._goal_handle.get_result_async()
         self._get_result_future.add_done_callback(self.get_result_callback)
 

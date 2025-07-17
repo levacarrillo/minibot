@@ -57,6 +57,7 @@ class ParamsPopUp:
         buton_set             .grid(column = 3, row = 4, sticky = (N, E), padx = (0, 5), pady = (15, 10), columnspan = 1)
 
         context.set_params_pop_up(self)
+        context.set_initial_window_parameters()
         context.format_parameters()
 
         self.linear_vel       .trace_add('write', context.format_parameters)
