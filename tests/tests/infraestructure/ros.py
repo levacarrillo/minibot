@@ -25,7 +25,7 @@ class Ros(Node):
         self._robot_status_sub = self.create_subscription(RobotStatus, 'robot_status', self._robot_status_callback, 10)
         self._robot_status_sub
 
-        delay = 1.0
+        delay = 1.5
         if not self._light_client.wait_for_service(timeout_sec = delay):
             self.get_logger().warn('SERVICE /get_light_readings NOT AVAILABLE.')
         if not self._lidar_client.wait_for_service(timeout_sec = delay):
@@ -46,7 +46,7 @@ class Ros(Node):
 
         self._robot_name = None
         self._battery_charge_percentage = None
-        self._executing_movement = False
+        self._movement_is_executing = False
 
         self.create_timer(0.5, self._request_services)
 
@@ -151,12 +151,12 @@ class Ros(Node):
         movement_msg.angle = pose['angle']
         movement_msg.distance = pose['distance']
         self._go_to_pose_action.wait_for_server()
-        self._executing_movement = True
+        self._movement_is_executing = True
         send_goal_pose_future = self._go_to_pose_action.send_goal_async(movement_msg, feedback_callback = self._feedback_callback)
         send_goal_pose_future.add_done_callback(self._goal_pose_response_callback)
 
-    def movement_is_executing(self):
-        return self._executing_movement
+    def movement_is_running(self):
+        return self._movement_is_executing
 
     def _goal_pose_response_callback(self, future):
         self._goal_pose_handle = future.result()
@@ -169,7 +169,7 @@ class Ros(Node):
 
     def _get_result_callback(self, future):
         result = future.result().result
-        self._executing_movement = False
+        self._movement_is_executing = False
 
     def _feedback_callback(self, feedback_msg):
         feedback = feedback_msg.feedback

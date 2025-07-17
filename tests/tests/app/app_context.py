@@ -95,7 +95,7 @@ class AppContext:
     def format_parameters(self, *args):
         linear_vel  = self.params_pop_up.linear_vel.get().replace('m/s', '')
         angular_vel = self.params_pop_up.angular_vel.get().replace('rad/s', '')
-        max_advance = self.params_pop_up.max_advance.get().replace('m', '')
+        max_advance = self.params_pop_up.max_advance.get().replace('m', '')[:6]
         max_turn_angle = self.params_pop_up.max_turn_angle.get().replace('rad', '')
         light_threshold = self.params_pop_up.light_threshold.get()
         laser_threshold = self.params_pop_up.laser_threshold.get()
@@ -105,9 +105,9 @@ class AppContext:
         self.params_pop_up.angular_vel.set(angular_vel + 'rads/s')
         self.params_pop_up.max_advance.set(max_advance + 'm')
         self.params_pop_up.max_turn_angle.set(max_turn_angle + 'rad')
-        self.params = self.service.format_params(self.ros.get_motion_planner_params())
 
     def set_initial_params(self):
+        self.params = self.service.format_params(self.ros.get_motion_planner_params())
         if self.params is not None:
             self.behaviors_panel.behavior_list['values'] = self.params['behavior_list']
             self.behaviors_panel.behavior.set(self.params['behavior'])
@@ -162,7 +162,7 @@ class AppContext:
         self.status_panel.progress_var.set(100 if battery_charge is None else battery_charge)
         self.status_panel.battery_percentage_var.set(f'Battery: {99 if battery_charge is None else battery_charge}%')
         
-        self.movement_is_executing = self.ros.movement_is_executing()
+        self.movement_is_executing = self.ros.movement_is_running()
 
         self.cmd_pose_panel.run_stop.set('Run' if self.movement_is_executing else 'Stop')
 
@@ -182,9 +182,7 @@ class AppContext:
         for i in range(lidar_params['num_readings']):
             coords = self.service.get_laser_coords(i, lidar_params, width)
             self.draw_panel.plot_laser(coords)
-
-
-
+        
         if self.params is None:
             self.set_initial_params()
 

@@ -94,6 +94,9 @@ class Service():
             behavior_list.remove('') if '' in behavior_list else None
             behavior_list.remove('UNKNOWN') if 'UNKNOWN' in behavior_list else None
 
+            light_threshold = math.trunc(params.light_threshold * 1000) / 1000
+            laser_threshold = math.trunc(params.laser_threshold * 1000) / 1000
+
             return {
                 'behavior': params.behavior,
                 'run_behavior': params.run_behavior,
@@ -102,7 +105,7 @@ class Service():
                 'max_steps': params.max_steps,
                 'max_advance': params.max_advance,
                 'max_turn_angle': params.max_turn_angle,
-                'light_threshold': params.light_threshold,
-                'laser_threshold': params.laser_threshold
+                'light_threshold': light_threshold,
+                'laser_threshold': laser_threshold
             }
         return None
