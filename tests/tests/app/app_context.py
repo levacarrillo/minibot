@@ -113,7 +113,7 @@ class AppContext:
     def get_mp_params(self):
         self.params = self.service.format_params(self.ros.get_mp_params())
         if self.params is not None:
-            self.behaviors_panel.steps.set(self.params['max_steps'])
+            # self.behaviors_panel.current_step.set(self.params['max_steps'])
             self.behaviors_panel.behavior.set(self.params['behavior'])
             self.behaviors_panel.behavior_list = self.params['behavior_list']
 

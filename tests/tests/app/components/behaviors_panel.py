@@ -5,13 +5,13 @@ from tests.app.components.params_pop_up import *
 
 class BehaviorsPanel:
     def __init__(self, context):
-        self.behavior = StringVar()
-        self.run_stop = StringVar(value = 'Run')
+        self.behavior     = StringVar()
+        self.run_stop     = StringVar(value = 'Run')
         self.current_step = StringVar(value = 'Step: 0')
 
         frame       = LabelFrame(context.content, text = 'Behaviors')
         cb_behavior = ttk.Combobox(frame, textvariable = self.behavior, width = 18)
-        
+
         label_steps   = Label(frame, textvariable = self.current_step, width = 9)
 
         button_params = Button(frame, text = 'Params', command = lambda: ParamsPopUp(context))
