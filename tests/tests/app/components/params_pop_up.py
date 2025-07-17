@@ -1,11 +1,12 @@
 from tkinter import *
 
+
 class ParamsPopUp:
     def __init__(self, context):
         window = Toplevel(context.app)
         window.title('Parameters used for Motion Planner')
 
-        self.linear_vel = DoubleVar()
+        self.linear_vel  = DoubleVar()
         self.angular_vel = DoubleVar()
         self.max_advance = DoubleVar()
 

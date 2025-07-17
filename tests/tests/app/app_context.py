@@ -51,6 +51,9 @@ class AppContext:
     def set_params_pop_up(self, params_pop_up):
         self.params_pop_up = params_pop_up
 
+    def on_restore_config(self):
+        print('restoring...')
+
     def move_robot(self, movement):
         if movement == 'LEFT':
             self.ros.pub_vel(0.0,  self.angular_vel)
@@ -110,9 +113,9 @@ class AppContext:
     def get_mp_params(self):
         self.params = self.service.format_params(self.ros.get_mp_params())
         if self.params is not None:
-            self.behaviors_panel.max_steps.set(self.params['max_steps'])
+            self.behaviors_panel.steps.set(self.params['max_steps'])
             self.behaviors_panel.behavior.set(self.params['behavior'])
-            self.behaviors_panel.cb_behavior['values'] = self.params['behavior_list']
+            self.behaviors_panel.behavior_list = self.params['behavior_list']
 
             # self.params_pop_up.linear_vel.set(self.params['linear_velocity'])
             # self.params_pop_up.angular_vel.set(self.params['angular_velocity'])
@@ -120,7 +123,7 @@ class AppContext:
 
             self.ros.get_logger().warn(f'params->{self.params}')
 
-    def on_click_run_stop_behavior(self):
+    def on_click_behavior(self):
         if self.ros.get_behavior_running() is False:
             self.params['run_behavior'] = True
         else:
@@ -144,7 +147,7 @@ class AppContext:
             self.behaviors_panel.run_stop.set('Run')
         else:
             self.behaviors_panel.run_stop.set('Stop')
-            self.behaviors_panel.max_steps.set(self.ros.get_current_step())
+            self.behaviors_panel.steps.set(self.ros.get_current_step())
 
         id_max = self.get_lights_max_intensity()
         lidar_params = self.get_lidar_readings()

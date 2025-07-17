@@ -12,7 +12,7 @@ class StatusPanel:
         label_bot_id  = Label(frame, textvariable = self.robot_name_var, font = ('arial', 11, 'bold'))
         label_battery = Label(frame, textvariable = self.battery_percentage_var)
         battery_bar   = ttk.Progressbar(frame, variable = self.progress_var, maximum = 100)
-        button_reset  = Button(frame, text = 'Reset config')
+        button_reset  = Button(frame, text = 'Reset config', command = context.on_restore_config)
 
         frame         .grid(column = 0, row = 0, sticky = (N, W), padx = (5, 0),  pady = (5, 5), columnspan = 5)
         label_bot_id  .grid(column = 0, row = 0, sticky = (N, W), padx = (10, 5), pady = (15, 10))
