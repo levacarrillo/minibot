@@ -17,7 +17,7 @@ class StatusPanel:
         frame         .grid(column = 0, row = 0, sticky = (N, W), padx = (5, 0),  pady = (5, 5), columnspan = 5)
         label_bot_id  .grid(column = 0, row = 0, sticky = (N, W), padx = (10, 5), pady = (15, 10))
         label_battery .grid(column = 1, row = 0, sticky = (N, W), padx = (10, 5), pady = (15, 10), columnspan = 2)
-        battery_bar   .grid(column = 4, row = 0, sticky = (N, W), padx = (0, 8),  pady = (18, 10))
-        button_reset  .grid(column = 5, row = 0, sticky = (N, W), padx = (0, 10), pady = (10, 10), columnspan = 2)
+        battery_bar   .grid(column = 4, row = 0, sticky = (N, W), padx = (0, 10), pady = (18, 10))
+        button_reset  .grid(column = 5, row = 0, sticky = (N, W), padx = (1, 10), pady = (10, 10), columnspan = 2)
 
         context.set_status_panel(self)
