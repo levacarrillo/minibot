@@ -17,7 +17,7 @@ class BehaviorsPanel:
         button_params = Button(frame, text = 'Params', command = lambda: ParamsPopUp(context))
         button_run    = Button(frame, textvariable = self.run_stop, command = context.on_click_behavior, width = 4)
 
-        self.behavior_list = cb_behavior['values']
+        self.behavior_list = cb_behavior
 
         frame          .grid(column = 0, row = 3, sticky = (N, W), padx = (5, 0), pady = (5, 10), columnspan = 5)
         cb_behavior    .grid(column = 0, row = 0, sticky = (N, W), padx = (5, 0), pady = (5, 10), columnspan = 1)

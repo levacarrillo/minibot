@@ -6,13 +6,13 @@ class ParamsPopUp:
         self.window = Toplevel(context.app)
         self.window.title('Parameters used for Motion Planner')
 
+        self.max_steps       = IntVar(value = 100)
         self.linear_vel      = StringVar(value = '0.20m/s')
         self.angular_vel     = StringVar(value = '0.30rad/s')
-        self.max_advance     = StringVar(value = '3.0cm')
+        self.max_advance     = StringVar(value = '0.03m')
         self.max_turn_angle  = StringVar(value = '0.5rad')
         self.light_threshold = StringVar(value = '0.04503')
-        self.lidar_threshold = StringVar(value = '0.3')
-        self.max_steps       = IntVar(value = 100)
+        self.laser_threshold = StringVar(value = '0.3')
 
 
         params_frame          = LabelFrame(self.window,  text = 'Parameters')
@@ -29,7 +29,7 @@ class ParamsPopUp:
         sp_max_advance     = Spinbox(params_frame, textvariable = self.max_advance, from_= -100, to = 100, increment = 0.5,  width = 7)
         sp_max_steps       = Spinbox(params_frame, textvariable = self.max_steps,   from_= 0,    to = 120, increment = 1,    width = 4)
         sp_light_threshold = Spinbox(params_frame, textvariable = self.light_threshold, from_= 0,    to = 10,  increment = 0.01, width = 8)
-        sp_laser_threshold = Spinbox(params_frame, textvariable = self.lidar_threshold, from_= 0,    to = 10,  increment = 0.01, width = 7)
+        sp_laser_threshold = Spinbox(params_frame, textvariable = self.laser_threshold, from_= 0,    to = 10,  increment = 0.01, width = 7)
         sp_turn_angle      = Spinbox(params_frame, textvariable = self.max_turn_angle, from_=-3.1716, to=3.1416, increment = 0.01745, width = 7)
 
         button_exit = Button(params_frame, text = 'Close', command = self.window.destroy)

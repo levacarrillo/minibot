@@ -47,13 +47,14 @@ class Ros(Node):
         self.executing_movement = False
 
     def send_request(self, params):
-        self.get_logger().info(f'params.run_behavior->{params['run_behavior']}')
+        self.params_req.behavior = params['behavior']
         self.params_req.run_behavior = params['run_behavior']
-        self.params_req.behavior = 'USER_SM'
         self.params_req.step = 0
-        self.params_req.max_steps = 6
-        self.params_req.max_advance = 0.4
-        self.params_req.max_turn_angle = 0.5
+        self.params_req.behavior_list = params['behavior_list']
+        self.params_req.max_steps = params['max_steps']
+        self.params_req.max_advance = params['max_advance']
+        self.params_req.max_turn_angle = params['max_turn_angle']
+        self.get_logger().warn(f'req->{self.params_req}')
         self.future = self.params_client.call_async(self.params_req)
         rclpy.spin_until_future_complete(self, self.future)
         return self.future.result()
