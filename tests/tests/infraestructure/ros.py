@@ -18,6 +18,9 @@ class Ros(Node):
         self.lidar_client = self.create_client(GetScan, 'get_scan')
         self.mp_client    = self.create_client(GetParams, 'get_params')
         self.params_client = self.create_client(SetParams, 'set_params')
+        self.get_vel_client = self.create_client(GetVelParams, 'get_vel_params')
+        self.set_vel_client = self.create_client(SetVelParams, 'set_vel_params')
+
         self.subscription = self.create_subscription(RobotStatus, 'robot_status', self.listener_callback, 10)
         self.subscription
 
@@ -30,11 +33,18 @@ class Ros(Node):
             self.get_logger().warn('SERVICE /get_params NOT AVAILABLE.')
         if not self.params_client.wait_for_service(timeout_sec = delay):
             self.get_logger().warn('SERVICE /set_params NOT AVAILABLE.')
+        if not self.get_vel_client.wait_for_service(timeout_sec = delay):
+            self.get_logger().warn('SERVICE /get_vel_params NOT AVAILABLE.')
+        if not self.set_vel_client.wait_for_service(timeout_sec = delay):
+            self.get_logger().warn('SERVICE /set_vel_params NOT AVAILABLE.')
 
         self.light_req = GetLightReadings.Request()
         self.lidar_req = GetScan.Request()
         self.mp_req    = GetParams.Request()
         self.params_req = SetParams.Request()
+
+        self.get_vel_req = GetVelParams.Request()
+        self.set_vel_req = SetVelParams.Request()
 
         self.light_readings = None
         self.lidar_readings = None
@@ -46,6 +56,18 @@ class Ros(Node):
 
         self.executing_movement = False
 
+    def get_vel_params(self):
+        future = self.get_vel_client.call_async(self.get_vel_req)
+        rclpy.spin_until_future_complete(self, future)
+        return future.result()
+
+    def set_vel_params(self, cmd_params):
+        self.set_vel_req.linear_velocity  = cmd_params['linear_velocity']
+        self.set_vel_req.angular_velocity = cmd_params['angular_velocity']
+        future = self.set_vel_client.call_async(self.set_vel_req)
+        rclpy.spin_until_future_complete(self, future)
+        return future.result()
+
     def send_request(self, params):
         self.params_req.behavior = params['behavior']
         self.params_req.run_behavior = params['run_behavior']
@@ -55,9 +77,9 @@ class Ros(Node):
         self.params_req.max_advance = params['max_advance']
         self.params_req.max_turn_angle = params['max_turn_angle']
         self.get_logger().warn(f'req->{self.params_req}')
-        self.future = self.params_client.call_async(self.params_req)
-        rclpy.spin_until_future_complete(self, self.future)
-        return self.future.result()
+        future = self.params_client.call_async(self.params_req)
+        rclpy.spin_until_future_complete(self, future)
+        return future.result()
 
 
     def listener_callback(self, msg):

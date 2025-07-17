@@ -31,7 +31,7 @@ class AppContext:
 
         self.params = None
 
-
+    # ADD PANELS TO CONTEXT
     def set_status_panel(self, status_panel):
         self.status_panel = status_panel
 
