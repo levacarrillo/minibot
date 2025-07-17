@@ -1,5 +1,6 @@
 #include "rclcpp/rclcpp.hpp"
 #include "rclcpp_action/rclcpp_action.hpp"
+#include "interfaces/srv/get_vel_params.hpp"
 #include "interfaces/srv/set_vel_params.hpp"
 #include "interfaces/action/go_to_pose.hpp"
 #include "geometry_msgs/msg/twist.hpp"
@@ -7,6 +8,7 @@
 
 using namespace std::placeholders;
 using GoToPose = interfaces::action::GoToPose;
+using GetVelParams = interfaces::srv::GetVelParams;
 using SetVelParams = interfaces::srv::SetVelParams;
 using GoalHandleGoToPose = rclcpp_action::ServerGoalHandle<GoToPose>;
 
@@ -18,9 +20,13 @@ public:
         this->declare_parameter("linear_velocity", this->linear_velocity);
         this->declare_parameter("angular_velocity", this->angular_velocity);
         cmd_vel_pub_ = this->create_publisher<geometry_msgs::msg::Twist>("/cmd_vel", 10);
-        service_ = this->create_service<interfaces::srv::SetVelParams>(
+        set_vel_service = this->create_service<SetVelParams>(
             "set_vel_params",
-            std::bind(&PoseCommander::handler_velocity, this, _1, _2)
+            std::bind(&PoseCommander::handler_set_velocity, this, _1, _2)
+        );
+        get_vel_service = this->create_service<GetVelParams>(
+            "get_vel_params",
+            std::bind(&PoseCommander::handler_get_velocity, this, _1, _2)
         );
         action_server_ = rclcpp_action::create_server<GoToPose>(
             this,
@@ -35,11 +41,20 @@ private:
     float linear_velocity;
     float angular_velocity;
     rclcpp_action::Server<GoToPose>::SharedPtr action_server_;
-    rclcpp::Service<SetVelParams>::SharedPtr service_;
+    rclcpp::Service<GetVelParams>::SharedPtr get_vel_service;
+    rclcpp::Service<SetVelParams>::SharedPtr set_vel_service;
     rclcpp::Publisher<geometry_msgs::msg::Twist>::SharedPtr cmd_vel_pub_;
 
-    void handler_velocity(const std::shared_ptr<interfaces::srv::SetVelParams::Request> request,
-        std::shared_ptr<interfaces::srv::SetVelParams::Response> response)
+    
+    void handler_get_velocity(const std::shared_ptr<GetVelParams::Request> /*request*/,
+        std::shared_ptr<GetVelParams::Response> response)
+    {
+        response->linear_velocity  = get_parameter("linear_velocity").as_double();
+        response->angular_velocity = get_parameter("angular_velocity").as_double();
+    }
+
+    void handler_set_velocity(const std::shared_ptr<SetVelParams::Request> request,
+        std::shared_ptr<SetVelParams::Response> response)
     {
         this->set_parameter(rclcpp::Parameter("linear_velocity",  request->linear_velocity));
         this->set_parameter(rclcpp::Parameter("angular_velocity", request->angular_velocity));

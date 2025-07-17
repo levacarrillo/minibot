@@ -15,6 +15,7 @@ rosidl_generate_interfaces(${PROJECT_NAME}
   "srv/GetParams.srv"
   "srv/GetScan.srv"
   "srv/SetParams.srv"
+  "srv/GetVelParams.srv"
   "srv/SetVelParams.srv"
   "action/GoToPose.action"
   DEPENDENCIES
