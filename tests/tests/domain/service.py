@@ -88,7 +88,7 @@ class Service():
 
         return coords
 
-    def format_params(self, params):
+    def format_params(self, params, vel_parms):
         if params is not None:
             behavior_list = params.behavior_list
             behavior_list.remove('') if '' in behavior_list else None
@@ -96,6 +96,9 @@ class Service():
 
             light_threshold = math.trunc(params.light_threshold * 1000) / 1000
             laser_threshold = math.trunc(params.laser_threshold * 1000) / 1000
+            
+            linear_velocity  = math.trunc(vel_parms.linear_velocity  * 1000) / 1000
+            angular_velocity = math.trunc(vel_parms.angular_velocity * 1000) / 1000
 
             return {
                 'behavior': params.behavior,
@@ -106,6 +109,8 @@ class Service():
                 'max_advance': params.max_advance,
                 'max_turn_angle': params.max_turn_angle,
                 'light_threshold': light_threshold,
-                'laser_threshold': laser_threshold
+                'laser_threshold': laser_threshold,
+                'linear_velocity': linear_velocity,
+                'angular_velocity': angular_velocity
             }
         return None

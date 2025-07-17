@@ -63,15 +63,15 @@ class AppContext:
 
     def move_robot(self, movement):
         if movement == 'LEFT':
-            self.ros.pubish_velocity(0.0,  self.cmd_vel['angular_vel'])
+            self.ros.publish_velocity(0.0,  self.cmd_vel['angular_vel'])
         elif movement == 'RIGHT':
-            self.ros.pubish_velocity(0.0, -self.cmd_vel['angular_vel'])
+            self.ros.publish_velocity(0.0, -self.cmd_vel['angular_vel'])
         elif movement == 'STOP':
-            self.ros.pubish_velocity(0.0, 0.0)
+            self.ros.publish_velocity(0.0, 0.0)
         elif movement == 'FORWARD':
-            self.ros.pubish_velocity(self.cmd_vel['linear_vel'], 0.0)
+            self.ros.publish_velocity(self.cmd_vel['linear_vel'], 0.0)
         elif movement == 'BACKWARD':
-            self.ros.pubish_velocity(-self.cmd_vel['linear_vel'], 0.0)
+            self.ros.publish_velocity(-self.cmd_vel['linear_vel'], 0.0)
         else: 
             print(f'MOVEMENT {movement} DOES NOT RECOGNIZED')
 
@@ -86,6 +86,8 @@ class AppContext:
         self.cmd_pose_panel.distance_var.set(distance_cm)
 
     def set_initial_window_parameters(self):
+        self.params_pop_up.linear_vel.set(self.params['linear_velocity'])
+        self.params_pop_up.angular_vel.set(self.params['angular_velocity'])
         self.params_pop_up.max_advance.set(self.params['max_advance'])
         self.params_pop_up.max_turn_angle.set(self.params['max_turn_angle'])
         self.params_pop_up.light_threshold.set(self.params['light_threshold'])
@@ -102,12 +104,12 @@ class AppContext:
         max_steps       = self.params_pop_up.max_steps.get()
 
         self.params_pop_up.linear_vel.set(linear_vel + 'm/s')
-        self.params_pop_up.angular_vel.set(angular_vel + 'rads/s')
+        self.params_pop_up.angular_vel.set(angular_vel + 'rad/s')
         self.params_pop_up.max_advance.set(max_advance + 'm')
         self.params_pop_up.max_turn_angle.set(max_turn_angle + 'rad')
 
     def set_initial_params(self):
-        self.params = self.service.format_params(self.ros.get_motion_planner_params())
+        self.params = self.service.format_params(self.ros.get_motion_planner_params(), self.ros.get_vel_params())
         if self.params is not None:
             self.behaviors_panel.behavior_list['values'] = self.params['behavior_list']
             self.behaviors_panel.behavior.set(self.params['behavior'])
@@ -143,10 +145,13 @@ class AppContext:
             self.params['behavior'] = self.behaviors_panel.behavior_list.get()
         else:
             self.params['run_behavior'] = False
+        self.ros.set_vel_params(self.params)
         self.ros.send_motion_planner_req(self.params)
 
     def on_click_set_params(self):
         self.params['max_steps'] = self.params_pop_up.max_steps.get()
+        self.params['linear_velocity']  = float(self.params_pop_up.linear_vel  .get().replace('m/s', ''))
+        self.params['angular_velocity'] = float(self.params_pop_up.angular_vel .get().replace('rad/s', ''))
         self.params['max_advance'] = float(self.params_pop_up.max_advance.get().replace('m', ''))
         self.params['max_turn_angle'] = float(self.params_pop_up.max_turn_angle.get().replace('rad', ''))
         self.params['light_threshold'] = self.params_pop_up.light_threshold.get()
@@ -164,9 +169,9 @@ class AppContext:
         
         self.movement_is_executing = self.ros.movement_is_running()
 
-        self.cmd_pose_panel.run_stop.set('Run' if self.movement_is_executing else 'Stop')
+        self.cmd_pose_panel.run_stop.set('Stop' if self.movement_is_executing else 'Run')
 
-        self.behaviors_panel.run_stop.set('Run' if self.ros.get_behavior_running() else 'Stop')
+        self.behaviors_panel.run_stop.set('Stop' if self.ros.get_behavior_running() else 'Run')
         self.behaviors_panel.current_step.set(f'Steps: {self.ros.get_current_step()}')
 
         id_max = self.get_lights_max_intensity()
