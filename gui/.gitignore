@@ -13,13 +13,20 @@
 !gui/app/
 !gui/app/*.py
 
+!gui/app/components/
+!gui/app/components/*.py
+
+!gui/app/components/menu/
+!gui/app/components/menu/*.py
+
+!gui/app/components/side_panel/
+!gui/app/components/side_panel/*.py
+
 !gui/app/canvas/
 !gui/app/canvas/*.py
 !gui/app/canvas/robot/
 !gui/app/canvas/robot/*.py
 
-!gui/app/menu/
-!gui/app/menu/*.py
 
 !gui/app/side_panel/
 !gui/app/side_panel/*.py

@@ -1,18 +1,17 @@
-import tkinter as tk
-from tkinter import Frame, BOTH
+from tkinter import *
 from gui.config.colors import *
-from gui.app.menu.menu_bar import *
+from gui.app.components.menu.menu_bar import *
 from gui.app.canvas.canvas_panel import *
 from gui.app.app_context import AppContext
-from gui.app.side_panel.side_panel import *
+from gui.app.components.side_panel.side_panel import SidePanel
 
 
-class App(tk.Tk):
+class App(Tk):
     def __init__(self, controller):
         super().__init__()
         self.title("Mobile Robot 2D Simulator v.2")
 
-        content = Frame(self)
+        content = Frame(self).place()
 
         context = AppContext(
             app        = self,
@@ -22,10 +21,9 @@ class App(tk.Tk):
         )
         
         controller.update_params()
+        MenuBar(context)
         SidePanel(context)
         CanvasPanel(context)
-        MenuBar(context)
-        content.pack(fill=BOTH, expand=True)
     
     def run(self):
         self.mainloop()

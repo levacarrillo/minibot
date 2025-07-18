@@ -36,6 +36,10 @@ class AppContext:
         self.objects = None
 
 
+    def canvas_panel_resize(self, size_x, size_y):
+        print('todo')
+
+
     # SETTERS FOR SECTIONS
     def set_env_section(self, env_section):
         self.env_section = env_section
@@ -76,10 +80,10 @@ class AppContext:
     def get_execution_delay(self):
         return self.controller.get_execution_delay(self.velocity_slider)
     
-    def set_fast_mode(self, value):
+    def on_check_fast_mode(self, value):
         self.fast_mode = value
 
-    def set_show_sensors(self, value):
+    def on_check_show_sensors(self, value):
         self.show_sensors = value
 
     def set_route(self, value):
@@ -90,8 +94,8 @@ class AppContext:
             return self.env_section.behavior_list_cb.get()
         elif name == 'max_steps':
             return int(self.env_section.steps_entry.get())
-        elif name == 'map':
-            return self.env_section.environment_cb.get()
+        # elif name == 'map':
+        #     return self.env_section.environment_cb.get()
         elif name == 'entry_angle':
             return self.robot_section.entry_angle.get()
         elif name == 'entry_radius':
@@ -176,26 +180,27 @@ class AppContext:
     def last_simulation(self):
         self.run_last_simulation = True
         
-
     def plot_map(self):
-        self.clear_topological_map()
-        self.polygon_list, polygon_to_plot_list = self.controller.get_map(self.get_param('map'))
-        self.grid.plot()
+        print(f'todo')
+    # def plot_map(self):
+    #     self.clear_topological_map()
+    #     self.polygon_list, polygon_to_plot_list = self.controller.get_map(self.get_param('map'))
+    #     self.grid.plot()
 
-        self.canvas.delete('map')
-        for polygon_to_plot in polygon_to_plot_list:
-            self.canvas.create_polygon(
-                polygon_to_plot, 
-                outline = self.color['obstacle_outline'],
-                fill = self.color['obstacle_inner'],
-                width = 1,
-                tag = 'map'
-            )
+    #     self.canvas.delete('map')
+    #     for polygon_to_plot in polygon_to_plot_list:
+    #         self.canvas.create_polygon(
+    #             polygon_to_plot, 
+    #             outline = self.color['obstacle_outline'],
+    #             fill = self.color['obstacle_inner'],
+    #             width = 1,
+    #             tag = 'map'
+    #         )
 
-        if self.controller.check_for_topological_map(self.get_param('map')):
-            self.buttons_section.plot_topological.config(state = NORMAL)
-        else:
-            self.buttons_section.plot_topological.config(state = DISABLED)
+        # if self.controller.check_for_topological_map(self.get_param('map')):
+        #     self.buttons_section.plot_topological.config(state = NORMAL)
+        # else:
+        #     self.buttons_section.plot_topological.config(state = DISABLED)
 
     def plot_topological_map(self):
         self.buttons_section.plot_topological.config(state = DISABLED)
@@ -236,8 +241,9 @@ class AppContext:
 
         return polygon_list
 
-    def load_objects(self, load_objects):
-        self.objects.plot() if load_objects == 1 else self.objects.delete()
+    def on_check_load_objects(self, load_objects):
+        print(f'todo')
+        # self.objects.plot() if load_objects == 1 else self.objects.delete()
 
-    def change_sensor_noise(self, noise):
+    def on_check_noise(self, noise):
         self.sensor_noise = True if noise == 1 else False

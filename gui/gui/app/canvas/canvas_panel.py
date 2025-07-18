@@ -32,7 +32,7 @@ class CanvasPanel:
         context.app.frame.grid(column = 0, row = 0, columnspan = 3, rowspan = 2, 
                                                         sticky = (N, S, E, W))
         self.canvas.pack()
-        context.plot_map()
+        # context.plot_map()
 
         Animation(context)
 
