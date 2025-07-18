@@ -21,7 +21,15 @@ def generate_launch_description():
         'config',
         'params.yaml'
     )
-    print(f'params_path->{params_path}')
+    
+    map_path = os.path.join(
+        get_package_share_directory('hardware'),
+        'maps',
+        'map.yaml'
+    )
+
+    print(f'map_path->{map_path}')
+
     robot_description_config = xacro.process_file(xacro_file)
     robot_description = {'robot_description': robot_description_config.toxml()}
 
@@ -71,6 +79,14 @@ def generate_launch_description():
             name='robot_introspection',
             output='screen',
             parameters=[params_path],
+            condition=IfCondition(use_sim)
+        ),
+        Node(
+            package='nav2_map_server',
+            executable='map_server',
+            name='map_server',
+            output='screen',
+            parameters=[{'yaml_filename': map_path}],
             condition=IfCondition(use_sim)
         ),
         # Node(
