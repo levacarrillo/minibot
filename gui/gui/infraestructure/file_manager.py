@@ -13,7 +13,7 @@ class FileManager:
     #     self.map_file.close()
     #     self.objects_file.close()
 
-    def get_file_path(self, file_name):
+    def get_path(self, file_name):
         return os.path.join(self.resources, file_name)
     
     def check_for_topological_map(self, file_name):

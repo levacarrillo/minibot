@@ -14,12 +14,12 @@ class App(Tk):
         content = Frame(self).place()
 
         context = AppContext(
-            app     = self,
-            color   = colors,
-            content = content,
-            service = service,
-            ros     = node,
-            file    = file_manager
+            app      = self,
+            color    = colors,
+            content  = content,
+            service  = service,
+            ros      = node,
+            file_manager  = file_manager
         )
         
         context.update_params()

@@ -4,29 +4,21 @@ from PIL import ImageTk
 
 class Light:
     def __init__(self, context):
-        self.canvas     = context.canvas
-        # self.controller = context.controller
-  
+        self.context = context
         self.position = None
-        self.image = False
-        # self.img   = PhotoImage(file = self.controller.get_file_path('light.png'))
-        # self.img.zoom(50, 50)
+        self.image = None
+        self.img   = PhotoImage(file = context.get_file_path('light.png'))
+        self.img.zoom(50, 50)
         context.set_light(self)
 
-    def plot(self, position = None):
-        if position is not None:
-            self.position = position
-        # elif self.position is not None:
-        #     self.position = self.controller.remap_position(self.position)
+    def plot(self, e_point = None):
+        self.context.canvas.delete('light')
+        if e_point:
+            self.position = self.context.position(e_point.x, e_point.y)
+        elif self.position:
+            self.position = self.context.remap_position(self.position)
 
-        if self.image:
-            self.canvas.delete(self.image)
-
-        if self.position is not None:
-            self.image = self.canvas.create_image(self.position['x'], self.position['y'], 
-                                                                        image = self.img)
+        self.image = self.context.canvas.create_image(self.position['x'], self.position['y'], 
+                                                            image = self.img, tag = 'light')
     def get_position(self):
         return self.position
-
-    def delete(self):
-        self.canvas.delete(self.image)

@@ -2,12 +2,15 @@ from tkinter import NORMAL, DISABLED, END
 from PIL import Image, ImageDraw, ImageTk
 
 class AppContext:
-    def __init__(self, app, color, content, service, ros, file):
-        self.app          = app
-        self.color        = color
-        self.content      = content
-        self.ros          = ros
-        self.canvas       = None
+    def __init__(self, app, color, content, service, ros, file_manager):
+        self.app      = app
+        self.color    = color
+        self.content  = content
+        self.service  = service
+        self.ros      = ros
+        self.file     = file_manager
+
+        self.canvas   = None
 
         self.canvas_size  = {
             'width':  500,
@@ -55,6 +58,15 @@ class AppContext:
 
     def set_grid(self, grid):
         self.grid = grid
+
+    def position(self, x, y):
+        return { 'x': x, 'y': y }
+
+    def remap_position(self, position):
+        return self.service.remap_position(position)
+
+    def get_file_path(self, file_name):
+        return self.file.get_path(file_name)
 
     def plot_map(self):
         self.grid.plot() if self.grid else None

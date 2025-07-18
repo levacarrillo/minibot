@@ -19,11 +19,11 @@ class CanvasPanel:
         context.set_canvas(canvas)
 
         Grid(context)
-        # Light(context)
+        light = Light(context)
         # self.robot = Robot(context)
         # self.objects = Objects(context)
 
-        # self.canvas.bind("<Button-3>", self.right_click)
+        canvas.bind("<Button-3>", light.plot)
         # self.canvas.bind("<Button-1>", self.left_click)
         context.plot_map()
         frame.grid(column = 0, row = 0, columnspan = 3, rowspan = 2, 
@@ -31,15 +31,6 @@ class CanvasPanel:
         canvas.pack()
 
         # Animation(context)
-
-    # def resize(self, new_size_x, new_size_y):
-    #     print(f"New canva's size: {new_size_x}x{new_size_y}")
-    #     self.context.set_canvas_size(new_size_x, new_size_y)
-
-    #     self.light.plot()
-    #     self.robot.plot()
-    #     self.canvas.configure(width = new_size_x, height = new_size_y)
-    #     self.context.plot_map()
  
     # def right_click(self, e_point):
     #     light_position = self.controller.set_position(e_point.x, e_point.y)
