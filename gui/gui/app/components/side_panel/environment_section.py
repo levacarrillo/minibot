@@ -11,13 +11,12 @@ class EnvironmentSection:
         show_sensors = IntVar()
         load_objects = IntVar()
 
-        # environment_list = context.controller.get_environment_list()
-        # behavior_list    = context.controller.get_param('behavior_list')
-        # max_steps        = StringVar(value = context.controller.get_param('max_steps'))
-
-        environment_list = []
-        behavior_list    = []
-        max_steps        = StringVar(value = 35)
+        environment_list  = context.get_environment_list()
+        behavior_list     = context.get_ros_param('behavior_list')
+        self.curr_step    = IntVar(value = 0)
+        self.max_steps    = StringVar(value = context.get_ros_param('max_steps'))
+        self.light_pose_x = StringVar(value = "Click Right")
+        self.light_pose_y = StringVar(value = "Click Right")
 
         label_settings      = Label(context.side_frame,  text = "Settings", font = ('arial', 11, 'bold'))
         label_enviroments   = Label(context.side_frame,  text = "Environment:")
@@ -27,25 +26,24 @@ class EnvironmentSection:
         label_light_y       = Label(context.side_frame,  text = "Light Y:")
         label_curr_step     = Label(context.side_frame,  text = "Current step:")
         label_configuration = Label(context.side_frame,  text = "Configurations:")
-        label_light_pose_x  = Label(context.side_frame,  text = "Click Right", justify='center')
-        label_light_pose_y  = Label(context.side_frame,  text = "Click Right",  justify='center')
-        label_steps         = Label(context.side_frame,  text = "0", justify='center')
+        label_light_pose_x  = Label(context.side_frame,  textvariable = self.light_pose_x, justify='center')
+        label_light_pose_y  = Label(context.side_frame,  textvariable = self.light_pose_y, justify='center')
+        label_steps         = Label(context.side_frame,  textvariable = self.curr_step,    justify='center')
         
-        steps_entry = Entry(context.side_frame, validate = 'key', textvariable = max_steps, width = 5)
+        steps_entry = Entry(context.side_frame, validate = 'key', textvariable = self.max_steps, width = 5)
         environment_cb    = ttk.Combobox(context.side_frame, values = environment_list, width = 16)
         behavior_list_cb  = ttk.Combobox(context.side_frame, values = behavior_list,  width = 16)
 
-        ck_button_fast    = Checkbutton(context.side_frame, text="Fast mode",
-                                        variable = fast_mode,
+        self.environment = environment_cb
+        self.behavior    = behavior_list
+
+        ck_button_fast    = Checkbutton(context.side_frame, text="Fast mode", variable = fast_mode,
                                         command = lambda: context.on_check_fast_mode(fast_mode.get()))
-        ck_button_sensors = Checkbutton(context.side_frame, text="Show sensors",
-                                        variable = show_sensors,
+        ck_button_sensors = Checkbutton(context.side_frame, text="Show sensors", variable = show_sensors,
                                         command = lambda: on_check_show_sensors(show_sensors.get()))
-        ck_add_noise      = Checkbutton(context.side_frame, text="Add Noise", 
-                                        variable = add_noise,
+        ck_add_noise      = Checkbutton(context.side_frame, text="Add Noise",  variable = add_noise,
                                         command = lambda: context.on_check_noise(add_noise.get()))
-        ck_button_load    = Checkbutton(context.side_frame, text="Load Objects",
-                                        variable = load_objects,
+        ck_button_load    = Checkbutton(context.side_frame, text="Load Objects", variable = load_objects,
                                         command = lambda: context.on_check_load_objects(load_objects.get()))
 
         label_settings      .grid(column = 0, row = 0,  sticky = (N, W), padx = (5, 0))
@@ -69,8 +67,8 @@ class EnvironmentSection:
         ck_add_noise        .grid(column = 1, row = 9,  sticky = (N, W), padx = (5, 0))
         ck_button_load      .grid(column = 1, row = 10, sticky = (N, W), padx = (5, 0))
 
-        # environment_cb.set('EMPTY')
-        # behavior_list_cb.current(0)
+        environment_cb.set('EMPTY')
+        behavior_list_cb.current(0)
 
         environment_cb.bind("<<ComboboxSelected>>", context.plot_map)
 

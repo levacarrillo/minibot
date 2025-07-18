@@ -235,7 +235,7 @@ class Service():
         laser_threshold = math.trunc(params.laser_threshold * 1000) / 1000
         light_threshold = math.trunc(params.light_threshold * 1000) / 1000
 
-        self.ros_params = {
+        return {
             "behavior" :       params.behavior,
             "run_behavior" :   params.run_behavior,
             "behavior_list" :  behavior_list,
@@ -246,6 +246,29 @@ class Service():
             "light_threshold": light_threshold,
             "laser_threshold": laser_threshold
         }
+
+    # def format_ros_params(self, params):
+    #     behavior_list = params.behavior_list
+    #     if '' in behavior_list:
+    #         behavior_list.remove('')
+    #     if 'UNKNOWN' in behavior_list:
+    #         behavior_list.remove('UNKNOWN')
+        
+    #     max_advance = math.trunc(params.max_advance * 1000) / 1000
+    #     laser_threshold = math.trunc(params.laser_threshold * 1000) / 1000
+    #     light_threshold = math.trunc(params.light_threshold * 1000) / 1000
+
+    #     self.ros_params = {
+    #         "behavior" :       params.behavior,
+    #         "run_behavior" :   params.run_behavior,
+    #         "behavior_list" :  behavior_list,
+    #         "step" :           params.step,
+    #         "max_steps" :      params.max_steps,
+    #         "max_advance" :    max_advance,
+    #         "max_turn_angle":  params.max_turn_angle,
+    #         "light_threshold": light_threshold,
+    #         "laser_threshold": laser_threshold
+    #     }
 
     def get_current_step(self, params):
         self.ros_params['step'] = params.step

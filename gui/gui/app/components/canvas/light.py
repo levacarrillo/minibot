@@ -15,6 +15,7 @@ class Light:
         self.context.canvas.delete('light')
         if e_point:
             self.position = self.context.position(e_point.x, e_point.y)
+            self.context.set_light_position(e_point.x, e_point.y)
         elif self.position:
             self.position = self.context.remap_position(self.position)
 

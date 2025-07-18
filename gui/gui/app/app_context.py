@@ -2,6 +2,7 @@ from tkinter import NORMAL, DISABLED, END
 from PIL import Image, ImageDraw, ImageTk
 from copy import copy
 
+
 class AppContext:
     def __init__(self, app, color, content, service, ros, file_manager):
         self.app      = app
@@ -23,6 +24,8 @@ class AppContext:
             'width':  1,
             'height': 1
         }
+
+        self.ros_params = None
 
         self.side_frame   = None
 
@@ -48,6 +51,21 @@ class AppContext:
 
 
     # REFACTORED---
+    def update_params(self):
+        self.ros_params = self.service.format_ros_params(self.ros.update_params())
+        print(f'ros_params->{self.ros_params}')
+
+    def get_ros_param(self, param_name):
+        return self.ros_params[param_name]
+
+    def set_light_position(self, x, y):
+        x, y = self.service.px_point_to_m(x, self.canvas_size['height'] - y)
+        self.env_section.light_pose_x.set(x)
+        self.env_section.light_pose_y.set(y)
+
+    def get_environment_list(self):
+        return self.file.get_environment_list()
+
     def load_objects(self):
         return self.service.parse_objects_file(self.file.load_objects())
 
@@ -119,10 +137,6 @@ class AppContext:
         # controller.finish_movement()
         # context.simulation_running = False
         # context.enable_button_run()
-
-    def update_params(self):
-        print('todo:updating params')
-        # controller.update_params()
 
     def get_canvas_size(self):
         return self.canvas_size
@@ -226,27 +240,27 @@ class AppContext:
     def set_side_frame(self, side_frame):
         self.side_frame = side_frame
 
-    def panel_update_value(self, name, value):
-        if name == 'label_light_pose_x':
-            self.env_section.label_light_pose_x.config(text = value)
-        elif name == 'label_light_pose_y':
-            self.env_section.label_light_pose_y.config(text = value)
-        elif name == 'label_steps':
-            self.env_section.label_steps.config(text = value)
-        elif name == 'entry_pose_x':
-            self.robot_section.entry_pose_x.delete(0, END)
-            self.robot_section.entry_pose_x.insert(0, value)
-        elif name == 'entry_pose_y':
-            self.robot_section.entry_pose_y.delete(0, END)
-            self.robot_section.entry_pose_y.insert(0, value)
-        elif name == 'entry_angle':
-            self.robot_section.entry_angle.delete(0, END)
-            self.robot_section.entry_angle.insert(0, str(value)[:6])
-        elif name == 'num_sensors':
-            self.sensors_section.entry_num_sensors.delete(0, END)
-            self.sensors_section.entry_num_sensors.insert(0, str(value))
-        else:
-            print(f'PANEL_UPDATE_VALUE()->{name} NOT RECOGNIZED BY CONTEXT')        
+    # def panel_update_value(self, name, value):
+    #     if name == 'label_light_pose_x':
+    #         self.env_section.label_light_pose_x.config(text = value)
+    #     elif name == 'label_light_pose_y':
+    #         self.env_section.label_light_pose_y.config(text = value)
+    #     elif name == 'label_steps':
+    #         self.env_section.label_steps.config(text = value)
+    #     elif name == 'entry_pose_x':
+    #         self.robot_section.entry_pose_x.delete(0, END)
+    #         self.robot_section.entry_pose_x.insert(0, value)
+    #     elif name == 'entry_pose_y':
+    #         self.robot_section.entry_pose_y.delete(0, END)
+    #         self.robot_section.entry_pose_y.insert(0, value)
+    #     elif name == 'entry_angle':
+    #         self.robot_section.entry_angle.delete(0, END)
+    #         self.robot_section.entry_angle.insert(0, str(value)[:6])
+    #     elif name == 'num_sensors':
+    #         self.sensors_section.entry_num_sensors.delete(0, END)
+    #         self.sensors_section.entry_num_sensors.insert(0, str(value))
+    #     else:
+    #         print(f'PANEL_UPDATE_VALUE()->{name} NOT RECOGNIZED BY CONTEXT')        
 
     # SHARED METHODS
     def run_simulation(self):
