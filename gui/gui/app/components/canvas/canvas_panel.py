@@ -1,39 +1,34 @@
 from tkinter import *
-from gui.app.canvas.grid  import Grid
-from gui.app.canvas.light import Light
-from gui.app.canvas.objects import Objects
-from gui.app.canvas.robot.robot import Robot
-from gui.app.canvas.animation import Animation
+from gui.app.components.canvas.grid  import Grid
+from gui.app.components.canvas.light import Light
+from gui.app.components.canvas.objects import Objects
+# from gui.app.canvas.robot.robot import Robot
+# from gui.app.canvas.animation import Animation
 
 
 class CanvasPanel:
     def __init__(self, context):
-        # self.context    = context
-        # self.controller = context.controller
+        frame = Frame(context.content, borderwidth = 5, relief = "flat", width = 900, height = 900, 
+                                                                    bg = context.color['background'])
 
-        context.app.frame = Frame(context.content, borderwidth = 5, relief = "flat", 
-                            width = 900, height = 900, bg = context.color['background'])
+        size = context.get_canvas_size()
+        canvas = Canvas(frame, width = size['width'], height = size['height'], 
+                                                                    bg = context.color['canvas'])
 
-        # self.size = self.controller.get_canvas_size()
 
-        self.canvas = Canvas(context.app.frame, width = 500, height = 500, bg = context.color['canvas'])
-        # self.canvas = Canvas(context.app.frame, width = self.size['x'], 
-        #                             height = self.size['y'], bg = context.color['canvas'])
+        context.set_canvas(canvas)
 
-        context.set_canvas_panel(self)
-
-        self.grid  = Grid(context)
-        self.light = Light(context)
+        Grid(context)
+        # Light(context)
         # self.robot = Robot(context)
-        self.objects = Objects(context)
+        # self.objects = Objects(context)
 
         # self.canvas.bind("<Button-3>", self.right_click)
         # self.canvas.bind("<Button-1>", self.left_click)
-        
-        context.app.frame.grid(column = 0, row = 0, columnspan = 3, rowspan = 2, 
-                                                        sticky = (N, S, E, W))
-        self.canvas.pack()
-        # context.plot_map()
+        context.plot_map()
+        frame.grid(column = 0, row = 0, columnspan = 3, rowspan = 2, 
+                                                        sticky = (N, S, E, W))                          
+        canvas.pack()
 
         # Animation(context)
 

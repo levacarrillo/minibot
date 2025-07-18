@@ -6,10 +6,18 @@ class AppContext:
         self.app          = app
         self.color        = color
         self.content      = content
-
+        self.ros          = ros
         self.canvas       = None
-        self.canvas_size  = None
-        self.canvas_panel = None
+
+        self.canvas_size  = {
+            'width':  500,
+            'height': 500
+        }
+
+        self.canvas_scale = {
+            'width':  1,
+            'height': 1
+        }
 
         self.side_frame   = None
 
@@ -36,14 +44,27 @@ class AppContext:
 
 
     # REFACTORED---
-    def canvas_panel_resize(self, size_x, size_y):
-        print('todo')
+    def set_canvas(self, canvas):
+        self.canvas = canvas
+
+    def resize_canvas(self, width, height):
+        self.canvas_size['width']  = width
+        self.canvas_size['height'] = height
+        self.canvas.configure(width = width, height = height)
+        self.plot_map()
+
+    def set_grid(self, grid):
+        self.grid = grid
+
+    def plot_map(self):
+        self.grid.plot() if self.grid else None
+            
 
     def robot_plot(self):
-        print('todo')
+        print('todo: robot plot')
     
     def set_angle(self):
-        print('ftodo')
+        print('todo: set_angle')
         # if event is None:
         #     context.panel_update_value('entry_angle', 0.0)
         # else:
@@ -58,8 +79,14 @@ class AppContext:
         # context.enable_button_run()
 
     def update_params(self):
-        print('todo')
+        print('todo:updating params')
         # controller.update_params()
+
+    def get_canvas_size(self):
+        return self.canvas_size
+
+    def get_canvas_scale(self):
+        return self.canvas_scale
 
     def loop(self):
         print('todo')
@@ -78,16 +105,8 @@ class AppContext:
         self.buttons_section = buttons_section
 
     # SETTERS FOR CANVA'S COMPONENTS
-    def set_canvas_panel(self, canvas_panel):
-        self.canvas_panel = canvas_panel
-        # self.canvas = canvas_panel.canvas
-        # self.canvas_size  = canvas_panel.size
-
     def set_canvas_size(self, new_size_x, new_size_y):
         self.canvas_size  = self.controller.set_canvas_size(new_size_x, new_size_y)
-
-    def set_grid(self, grid):
-        self.grid = grid
 
     def set_light(self, light):
         self.light = light
@@ -203,9 +222,7 @@ class AppContext:
     
     def last_simulation(self):
         self.run_last_simulation = True
-        
-    def plot_map(self):
-        print(f'todo')
+
     # def plot_map(self):
     #     self.clear_topological_map()
     #     self.polygon_list, polygon_to_plot_list = self.controller.get_map(self.get_param('map'))
