@@ -7,9 +7,6 @@ from gui.app.components.canvas.robot.sensors import Sensors
 class Robot:
     def __init__(self, context):
         self.context    = context
-        self.color      = context.color
-        self.canvas     = context.canvas
-        # self.controller = context.controller
 
         self.pose    = None
         self.radius  = None
@@ -20,35 +17,37 @@ class Robot:
         # self.sensors = Sensors(context)
         # self.parts = Parts(context)
 
-    def plot(self, position = None, rotation = 0):
-        entry_angle  = self.context.get_param('entry_angle')
-        entry_radius = self.context.get_param('entry_radius')
-        angle = self.controller.normalize_angle(entry_angle) + rotation
+    def plot(self, e_point = None):
+        print(f'plotting robot at->{e_point}')
+    # def plot(self, position = None, rotation = 0):
+        # entry_angle  = self.context.get_param('entry_angle')
+        # entry_radius = self.context.get_param('entry_radius')
+        # angle = self.controller.normalize_angle(entry_angle) + rotation
 
-        self.radius = self.controller.m_to_pixels(entry_radius)
-        if position is not None:
-            self.pose   = self.controller.set_pose(position['x'], position['y'], angle)
-        elif self.pose is not None: # VERIFY IF ROBOT EXISTS
-            new_pose   = self.controller.set_pose(self.pose['x'], self.pose['y'], angle)
-            self.pose   = self.controller.remap_position(new_pose)
+        # self.radius = self.controller.m_to_pixels(entry_radius)
+        # if position is not None:
+        #     self.pose   = self.controller.set_pose(position['x'], position['y'], angle)
+        # elif self.pose is not None: # VERIFY IF ROBOT EXISTS
+        #     new_pose   = self.controller.set_pose(self.pose['x'], self.pose['y'], angle)
+        #     self.pose   = self.controller.remap_position(new_pose)
 
 
-        if self.body:
-            self.delete()
-            if self.sensors:  
-                self.sensors.delete()
+        # if self.body:
+        #     self.delete()
+        #     if self.sensors:  
+        #         self.sensors.delete()
 
-        if self.context.show_sensors:
-            self.sensors.plot()
+        # if self.context.show_sensors:
+        #     self.sensors.plot()
 
-        if self.pose is not None:
-            self.body = self.parts.get(name = 'body')
-            self.parts.get(name = 'hokuyo')
-            self.parts.get(name = 'head')
-            self.parts.get(name = 'left_wheel')
-            self.parts.get(name = 'right_wheel')
+        # if self.pose is not None:
+        #     self.body = self.parts.get(name = 'body')
+        #     self.parts.get(name = 'hokuyo')
+        #     self.parts.get(name = 'head')
+        #     self.parts.get(name = 'left_wheel')
+        #     self.parts.get(name = 'right_wheel')
         
-        self.context.panel_update_value('entry_angle', angle)
+        # self.context.panel_update_value('entry_angle', angle)
 
     def rotate(self, angle):
         self.plot(rotation = angle)
