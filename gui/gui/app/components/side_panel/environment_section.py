@@ -43,10 +43,10 @@ class EnvironmentSection:
                                         command = lambda: on_check_show_sensors(show_sensors.get()))
         ck_add_noise      = Checkbutton(context.side_frame, text="Add Noise", 
                                         variable = add_noise,
-                                               command = lambda: context.on_check_noise(add_noise.get()))
+                                        command = lambda: context.on_check_noise(add_noise.get()))
         ck_button_load    = Checkbutton(context.side_frame, text="Load Objects",
                                         variable = load_objects,
-                                        command = context.on_check_load_objects(load_objects.get()))
+                                        command = lambda: context.on_check_load_objects(load_objects.get()))
 
         label_settings      .grid(column = 0, row = 0,  sticky = (N, W), padx = (5, 0))
         label_enviroments   .grid(column = 0, row = 1,  sticky = (N, W), padx = (5, 0))
@@ -72,6 +72,6 @@ class EnvironmentSection:
         # environment_cb.set('EMPTY')
         # behavior_list_cb.current(0)
 
-        environment_cb.bind("<<ComboboxSelected>>", context.plot_map())
+        environment_cb.bind("<<ComboboxSelected>>", context.plot_map)
 
         context.set_env_section(self)

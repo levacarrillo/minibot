@@ -49,6 +49,9 @@ class AppContext:
 
 
     # REFACTORED---
+    def load_objects(self):
+        return self.service.parse_objects_file(self.file.load_objects())
+
     def set_canvas(self, canvas):
         self.canvas = canvas
 
@@ -77,6 +80,18 @@ class AppContext:
 
     def plot_map(self):
         self.grid.plot() if self.grid else None
+        self.canvas.delete('map')
+        map_file = self.file.get_map('EMPTY')
+        polygon_list, polygon_to_plot_list = self.service.parse_map(map_file)
+        for polygon_to_plot in polygon_to_plot_list:
+            self.canvas.create_polygon(
+                polygon_to_plot, 
+                outline = self.color['obstacle_outline'],
+                fill = self.color['obstacle_inner'],
+                width = 1,
+                tag = 'map'
+            )
+
             
 
     def robot_plot(self):
@@ -302,8 +317,7 @@ class AppContext:
         return polygon_list
 
     def on_check_load_objects(self, load_objects):
-        print(f'todo')
-        # self.objects.plot() if load_objects == 1 else self.objects.delete()
+            self.objects.plot() if load_objects == 1 else self.objects.delete()
 
     def on_check_noise(self, noise):
         self.sensor_noise = True if noise == 1 else False

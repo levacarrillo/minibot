@@ -21,7 +21,7 @@ class CanvasPanel:
         Grid(context)
         light = Light(context)
         # robot = Robot(context)
-        # self.objects = Objects(context)
+        Objects(context)
 
         canvas.bind("<Button-3>", light.plot)
         # self.canvas.bind("<Button-1>", self.left_click)
