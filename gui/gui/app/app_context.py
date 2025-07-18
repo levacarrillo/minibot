@@ -26,7 +26,6 @@ class AppContext:
 
         self.side_frame   = None
 
-        self.grid         = None
         self.light        = None
         self.robot        = None
 
@@ -63,9 +62,6 @@ class AppContext:
         self.light.plot() if self.light else None
         self.plot_map()
 
-    def set_grid(self, grid):
-        self.grid = grid
-
     def position(self, x, y):
         return { 'x': x, 'y': y }
 
@@ -79,7 +75,19 @@ class AppContext:
         return self.file.get_path(file_name)
 
     def plot_map(self):
-        self.grid.plot() if self.grid else None
+        # self.grid.plot() if self.grid else None
+        self.canvas.delete('grid')
+
+        line_per_meters = 10
+        for axis in self.canvas_size:
+            line = self.canvas_size[axis] / (line_per_meters * self.canvas_scale[axis])
+            for i in range(1, int(line_per_meters * self.canvas_scale[axis])):
+                points = [i * line if axis == 'width' else 0,
+                          i * line if axis != 'width' else 0,
+                          i * line if axis == 'width' else self.canvas_size[axis],
+                          i * line if axis != 'width' else self.canvas_size[axis]]
+                self.canvas.create_line(points, dash = (4, 4),
+                                    fill = self.color['grid'], tag  = 'grid' )
         self.canvas.delete('map')
         map_file = self.file.get_map('EMPTY')
         polygon_list, polygon_to_plot_list = self.service.parse_map(map_file)

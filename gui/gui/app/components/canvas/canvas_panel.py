@@ -1,8 +1,7 @@
 from tkinter import *
-from gui.app.components.canvas.grid  import Grid
 from gui.app.components.canvas.light import Light
 from gui.app.components.canvas.objects import Objects
-# from gui.app.canvas.robot.robot import Robot
+from gui.app.components.canvas.robot.robot import Robot
 # from gui.app.canvas.animation import Animation
 
 
@@ -18,9 +17,8 @@ class CanvasPanel:
 
         context.set_canvas(canvas)
 
-        Grid(context)
         light = Light(context)
-        # robot = Robot(context)
+        robot = Robot(context)
         Objects(context)
 
         canvas.bind("<Button-3>", light.plot)

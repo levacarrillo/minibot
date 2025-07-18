@@ -3,7 +3,6 @@ class Parts:
         self.context = context
         self.color      = context.color
         self.canvas     = context.canvas
-        self.controller = context.controller
 
         self.anchor = None
         self.radius = None

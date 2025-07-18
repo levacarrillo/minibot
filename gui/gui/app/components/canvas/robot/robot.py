@@ -1,7 +1,7 @@
 import time
 from tkinter import END
-from gui.app.canvas.robot.parts import Parts
-from gui.app.canvas.robot.sensors import Sensors
+from gui.app.components.canvas.robot.parts import Parts
+from gui.app.components.canvas.robot.sensors import Sensors
 
 
 class Robot:
@@ -9,7 +9,7 @@ class Robot:
         self.context    = context
         self.color      = context.color
         self.canvas     = context.canvas
-        self.controller = context.controller
+        # self.controller = context.controller
 
         self.pose    = None
         self.radius  = None
@@ -17,8 +17,8 @@ class Robot:
         self.grasped = None
         context.set_robot(self)
 
-        self.sensors = Sensors(context)
-        self.parts = Parts(context)
+        # self.sensors = Sensors(context)
+        # self.parts = Parts(context)
 
     def plot(self, position = None, rotation = 0):
         entry_angle  = self.context.get_param('entry_angle')
