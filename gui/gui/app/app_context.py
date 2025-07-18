@@ -36,9 +36,26 @@ class AppContext:
         self.objects = None
 
 
+    # REFACTORED---
     def canvas_panel_resize(self, size_x, size_y):
         print('todo')
 
+    def robot_plot(self):
+        print('todo')
+    
+    def set_angle(self):
+        print('ftodo')
+        # if event is None:
+        #     context.panel_update_value('entry_angle', 0.0)
+        # else:
+        #     context.paqnel_update_value('entry_angle', entry_angle.get())
+        # context.robot.plot()
+
+    def stop_simulation():
+        print(todo)
+        # controller.finish_movement()
+        # context.simulation_running = False
+        # context.enable_button_run()
 
     # SETTERS FOR SECTIONS
     def set_env_section(self, env_section):
