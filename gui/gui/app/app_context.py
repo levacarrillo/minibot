@@ -1,5 +1,6 @@
 from tkinter import NORMAL, DISABLED, END
 from PIL import Image, ImageDraw, ImageTk
+from copy import copy
 
 class AppContext:
     def __init__(self, app, color, content, service, ros, file_manager):
@@ -12,6 +13,7 @@ class AppContext:
 
         self.canvas   = None
 
+        self.previus_canvas_size = None
         self.canvas_size  = {
             'width':  500,
             'height': 500
@@ -51,9 +53,11 @@ class AppContext:
         self.canvas = canvas
 
     def resize_canvas(self, width, height):
+        self.previus_canvas_size = copy(self.canvas_size)
         self.canvas_size['width']  = width
         self.canvas_size['height'] = height
         self.canvas.configure(width = width, height = height)
+        self.light.plot() if self.light else None
         self.plot_map()
 
     def set_grid(self, grid):
@@ -63,7 +67,10 @@ class AppContext:
         return { 'x': x, 'y': y }
 
     def remap_position(self, position):
-        return self.service.remap_position(position)
+        if self.previus_canvas_size is not None:
+            position['x'] = self.canvas_size['width'] * position['x'] / self.previus_canvas_size['width']
+            position['y'] = self.canvas_size['height'] * position['y'] / self.previus_canvas_size['height']
+        return position
 
     def get_file_path(self, file_name):
         return self.file.get_path(file_name)

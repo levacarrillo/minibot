@@ -18,7 +18,8 @@ class Light:
         elif self.position:
             self.position = self.context.remap_position(self.position)
 
-        self.image = self.context.canvas.create_image(self.position['x'], self.position['y'], 
-                                                            image = self.img, tag = 'light')
+        if self.position:
+            self.image = self.context.canvas.create_image(self.position['x'], self.position['y'], 
+                                                                image = self.img, tag = 'light')
     def get_position(self):
         return self.position
