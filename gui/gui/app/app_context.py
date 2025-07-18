@@ -2,11 +2,10 @@ from tkinter import NORMAL, DISABLED, END
 from PIL import Image, ImageDraw, ImageTk
 
 class AppContext:
-    def __init__(self, app, color, content, controller):
+    def __init__(self, app, color, content, service, ros, file):
         self.app          = app
         self.color        = color
         self.content      = content
-        self.controller   = controller
 
         self.canvas       = None
         self.canvas_size  = None
@@ -51,11 +50,19 @@ class AppContext:
         #     context.paqnel_update_value('entry_angle', entry_angle.get())
         # context.robot.plot()
 
-    def stop_simulation():
+
+    def stop_simulation(self):
         print(todo)
         # controller.finish_movement()
         # context.simulation_running = False
         # context.enable_button_run()
+
+    def update_params(self):
+        print('todo')
+        # controller.update_params()
+
+    def loop(self):
+        print('todo')
 
     # SETTERS FOR SECTIONS
     def set_env_section(self, env_section):
@@ -73,8 +80,8 @@ class AppContext:
     # SETTERS FOR CANVA'S COMPONENTS
     def set_canvas_panel(self, canvas_panel):
         self.canvas_panel = canvas_panel
-        self.canvas = canvas_panel.canvas
-        self.canvas_size  = canvas_panel.size
+        # self.canvas = canvas_panel.canvas
+        # self.canvas_size  = canvas_panel.size
 
     def set_canvas_size(self, new_size_x, new_size_y):
         self.canvas_size  = self.controller.set_canvas_size(new_size_x, new_size_y)

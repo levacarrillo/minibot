@@ -11,9 +11,13 @@ class EnvironmentSection:
         show_sensors = IntVar()
         load_objects = IntVar()
 
-        environment_list = context.controller.get_environment_list()
-        behavior_list    = context.controller.get_param('behavior_list')
-        max_steps        = StringVar(value = context.controller.get_param('max_steps'))
+        # environment_list = context.controller.get_environment_list()
+        # behavior_list    = context.controller.get_param('behavior_list')
+        # max_steps        = StringVar(value = context.controller.get_param('max_steps'))
+
+        environment_list = []
+        behavior_list    = []
+        max_steps        = StringVar(value = 35)
 
         label_settings      = Label(context.side_frame,  text = "Settings", font = ('arial', 11, 'bold'))
         label_enviroments   = Label(context.side_frame,  text = "Environment:")
@@ -65,8 +69,8 @@ class EnvironmentSection:
         ck_add_noise        .grid(column = 1, row = 9,  sticky = (N, W), padx = (5, 0))
         ck_button_load      .grid(column = 1, row = 10, sticky = (N, W), padx = (5, 0))
 
-        environment_cb.set('EMPTY')
-        behavior_list_cb.current(0)
+        # environment_cb.set('EMPTY')
+        # behavior_list_cb.current(0)
 
         environment_cb.bind("<<ComboboxSelected>>", context.plot_map())
 

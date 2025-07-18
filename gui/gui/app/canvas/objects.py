@@ -2,10 +2,11 @@ class Objects:
     def __init__(self, context):
         self.color = context.color
         self.canvas = context.canvas 
-        self.controller = context.controller
+        # self.controller = context.controller
 
         self.in_field = False
-        self.list = self.controller.load_objects()
+        # self.list = self.controller.load_objects()
+        self.list = []
         context.set_objects(self)
 
     def plot(self):
@@ -36,8 +37,8 @@ class Objects:
         self.plot()
 
     def add(self, name, position, robot_radius):
-        obj = self.controller.get_object_released(name, position, robot_radius)
-        self.list.append(obj)
+        # obj = self.controller.get_object_released(name, position, robot_radius)
+        # self.list.append(obj)
         self.plot()
 
     def delete(self):

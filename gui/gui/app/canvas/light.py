@@ -5,19 +5,19 @@ from PIL import ImageTk
 class Light:
     def __init__(self, context):
         self.canvas     = context.canvas
-        self.controller = context.controller
+        # self.controller = context.controller
   
         self.position = None
         self.image = False
-        self.img   = PhotoImage(file = self.controller.get_file_path('light.png'))
-        self.img.zoom(50, 50)
+        # self.img   = PhotoImage(file = self.controller.get_file_path('light.png'))
+        # self.img.zoom(50, 50)
         context.set_light(self)
 
     def plot(self, position = None):
         if position is not None:
             self.position = position
-        elif self.position is not None:
-            self.position = self.controller.remap_position(self.position)
+        # elif self.position is not None:
+        #     self.position = self.controller.remap_position(self.position)
 
         if self.image:
             self.canvas.delete(self.image)

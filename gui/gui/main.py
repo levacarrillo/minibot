@@ -2,14 +2,16 @@ import rclpy
 import threading
 from gui.app.app import App
 from gui.infraestructure.ros import Ros
-from gui.controllers.controller import Controller
+from gui.infraestructure.file_manager import FileManager
+from gui.domain.service import Service
 
 
 def main(args = None):
     rclpy.init(args = args)
     node = Ros()
-    controller = Controller(node)
-    app = App(controller)
+    service = Service()
+    file_manager = FileManager()
+    app = App(service, node, file_manager)
 
     def ros_spin():
         while True:

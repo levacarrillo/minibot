@@ -50,9 +50,9 @@ class RobotSection:
         entry_turn_angle .grid(column = 4, row = 7, sticky = (N, E), padx = (5, 0))
         button_set_zero  .grid(column = 4, row = 4, sticky = (N, W), padx = (5, 0),
                                     columnspan = 2)
-        label_velocity	  .grid(column = 4, row = 9, sticky = (N, W), padx = (5, 0))
+        label_velocity	 .grid(column = 4, row = 9, sticky = (N, W), padx = (5, 0))
         slider_velocity  .grid(column = 4, row = 10, columnspan = 2, rowspan = 1,
-                                    sticky = (N, W), padx = 5)
+                                                    sticky = (N, W), padx = (5, 0), pady = (0, 10))
 
         entry_angle  .bind("<Return>", context.set_angle)
         entry_radius .bind("<Return>", context.robot_plot())

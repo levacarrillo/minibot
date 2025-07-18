@@ -3,7 +3,7 @@ class Grid:
         self.context      = context
         self.color        = context.color
         self.canvas       = context.canvas
-        self.controller   = context.controller
+        # self.controller   = context.controller
         self.line_per_meters = 10
 
         self.grid = []
@@ -15,7 +15,8 @@ class Grid:
             self.canvas.delete(i)
 
         for axis in canvas_size:
-            edge = self.controller.get_edge(axis, self.line_per_meters)
+            # edge = self.controller.get_edge(axis, self.line_per_meters)
+            edge = 10
             for i in range(0, canvas_size[axis]):
                 self.grid.append(
                     self.canvas.create_line(
