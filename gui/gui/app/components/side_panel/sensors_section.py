@@ -3,10 +3,8 @@ from tkinter import *
 
 class SensorsSection:
     def __init__(self, context):
-        # light_threshold = StringVar(value = context.controller.get_param('light_threshold'))
-        # laser_threshold = StringVar(value = context.controller.get_param('laser_threshold'))
-        light_threshold = StringVar()
-        laser_threshold = StringVar()
+        light_threshold = StringVar(value = context.get_ros_param('light_threshold'))
+        laser_threshold = StringVar(value = context.get_ros_param('laser_threshold'))
 
         label_sensors       = Label(context.side_frame, text = "Sensors", font = ('arial', 11, 'bold'))
         label_num_sensors   = Label(context.side_frame, text = "Num Sensors:")
@@ -38,9 +36,9 @@ class SensorsSection:
         entry_laser         .grid(column = 1, row = 16, sticky = (N, W), padx = (5, 0))
         entry_light         .grid(column = 1, row = 17, sticky = (N, W), padx = (5, 0))
 
-        # entry_num_sensors  .bind("<Return>", context.robot.plot)
-        # entry_origin_angle .bind("<Return>", context.robot.plot)
-        # entry_range        .bind("<Return>", context.robot.plot)
-        # entry_laser        .bind("<Return>", context.robot.plot)
+        entry_num_sensors  .bind("<Return>", context.robot.plot)
+        entry_origin_angle .bind("<Return>", context.robot.plot)
+        entry_range        .bind("<Return>", context.robot.plot)
+        entry_laser        .bind("<Return>", context.robot.plot)
 
         context.set_sensors_section(self)

@@ -33,8 +33,8 @@ class Objects:
         self.plot()
 
     def add(self, name, position, robot_radius):
-        # obj = self.controller.get_object_released(name, position, robot_radius)
-        # self.list.append(obj)
+        obj = self.context.get_object_released(name, position, robot_radius)
+        self.list.append(obj)
         self.plot()
 
     def delete(self):

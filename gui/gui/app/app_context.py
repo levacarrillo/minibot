@@ -84,7 +84,7 @@ class AppContext:
         elif name == 'laser_threshold':
             return float(self.sensors_section.entry_laser.get())
         else:
-            print(f'get_context_param()->PARAMETER {name} NOT RECOGNIZED BY CONTEXT')
+            print(f'AppContext.get_context_param()->PARAMETER {name} NOT RECOGNIZED BY CONTEXT')
 
     def set_light_position(self, x, y):
         xm, ym = self.service.px_point_to_m(x, self.canvas_size['height'] - y)

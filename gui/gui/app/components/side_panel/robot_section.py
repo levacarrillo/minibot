@@ -28,7 +28,8 @@ class RobotSection:
         entry_radius     = Entry(context.side_frame, textvariable = self.robot_radius,   width = 9)
         entry_advance    = Entry(context.side_frame, textvariable = self.max_advance,    width = 9)
         entry_turn_angle = Entry(context.side_frame, textvariable = self.max_turn_angle, width = 9)
-        button_set_zero  = Button(context.side_frame, text = "Angle Zero", width = 8, command = context.set_angle)
+        button_set_zero  = Button(context.side_frame, text = "Angle Zero", width = 8,
+                                                                        command = context.set_angle)
 
         label_robot      .grid(column = 4, row = 0, sticky = (N, W), padx = (5, 0))     
         label_pose_x     .grid(column = 4, row = 1, sticky = (N, W), padx = (5, 0))
@@ -47,10 +48,10 @@ class RobotSection:
         button_set_zero  .grid(column = 4, row = 4, sticky = (N, W), padx = (5, 0),
                                     columnspan = 2)
         label_velocity	 .grid(column = 4, row = 9, sticky = (N, W), padx = (5, 0))
-        slider_velocity  .grid(column = 4, row = 10, columnspan = 2, rowspan = 1,
-                                                    sticky = (N, W), padx = (5, 0), pady = (0, 10))
+        slider_velocity  .grid(column = 4, row = 10, columnspan = 2, rowspan = 1, sticky = (N, W),
+                                                                    padx = (5, 0), pady = (0, 10))
 
-        # entry_angle  .bind("<Return>", context.set_angle)
-        # entry_radius .bind("<Return>", context.robot.plot)
+        entry_angle  .bind("<Return>", context.set_angle)
+        entry_radius .bind("<Return>", context.robot.plot)
 
         context.set_robot_section(self)

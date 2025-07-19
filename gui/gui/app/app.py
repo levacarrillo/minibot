@@ -25,8 +25,8 @@ class App(Tk):
         context.update_params()
 
         MenuBar(context)
-        SidePanel(context)
         CanvasPanel(context)
+        SidePanel(context)
     
         context.loop()
 
