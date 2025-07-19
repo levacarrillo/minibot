@@ -20,19 +20,19 @@ class EnvironmentSection:
 
         label_settings      = Label(context.side_frame,  text = "Settings", font = ('arial', 11, 'bold'))
         label_enviroments   = Label(context.side_frame,  text = "Environment:")
-        label_behavior		 = Label(context.side_frame, text = "Behavior:")
+        label_behavior	    = Label(context.side_frame, text = "Behavior:")
         label_max_steps     = Label(context.side_frame,  text = "Max steps:")
-        label_light_x       = Label(context.side_frame,  text = "Light X:")
-        label_light_y       = Label(context.side_frame,  text = "Light Y:")
+        label_light_x       = Label(context.side_frame,  text = "Light X [m]:")
+        label_light_y       = Label(context.side_frame,  text = "Light Y [m]:")
         label_curr_step     = Label(context.side_frame,  text = "Current step:")
         label_configuration = Label(context.side_frame,  text = "Configurations:")
         label_light_pose_x  = Label(context.side_frame,  textvariable = self.light_pose_x, justify='center')
         label_light_pose_y  = Label(context.side_frame,  textvariable = self.light_pose_y, justify='center')
         label_steps         = Label(context.side_frame,  textvariable = self.curr_step,    justify='center')
         
-        steps_entry = Entry(context.side_frame, validate = 'key', textvariable = self.max_steps, width = 5)
+        steps_entry       = Entry(context.side_frame, textvariable = self.max_steps,    width = 5)
         environment_cb    = ttk.Combobox(context.side_frame, values = environment_list, width = 16)
-        behavior_list_cb  = ttk.Combobox(context.side_frame, values = behavior_list,  width = 16)
+        behavior_list_cb  = ttk.Combobox(context.side_frame, values = behavior_list,    width = 16)
 
         self.environment = environment_cb
         self.behavior    = behavior_list

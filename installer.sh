@@ -19,6 +19,7 @@ APT_PACKAGES=(
   screenfetch
   ros-jazzy-xacro
   ros-jazzy-random-numbers
+  ros-jazzy-nav2-map-server
 )
 
 echo "🔧 INSTALLING PACKAGES WITH APT..."

@@ -14,13 +14,14 @@ class Light:
     def plot(self, e_point = None):
         self.context.canvas.delete('light')
         if e_point:
-            self.position = self.context.position(e_point.x, e_point.y)
-            self.context.set_light_position(e_point.x, e_point.y)
-        elif self.position:
+            self.position = self.context.set_light_position(e_point.x, e_point.y)
+        else:
             self.position = self.context.remap_position(self.position)
 
-        if self.position:
-            self.image = self.context.canvas.create_image(self.position['x'], self.position['y'], 
+        self.image = self.context.canvas.create_image(self.position['x'], self.position['y'], 
                                                                 image = self.img, tag = 'light')
     def get_position(self):
         return self.position
+
+    def exists(self):
+        return True if self.position else False

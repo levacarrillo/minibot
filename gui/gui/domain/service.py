@@ -126,11 +126,12 @@ class Service():
         delay = (3 - int(slider_value)) * 0.01
         return delay
 
-    def set_polygon_point(self, pose, radius, portion):
-        sinT = math.sin(-pose['angle'])
-        cosT = math.cos(-pose['angle'])
-        x = radius * (portion['x'] * cosT - portion['y'] * sinT) + pose['x']
-        y = radius * (portion['x'] * sinT + portion['y'] * cosT) + pose['y']
+    def transform_to_polygon_point(self, position, angle, radius, point):
+        sinT = math.sin(-float(angle))
+        cosT = math.cos(-float(angle))
+
+        x = radius * (point['x'] * cosT - point['y'] * sinT) + position['x']
+        y = radius * (point['x'] * sinT + point['y'] * cosT) + position['y']
         return x, y
 
     def change_sys_reference(self, v):

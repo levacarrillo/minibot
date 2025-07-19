@@ -3,36 +3,32 @@ from tkinter import *
 
 class RobotSection:
     def __init__(self, context):
-        # max_advance    = StringVar(value = context.controller.get_param('max_advance'))
-        # max_turn_angle = StringVar(value = context.controller.get_param('max_turn_angle'))
-        max_advance    = StringVar()
-        max_turn_angle = StringVar()
+        self.robot_pose_x   = StringVar()
+        self.robot_pose_y   = StringVar()
+        self.robot_angle    = StringVar(value = "1.5707")
+        self.robot_radius   = StringVar(value = "0.04")
+        self.max_advance    = StringVar(value = context.get_ros_param('max_advance'))
+        self.max_turn_angle = StringVar(value = context.get_ros_param('max_turn_angle'))
 
         label_robot      = Label(context.side_frame, text = "Robot", font = ('arial', 11, 'bold'))
-        label_pose_x     = Label(context.side_frame, text = "Pose X:")
-        label_pose_y     = Label(context.side_frame, text = "Pose Y:")
-        label_angle      = Label(context.side_frame, text = "Angle:")
-        label_radius     = Label(context.side_frame, text = "Radius:")
-        label_advance    = Label(context.side_frame, text = "Advance:")
-        label_turn_angle = Label(context.side_frame, text = "Turn Angle:")
-        label_velocity   = Label(context.side_frame,  text = "Execution velocity:")
-        slider_velocity  = Scale(context.side_frame,  from_= 1, to=3, orient = HORIZONTAL, 
+        label_pose_x     = Label(context.side_frame, text = "Pose X [m]:")
+        label_pose_y     = Label(context.side_frame, text = "Pose Y [m]:")
+        label_angle      = Label(context.side_frame, text = "Angle [rad]:")
+        label_radius     = Label(context.side_frame, text = "Radius [m]:")
+        label_advance    = Label(context.side_frame, text = "Advance [m]:")
+        label_turn_angle = Label(context.side_frame, text = "Turn [rad]:")
+        label_velocity   = Label(context.side_frame, text = "Execution velocity:")
+        slider_velocity  = Scale(context.side_frame, from_= 1, to=3, orient = HORIZONTAL, 
                                     length = 162, command = context.set_velocity_slider)
 
-        entry_pose_x     = Entry(context.side_frame, validate = 'key', 
-                                    textvariable = StringVar(value = "1.5"),  width = 9)
-        entry_pose_y     = Entry(context.side_frame, validate = 'key', 
-                                    textvariable = StringVar(value = "2.2"),  width = 9)
-        entry_angle      = Entry(context.side_frame, validate = 'key',
-                                    textvariable = StringVar(value = "1.5707"),  width = 9)
-        entry_radius     = Entry(context.side_frame, validate = 'key',
-                                    textvariable = StringVar(value = "0.04"), width = 9)
-        entry_advance    = Entry(context.side_frame, validate = 'key',
-                                    textvariable = max_advance,    width = 9)
-        entry_turn_angle = Entry(context.side_frame, validate = 'key',
-                                    textvariable = max_turn_angle, width = 9)
-        button_set_zero  = Button(context.side_frame, width = 8, text = "Angle Zero",
-                                                            command = context.set_angle)
+        entry_pose_x     = Entry(context.side_frame, textvariable = self.robot_pose_x,  width = 9)
+        entry_pose_y     = Entry(context.side_frame, textvariable = self.robot_pose_y,  width = 9)
+
+        entry_angle      = Entry(context.side_frame, textvariable = self.robot_angle,    width = 9)
+        entry_radius     = Entry(context.side_frame, textvariable = self.robot_radius,   width = 9)
+        entry_advance    = Entry(context.side_frame, textvariable = self.max_advance,    width = 9)
+        entry_turn_angle = Entry(context.side_frame, textvariable = self.max_turn_angle, width = 9)
+        button_set_zero  = Button(context.side_frame, text = "Angle Zero", width = 8, command = context.set_angle)
 
         label_robot      .grid(column = 4, row = 0, sticky = (N, W), padx = (5, 0))     
         label_pose_x     .grid(column = 4, row = 1, sticky = (N, W), padx = (5, 0))
@@ -54,7 +50,7 @@ class RobotSection:
         slider_velocity  .grid(column = 4, row = 10, columnspan = 2, rowspan = 1,
                                                     sticky = (N, W), padx = (5, 0), pady = (0, 10))
 
-        entry_angle  .bind("<Return>", context.set_angle)
-        entry_radius .bind("<Return>", context.robot_plot())
+        # entry_angle  .bind("<Return>", context.set_angle)
+        # entry_radius .bind("<Return>", context.robot.plot)
 
         context.set_robot_section(self)

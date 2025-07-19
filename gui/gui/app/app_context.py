@@ -58,10 +58,48 @@ class AppContext:
     def get_ros_param(self, param_name):
         return self.ros_params[param_name]
 
+    def get_context_param(self, name):
+        if name == 'behavior':
+            return self.env_section.behavior_list_cb.get()
+        elif name == 'max_steps':
+            return int(self.env_section.steps_entry.get())
+        # elif name == 'map':
+        #     return self.env_section.environment_cb.get()
+        elif name == 'angle':
+            return float(self.robot_section.robot_angle.get())
+        elif name == 'radius':
+            return self.service.m_to_pixels(self.robot_section.robot_radius.get())
+        elif name == 'max_advance':
+            return float(self.robot_section.entry_advance.get())
+        elif name == 'max_turn_angle':
+            return float(self.robot_section.entry_turn_angle.get())
+        elif name == 'num_sensors':
+            return int(self.sensors_section.entry_num_sensors.get())
+        elif name == 'origin_angle':
+            return float(self.sensors_section.entry_origin_angle.get())
+        elif name == 'range_sensor':
+            return float(self.sensors_section.entry_range.get())
+        elif name == 'light_threshold':
+            return float(self.sensors_section.entry_light.get())
+        elif name == 'laser_threshold':
+            return float(self.sensors_section.entry_laser.get())
+        else:
+            print(f'get_context_param()->PARAMETER {name} NOT RECOGNIZED BY CONTEXT')
+
     def set_light_position(self, x, y):
-        x, y = self.service.px_point_to_m(x, self.canvas_size['height'] - y)
-        self.env_section.light_pose_x.set(x)
-        self.env_section.light_pose_y.set(y)
+        xm, ym = self.service.px_point_to_m(x, self.canvas_size['height'] - y)
+        self.env_section.light_pose_x.set(xm)
+        self.env_section.light_pose_y.set(ym)
+        return { 'x': x, 'y': y }
+
+    def set_robot_position(self, x, y):
+        xm, ym = self.service.px_point_to_m(x, self.canvas_size['height'] - y)
+        self.robot_section.robot_pose_x.set(xm)
+        self.robot_section.robot_pose_y.set(ym)
+        return { 'x': x, 'y': y }
+
+    def m_to_pixels(self, length):
+        return self.service.m_to_pixels(length)
 
     def get_environment_list(self):
         return self.file.get_environment_list()
@@ -77,11 +115,9 @@ class AppContext:
         self.canvas_size['width']  = width
         self.canvas_size['height'] = height
         self.canvas.configure(width = width, height = height)
-        self.light.plot() if self.light else None
         self.plot_map()
-
-    def position(self, x, y):
-        return { 'x': x, 'y': y }
+        self.light.plot() if self.light.exists() else None
+        self.robot.plot() if self.robot.exists() else None
 
     def remap_position(self, position):
         if self.previus_canvas_size is not None:
@@ -112,19 +148,113 @@ class AppContext:
         for polygon_to_plot in polygon_to_plot_list:
             self.canvas.create_polygon(
                 polygon_to_plot, 
-                outline = self.color['obstacle_outline'],
-                fill = self.color['obstacle_inner'],
+                outline = self.color['grid'],
+                fill = self.color['grid'],
                 width = 1,
                 tag = 'map'
             )
 
-            
+    def get_circles_coords(self, position, radius):
+        body = {
+            'color' : self.color['robot'],
+            'coords': [
+                position['x'] - radius,
+                position['y'] - radius,
+                position['x'] + radius,
+                position['y'] + radius
+            ]
+        }
+        hokuyo = {
+            'color': self.color['hokuyo'],
+            'coords': [
+                position['x'] - (radius / 5),
+                position['y'] - (radius / 5),
+                position['x'] + (radius / 5),
+                position['y'] + (radius / 5)
+            ] 
+        }
+        return [body, hokuyo]
 
-    def robot_plot(self):
-        print('todo: robot plot')
+    def get_polygon_coords(self, position, radius, angle):
+        # POINTS MAGNITUDES RELATIVE TO ROBOT'S RADIUS
+        head_rel_points = [{ 'x': 2/3, 'y': - 1/3 },
+                  { 'x': 2/3, 'y':   1/3 },
+                  { 'x': 5/6, 'y':  0.0  }]
+
+        left_wheel_rel_points  = [{'x': -1/2, 'y': -5/6 },
+                        {'x':  1/2, 'y': -5/6 },
+                        {'x':  1/2, 'y': -3/6 },
+                        {'x': -1/2, 'y': -3/6 }]
+
+        right_wheel_rel_points = [{'x': -1/2, 'y':  3/6 },
+                         {'x':  1/2, 'y':  3/6 },
+                         {'x':  1/2, 'y':  5/6 },
+                         {'x': -1/2, 'y':  5/6 }]
+
+        head_polygon = []
+        for relative_point in head_rel_points:
+            head_polygon.append(self.service.transform_to_polygon_point(position, angle, radius, relative_point))
+        left_wheel_polygon = []
+        for relative_point in left_wheel_rel_points:
+            left_wheel_polygon.append(self.service.transform_to_polygon_point(position, angle, radius, relative_point))
+        right_wheel_polygon = []
+        for relative_point in right_wheel_rel_points:
+            right_wheel_polygon.append(self.service.transform_to_polygon_point(position, angle, radius, relative_point))
+
+        head = {
+            'color':  self.color['head'],
+            'coords': head_polygon
+        }
+
+        left_wheel = {
+            'color':  self.color['wheel'],
+            'coords': left_wheel_polygon
+        }
+
+        right_wheel = {
+            'color':  self.color['wheel'],
+            'coords': right_wheel_polygon
+        }
+
+        return [head, left_wheel, right_wheel]
+
+    def get_head_coords(self, position, angle, radius):
+        # POINTS MAGNITUDES RELATIVE TO ROBOT'S RADIUS
+        points = [{ 'x': 2/3, 'y': - 1/3 },
+                  { 'x': 2/3, 'y':   1/3 },
+                  { 'x': 5/6, 'y':    0  }]
+        polygon = []
+        for point in points:
+            polygon.append(self.service.transform_to_polygon_point(position, angle, radius, point))
+
+        return polygon
+
+    def get_left_wheel_coords(self, position, angle, radius):
+        # POINTS MAGNITUDES RELATIVE TO ROBOT'S RADIUS
+        points = [{'x': -1/2, 'y': -5/6 },
+                 {'x':  1/2, 'y': -5/6 },
+                 {'x':  1/2, 'y': -3/6 },
+                 {'x': -1/2, 'y': -3/6 }]
+        polygon = []
+        for point in points:
+            polygon.append(self.service.transform_to_polygon_point(position, angle, radius, point))
+
+        return polygon
+
+    def get_right_wheel_coods(self, position, angle, radius):
+        # POINTS MAGNITUDES RELATIVE TO ROBOT'S RADIUS
+        points = [{'x': -1/2, 'y':  3/6 },
+                  {'x':  1/2, 'y':  3/6 },
+                  {'x':  1/2, 'y':  5/6 },
+                  {'x': -1/2, 'y':  5/6 }]
+        polygon = []
+        for point in points:
+            polygon.append(self.service.transform_to_polygon_point(position, angle, radius, point))
+
+        return polygon
     
     def set_angle(self):
-        print('todo: set_angle')
+        self.robot_section.robot_angle.set(0.0)
         # if event is None:
         #     context.panel_update_value('entry_angle', 0.0)
         # else:
@@ -160,6 +290,9 @@ class AppContext:
     def set_buttons_section(self, buttons_section):
         self.buttons_section = buttons_section
 
+    def polar_to_cartesian(self, magnitude, angle):
+        return self.service.polar_to_cartesian_point(magnitude, angle)
+
     # SETTERS FOR CANVA'S COMPONENTS
     def set_canvas_size(self, new_size_x, new_size_y):
         self.canvas_size  = self.controller.set_canvas_size(new_size_x, new_size_y)
@@ -188,33 +321,33 @@ class AppContext:
     def set_route(self, value):
         self.route = value
 
-    def get_param(self, name):
-        if name == 'behavior':
-            return self.env_section.behavior_list_cb.get()
-        elif name == 'max_steps':
-            return int(self.env_section.steps_entry.get())
-        # elif name == 'map':
-        #     return self.env_section.environment_cb.get()
-        elif name == 'entry_angle':
-            return self.robot_section.entry_angle.get()
-        elif name == 'entry_radius':
-            return self.robot_section.entry_radius.get()
-        elif name == 'max_advance':
-            return float(self.robot_section.entry_advance.get())
-        elif name == 'max_turn_angle':
-            return float(self.robot_section.entry_turn_angle.get())
-        elif name == 'num_sensors':
-            return int(self.sensors_section.entry_num_sensors.get())
-        elif name == 'origin_angle':
-            return float(self.sensors_section.entry_origin_angle.get())
-        elif name == 'range_sensor':
-            return float(self.sensors_section.entry_range.get())
-        elif name == 'light_threshold':
-            return float(self.sensors_section.entry_light.get())
-        elif name == 'laser_threshold':
-            return float(self.sensors_section.entry_laser.get())
-        else:
-            print(f'GET_PARAM()->PARAMETER {name} NOT RECOGNIZED BY CONTEXT')
+    # def get_context_param(self, name):
+    #     if name == 'behavior':
+    #         return self.env_section.behavior_list_cb.get()
+    #     elif name == 'max_steps':
+    #         return int(self.env_section.steps_entry.get())
+    #     # elif name == 'map':
+    #     #     return self.env_section.environment_cb.get()
+    #     elif name == 'entry_angle':
+    #         return self.robot_section.robot_angle.get()
+    #     elif name == 'entry_radius':
+    #         return self.robot_section.robot_radius.get()
+    #     elif name == 'max_advance':
+    #         return float(self.robot_section.entry_advance.get())
+    #     elif name == 'max_turn_angle':
+    #         return float(self.robot_section.entry_turn_angle.get())
+    #     elif name == 'num_sensors':
+    #         return int(self.sensors_section.entry_num_sensors.get())
+    #     elif name == 'origin_angle':
+    #         return float(self.sensors_section.entry_origin_angle.get())
+    #     elif name == 'range_sensor':
+    #         return float(self.sensors_section.entry_range.get())
+    #     elif name == 'light_threshold':
+    #         return float(self.sensors_section.entry_light.get())
+    #     elif name == 'laser_threshold':
+    #         return float(self.sensors_section.entry_laser.get())
+    #     else:
+    #         print(f'get_context_param()->PARAMETER {name} NOT RECOGNIZED BY CONTEXT')
 
     def enable_button_run(self):
         self.buttons_section.button_stop   .config(state = DISABLED)
@@ -266,14 +399,14 @@ class AppContext:
     def run_simulation(self):
         self.simulation_running = True
         self.route.delete()
-        self.controller.set_ros_param('behavior', self.get_param('behavior'))
+        self.controller.set_ros_param('behavior', self.get_context_param('behavior'))
         self.controller.set_ros_param('run_behavior', self.simulation_running)
         self.controller.set_ros_param('step', 0)
-        self.controller.set_ros_param('max_steps', int(self.get_param('max_steps')))
-        self.controller.set_ros_param('max_advance', float(self.get_param('max_advance')))
-        self.controller.set_ros_param('max_turn_angle', float(self.get_param('max_turn_angle')))
-        self.controller.set_ros_param('light_threshold', float(self.get_param('light_threshold')))
-        self.controller.set_ros_param('laser_threshold', float(self.get_param('laser_threshold')))
+        self.controller.set_ros_param('max_steps', int(self.get_context_param('max_steps')))
+        self.controller.set_ros_param('max_advance', float(self.get_context_param('max_advance')))
+        self.controller.set_ros_param('max_turn_angle', float(self.get_context_param('max_turn_angle')))
+        self.controller.set_ros_param('light_threshold', float(self.get_context_param('light_threshold')))
+        self.controller.set_ros_param('laser_threshold', float(self.get_context_param('laser_threshold')))
         self.controller.send_state_params()
     
     def last_simulation(self):
@@ -281,7 +414,7 @@ class AppContext:
 
     # def plot_map(self):
     #     self.clear_topological_map()
-    #     self.polygon_list, polygon_to_plot_list = self.controller.get_map(self.get_param('map'))
+    #     self.polygon_list, polygon_to_plot_list = self.controller.get_map(self.get_context_param('map'))
     #     self.grid.plot()
 
     #     self.canvas.delete('map')
@@ -294,14 +427,14 @@ class AppContext:
     #             tag = 'map'
     #         )
 
-        # if self.controller.check_for_topological_map(self.get_param('map')):
+        # if self.controller.check_for_topological_map(self.get_context_param('map')):
         #     self.buttons_section.plot_topological.config(state = NORMAL)
         # else:
         #     self.buttons_section.plot_topological.config(state = DISABLED)
 
     def plot_topological_map(self):
         self.buttons_section.plot_topological.config(state = DISABLED)
-        node_coords, node_coords_to_plot, connections = self.controller.get_topological_map(self.get_param('map'), topological = True)
+        node_coords, node_coords_to_plot, connections = self.controller.get_topological_map(self.get_context_param('map'), topological = True)
         # print(node_coords)
         # print(node_coords_to_plot)
         if node_coords is None:

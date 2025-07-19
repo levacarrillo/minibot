@@ -38,9 +38,9 @@ class SensorsSection:
         entry_laser         .grid(column = 1, row = 16, sticky = (N, W), padx = (5, 0))
         entry_light         .grid(column = 1, row = 17, sticky = (N, W), padx = (5, 0))
 
-        entry_num_sensors  .bind("<Return>", context.robot_plot())
-        entry_origin_angle .bind("<Return>", context.robot_plot())
-        entry_range        .bind("<Return>", context.robot_plot())
-        entry_laser        .bind("<Return>", context.robot_plot())
+        # entry_num_sensors  .bind("<Return>", context.robot.plot)
+        # entry_origin_angle .bind("<Return>", context.robot.plot)
+        # entry_range        .bind("<Return>", context.robot.plot)
+        # entry_laser        .bind("<Return>", context.robot.plot)
 
         context.set_sensors_section(self)
