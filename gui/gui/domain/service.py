@@ -4,15 +4,9 @@ from interfaces.srv import SetParams
 
 
 class Service():
-    def __init__(self):
-        self.ros_params   = None
-        # CANVA'S SIZE DEFAULT VALUES
-        self.canvas_scale = { 'x': 1, 'y': 1 }
-        self.previus_size = None
-        self.current_size = { 'x': 500, 'y': 500 } # PIXELS
-
     # FILES SERVICES
-    def parse_map(self, map_file):
+    def parse_map(self, map_file, canvas_size):
+        scale = None
         polygon_list = []
         polygon_to_plot_list = []
         polygon = None
@@ -22,40 +16,40 @@ class Service():
             words = line.split()
             if words and words[0] == "(": # IGNORE EMPTY LINES AND COMMENTS
                 if words[1] == "dimensions":
-                    self.set_canvas_scale(float(words[3]), float(words[4])) 
+                    scale = { 'width': float(words[3]), 'height': float(words[4]) }
                 elif words[1] == "polygon":
-                    vertices_x  = [self.m_to_pixels(x) for x in words[4:len(words)-1:2]]
-                    vertices_y  = [self.m_to_pixels(y) for y in words[5:len(words)-1:2]]
-                    vertices_yp = [self.current_size['y'] - self.m_to_pixels(y) for y in words[5:len(words)-1:2]]
+                    vertices_x  = [float(x) * canvas_size['width']  / scale['width']  for x in words[4:len(words)-1:2]]
+                    vertices_y  = [float(y) * canvas_size['height'] / scale['height'] for y in words[5:len(words)-1:2]]
+                    vertices_yp = [canvas_size['height'] - (float(y) * canvas_size['height'] / scale['height']) for y in words[5:len(words)-1:2]]
                     polygon = [vertices_xy for xy in zip(vertices_x, vertices_y) for vertices_xy in xy]
                     polygon_to_plot = [vertices_xy for xy in zip(vertices_x, vertices_yp) for vertices_xy in xy]
                     polygon_list.append(polygon)
                     polygon_to_plot_list.append(polygon_to_plot)
-        return polygon_list, polygon_to_plot_list
+        return scale, polygon_to_plot_list
 
-    def parse_topological_map(self, map_file):
-        node_coords = []
-        node_coords_to_plot = []
-        connections = []
-        if map_file is None:
-            return None, None, None
-        lines = map_file.readlines()
+    # def parse_topological_map(self, map_file):
+    #     node_coords = []
+    #     node_coords_to_plot = []
+    #     connections = []
+    #     if map_file is None:
+    #         return None, None, None
+    #     lines = map_file.readlines()
 
-        for line in lines:
-            words = line.split()
-            if words and words[0] == "(": # IGNORE EMPTY LINES AND COMMENTS
-                if words[1] == "num":
-                    number_nodes = float(words[3])
-                elif words[1] == "node":
-                    # print(f'node->[{words[3]}, {words[4]}], px->[{self.m_to_pixels(words[3])}, {self.m_to_pixels(words[4])}]')
-                    node_id = words[2]
-                    node = { 'x': self.m_to_pixels(words[3]), 'y': self.m_to_pixels(words[4]) }
-                    node_to_plot = { 'x': self.m_to_pixels(words[3]), 'y': self.current_size['y'] - self.m_to_pixels(words[4])}
-                    node_coords.append(node)
-                    node_coords_to_plot.append(node_to_plot)
-                elif words[1] == "connection":
-                    connections.append([int(words[2]), int(words[3])])
-        return node_coords, node_coords_to_plot, connections
+    #     for line in lines:
+    #         words = line.split()
+    #         if words and words[0] == "(": # IGNORE EMPTY LINES AND COMMENTS
+    #             if words[1] == "num":
+    #                 number_nodes = float(words[3])
+    #             elif words[1] == "node":
+    #                 # print(f'node->[{words[3]}, {words[4]}], px->[{self.m_to_pixels(words[3])}, {self.m_to_pixels(words[4])}]')
+    #                 node_id = words[2]
+    #                 node = { 'x': self.m_to_pixels(words[3]), 'y': self.m_to_pixels(words[4]) }
+    #                 node_to_plot = { 'x': self.m_to_pixels(words[3]), 'y': self.current_size['y'] - self.m_to_pixels(words[4])}
+    #                 node_coords.append(node)
+    #                 node_coords_to_plot.append(node_to_plot)
+    #             elif words[1] == "connection":
+    #                 connections.append([int(words[2]), int(words[3])])
+    #     return node_coords, node_coords_to_plot, connections
 
     def parse_objects_file(self, objects_file):
         if objects_file is None:
@@ -67,8 +61,8 @@ class Service():
             if words:
                 obj = {
                     'name': words[0],
-                    'x': self.m_to_pixels(words[1]),
-                    'y': self.m_to_pixels(words[2])
+                    'x': float(words[1]),
+                    'y': float(words[2])
                 }
                 object_list.append(obj)
 
@@ -88,14 +82,6 @@ class Service():
     def get_canvas_size(self):
         return self.current_size
 
-    def set_canvas_size(self, x, y):
-        self.previus_size = self.current_size
-        self.current_size = { 'x': x, 'y': y }
-        return self.current_size
-    
-    def set_canvas_scale(self, x, y):
-        self.canvas_scale = { 'x': x, 'y': y }
-
     def set_pose(self, x, y, angle):
         return { 'x': x, 'y': y, 'angle': angle }
 
@@ -108,18 +94,12 @@ class Service():
     def get_line_segment(self, p1, p2):
         return { 'x': p2['x'] - p1['x'], 'y': p2['y'] - p1['y'] }
 
-    def remap_position(self, position):
-        if self.previus_size is not None:
-            position['x'] = self.current_size['x'] * position['x'] / self.previus_size['x']
-            position['y'] = self.current_size['y'] * position['y'] / self.previus_size['y']
-        return position
-
     def get_edge(self, axis, line_per_meters):
         return self.current_size[axis] / (self.canvas_scale[axis] * line_per_meters)
 
-    def px_point_to_m(self, px, py):
-        x = self.canvas_scale['x'] * px / self.current_size['x']
-        y = self.canvas_scale['y'] * py / self.current_size['y']
+    def px_point_to_m(self, px, py, scale_factor = 1):
+        x = scale_factor * px
+        y = scale_factor * py
         return str(x)[:6], str(y)[:6]
 
     def get_execution_delay(self, slider_value):
@@ -196,8 +176,10 @@ class Service():
     def get_magnitude_between_two_points(self, p1, p2):
         return math.hypot(p2['x'] - p1['x'], p2['y'] - p1['y'])
 
-    def m_to_pixels(self, length):
-        return (float(length) * self.current_size['x']) / self.canvas_scale['x']
+    def m_to_pixels(self, length, pixels_per_m):
+        print(f'{pixels_per_m}')
+        print(f'{length}')
+        return  int(pixels_per_m * float(length))
 
     def polar_to_cartesian(self, radius, angle):
         x = radius * math.cos(-angle)
@@ -247,52 +229,6 @@ class Service():
             "light_threshold": light_threshold,
             "laser_threshold": laser_threshold
         }
-
-    # def format_ros_params(self, params):
-    #     behavior_list = params.behavior_list
-    #     if '' in behavior_list:
-    #         behavior_list.remove('')
-    #     if 'UNKNOWN' in behavior_list:
-    #         behavior_list.remove('UNKNOWN')
-        
-    #     max_advance = math.trunc(params.max_advance * 1000) / 1000
-    #     laser_threshold = math.trunc(params.laser_threshold * 1000) / 1000
-    #     light_threshold = math.trunc(params.light_threshold * 1000) / 1000
-
-    #     self.ros_params = {
-    #         "behavior" :       params.behavior,
-    #         "run_behavior" :   params.run_behavior,
-    #         "behavior_list" :  behavior_list,
-    #         "step" :           params.step,
-    #         "max_steps" :      params.max_steps,
-    #         "max_advance" :    max_advance,
-    #         "max_turn_angle":  params.max_turn_angle,
-    #         "light_threshold": light_threshold,
-    #         "laser_threshold": laser_threshold
-    #     }
-
-    def get_current_step(self, params):
-        self.ros_params['step'] = params.step
-        self.ros_params['run_behavior'] = params.run_behavior
-        return self.ros_params['step']
-
-    def get_ros_param(self, param_name):
-        return self.ros_params[param_name]
-
-    def set_ros_param(self, name, value):
-        self.ros_params[name] = value
-
-    def get_all_params(self):
-        req = SetParams.Request()
-        req.behavior        = self.ros_params['behavior']
-        req.run_behavior    = self.ros_params['run_behavior']
-        req.step            = self.ros_params['step']
-        req.max_steps       = self.ros_params['max_steps']
-        req.max_advance     = self.ros_params['max_advance']
-        req.max_turn_angle  = self.ros_params['max_turn_angle']
-        req.light_threshold = self.ros_params['light_threshold']
-        req.laser_threshold = self.ros_params['laser_threshold']
-        return req
 
     def get_light_readings(self, robot_pose, robot_radius, light_pose):
         max_index = 0

@@ -15,15 +15,9 @@ class AppContext:
         self.canvas   = None
 
         self.previus_canvas_size = None
-        self.canvas_size  = {
-            'width':  500,
-            'height': 500
-        }
-
-        self.canvas_scale = {
-            'width':  1,
-            'height': 1
-        }
+        self.canvas_size  = { 'width':  500, 'height': 500 }
+        self.canvas_scale = { 'width':  1,   'height': 1 }
+        self.pixels_per_m = self.canvas_size['width']
 
         self.ros_params = None
 
@@ -91,6 +85,9 @@ class AppContext:
 
     def get_canvas_scale(self):
         return self.canvas_scale
+    
+    def set_canvas_scale(self, new_scale):
+        self.canvas_scale = new_scale
 
     def polar_to_cartesian(self, magnitude, angle):
         return self.service.polar_to_cartesian_point(magnitude, angle)
@@ -112,7 +109,7 @@ class AppContext:
         elif name == 'angle':
             return float(self.robot_section.robot_angle.get())
         elif name == 'radius':
-            return self.service.m_to_pixels(self.robot_section.robot_radius.get())
+            return self.service.m_to_pixels(self.robot_section.robot_radius.get(), self.pixels_per_m)
         elif name == 'max_advance':
             return float(self.robot_section.entry_advance.get())
         elif name == 'max_turn_angle':
@@ -156,9 +153,6 @@ class AppContext:
         self.set_context_param('robot_pose_y', xm)
         return { 'x': x, 'y': y }
 
-    def m_to_pixels(self, length):
-        return self.service.m_to_pixels(length)
-
     def get_environment_list(self):
         return self.file.get_environment_list()
 
@@ -170,6 +164,7 @@ class AppContext:
         self.canvas_size['width']  = width
         self.canvas_size['height'] = height
         self.canvas.configure(width = width, height = height)
+        self.pixels_per_m = width
         self.plot_map()
         self.light.plot() if self.light.exists() else None
         self.robot.plot() if self.robot.exists() else None
@@ -184,9 +179,10 @@ class AppContext:
         return self.file.get_path(file_name)
 
     def plot_map(self, event = None):
-        # self.grid.plot() if self.grid else None
         self.canvas.delete('grid')
-
+        map_file = self.file.get_map(self.get_context_param('map'))
+        scale, polygon_to_plot_list = self.service.parse_map(map_file, self.canvas_size)
+        self.set_canvas_scale(scale)
         line_per_meters = 10
         for axis in self.canvas_size:
             line = self.canvas_size[axis] / (line_per_meters * self.canvas_scale[axis])
@@ -195,21 +191,14 @@ class AppContext:
                           i * line if axis != 'width' else 0,
                           i * line if axis == 'width' else self.canvas_size[axis],
                           i * line if axis != 'width' else self.canvas_size[axis]]
-                self.canvas.create_line(points, dash = (4, 4),
-                                    fill = self.color['grid'], tag  = 'grid' )
+
+                self.canvas.create_line(points, dash = (4, 4), fill = self.color['grid'], tag  = 'grid' )
         
         self.canvas.delete('map')
-        map_file = self.file.get_map(self.get_context_param('map'))
-        polygon_list, polygon_to_plot_list = self.service.parse_map(map_file)
+        # print(f'polygon_to_plot_list->{polygon_to_plot_list}')
         for polygon_to_plot in polygon_to_plot_list:
             self.canvas.create_polygon(polygon_to_plot, outline = self.color['grid'], fill = self.color['grid'],
                                                                                         width = 1, tag = 'map')
-
-
-    # def plot_map(self):
-    #     self.clear_topological_map()
-    #     self.polygon_list, polygon_to_plot_list = self.controller.get_map(self.get_context_param('map'))
-    #     self.grid.plot()
 
     def get_circles_coords(self, position, radius):
         body = {

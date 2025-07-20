@@ -63,7 +63,7 @@ class Robot:
             # print('NO OBJECTS IN FIELD')
             return False
 
-        min_distance = self.radius + self.context.m_to_pixels(0.03)
+        min_distance = self.radius + 50
         
         for obj in self.context.objects.list:
             if obj['name'] == object_name:
