@@ -30,11 +30,12 @@ class AppContext:
         self.robot_section   = None 
         self.buttons_section = None 
 
-
-
-
+        self.excecution_delay = 0.01
 
         self.simulation_running  = False
+
+
+
         self.run_last_simulation = False
         self.show_sensors = None
         self.velocity_slider = 1
@@ -45,6 +46,8 @@ class AppContext:
 
         self.polygon_list = None
         self.objects = None
+
+        self.flag = True
 
 
     # REFACTORED---
@@ -90,20 +93,19 @@ class AppContext:
         self.canvas_scale = new_scale
 
     def polar_to_cartesian(self, magnitude, angle):
-        return self.service.polar_to_cartesian_point(magnitude, angle)
+        return self.service.polar_to_cartesian(magnitude, angle)
 
     def update_params(self):
         self.ros_params = self.service.format_ros_params(self.ros.update_params())
-        print(f'ros_params->{self.ros_params}')
 
     def get_ros_param(self, param_name):
         return self.ros_params[param_name]
 
     def get_context_param(self, name):
         if name == 'behavior':
-            return self.env_section.behavior_list_cb.get()
+            return self.env_section.behavior.get()
         elif name == 'max_steps':
-            return int(self.env_section.steps_entry.get())
+            return int(self.env_section.max_steps.get())
         elif name == 'map':
             return self.env_section.environment.get()
         elif name == 'angle':
@@ -111,9 +113,9 @@ class AppContext:
         elif name == 'radius':
             return self.service.m_to_pixels(self.robot_section.robot_radius.get(), self.pixels_per_m)
         elif name == 'max_advance':
-            return float(self.robot_section.entry_advance.get())
+            return float(self.robot_section.max_advance.get())
         elif name == 'max_turn_angle':
-            return float(self.robot_section.entry_turn_angle.get())
+            return float(self.robot_section.max_turn_angle.get())
         elif name == 'num_sensors':
             return int(self.sensors_section.entry_num_sensors.get())
         elif name == 'origin_angle':
@@ -277,12 +279,6 @@ class AppContext:
     def set_robot_radius(self, event = None):
         self.robot.plot() if self.robot.exists() else None
 
-    def stop_simulation(self):
-        print(todo)
-        # controller.finish_movement()
-        # context.simulation_running = False
-        # context.enable_button_run()
-
     def on_check_fast_mode(self, value):
         self.fast_mode = value
 
@@ -312,29 +308,33 @@ class AppContext:
         self.robot_section.entry_turn_angle.config(state = NORMAL)
 
     def disable_button_run(self):
-        self.buttons_section.button_stop  .config(state = NORMAL)
-        self.buttons_section.button_run   .config(state = DISABLED)
-        self.env_section.environment_cb   .config(state = DISABLED)
-        self.env_section.behavior_list_cb .config(state = DISABLED)
-        self.env_section.steps_entry      .config(state = DISABLED)
-        self.robot_section.entry_radius    .config(state = DISABLED)
-        self.robot_section.entry_advance   .config(state = DISABLED)
-        self.robot_section.entry_turn_angle.config(state = DISABLED)
+        self.buttons_section.button_stop    .config(state = NORMAL)
+        self.buttons_section.button_run     .config(state = DISABLED)
+        self.env_section.environment_cb     .config(state = DISABLED)
+        self.env_section.behavior_list_cb   .config(state = DISABLED)
+        self.env_section.steps_entry        .config(state = DISABLED)
+        self.robot_section.entry_radius     .config(state = DISABLED)
+        self.robot_section.entry_advance    .config(state = DISABLED)
+        self.robot_section.entry_turn_angle .config(state = DISABLED)
 
     # SHARED METHODS
     def run_simulation(self):
+        # self.route.delete()
         self.simulation_running = True
-        self.route.delete()
-        self.controller.set_ros_param('behavior', self.get_context_param('behavior'))
-        self.controller.set_ros_param('run_behavior', self.simulation_running)
-        self.controller.set_ros_param('step', 0)
-        self.controller.set_ros_param('max_steps', int(self.get_context_param('max_steps')))
-        self.controller.set_ros_param('max_advance', float(self.get_context_param('max_advance')))
-        self.controller.set_ros_param('max_turn_angle', float(self.get_context_param('max_turn_angle')))
-        self.controller.set_ros_param('light_threshold', float(self.get_context_param('light_threshold')))
-        self.controller.set_ros_param('laser_threshold', float(self.get_context_param('laser_threshold')))
-        self.controller.send_state_params()
-    
+        self.ros_params['run_behavior'] = True
+        self.ros_params['step'] = 0
+        self.ros_params['max_steps'] = self.get_context_param('max_steps')
+        self.ros_params['behavior']  = self.get_context_param('behavior')
+        self.ros_params['max_advance'] = self.get_context_param('max_advance')
+        self.ros_params['max_turn_angle'] = self.get_context_param('max_turn_angle')
+        self.ros.send_state_params(self.ros_params)
+
+    def stop_simulation(self):
+        self.simulation_running = False
+        # controller.finish_movement()
+        # context.simulation_running = False
+        # context.enable_button_run()
+
     def last_simulation(self):
         self.run_last_simulation = True
 
@@ -383,4 +383,26 @@ class AppContext:
         return polygon_list
 
     def loop(self):
-        print('todo')
+        if self.robot.exists():
+            goal_pose = self.service.format_goal_pose(self.ros.get_goal_pose(), self.canvas_size)
+            if self.light.exists():
+
+                # print(f'running->{self.simulation_running}')
+
+                light_readings = self.service.get_light_readings(self.robot.get_position(),
+                                                                 self.light.get_position(),
+                                                                 self.robot.get_angle(),
+                                                                 self.get_context_param('radius'))
+                # print(f'light_readings->{light_readings['max_index']}')
+
+                self.ros.set_light_readings(light_readings)
+
+                if self.simulation_running and goal_pose and self.flag:
+                    print(f'angle->{goal_pose['angle']}, distance->{goal_pose['distance']}')
+                    self.robot.rotate(goal_pose['angle'])
+                    self.robot.displace(goal_pose['distance'])
+                    self.ros.finish_movement()
+                    # self.flag = False
+
+
+        self.app.after(1, self.loop)

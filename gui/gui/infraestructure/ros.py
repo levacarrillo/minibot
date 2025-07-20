@@ -36,7 +36,16 @@ class Ros(Node):
         rclpy.spin_until_future_complete(self, future)
         return future.result()
 
-    def send_state_params(self, req):
+    def send_state_params(self, params):
+        req = SetParams.Request()
+        req.behavior        = params['behavior']
+        req.run_behavior    = params['run_behavior']
+        req.step            = params['step']
+        req.max_steps       = params['max_steps']
+        req.max_advance     = params['max_advance']
+        req.max_turn_angle  = params['max_turn_angle']
+        req.light_threshold = params['light_threshold']
+        req.laser_threshold = params['laser_threshold']
         future = self.set_params_cli.call_async(req)
         rclpy.spin_until_future_complete(self, future)
         return future.result()

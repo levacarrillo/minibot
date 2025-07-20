@@ -35,7 +35,7 @@ class EnvironmentSection:
         behavior_list_cb  = ttk.Combobox(context.side_frame, values = behavior_list,    width = 16)
 
         self.environment = environment_cb
-        self.behavior    = behavior_list
+        self.behavior    = behavior_list_cb
 
         ck_button_fast    = Checkbutton(context.side_frame, text="Fast mode", variable = fast_mode,
                                         command = lambda: context.on_check_fast_mode(fast_mode.get()))

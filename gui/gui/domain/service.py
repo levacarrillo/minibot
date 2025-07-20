@@ -79,9 +79,6 @@ class Service():
         return obj
 
     # GUI'S SERVICES
-    def get_canvas_size(self):
-        return self.current_size
-
     def set_pose(self, x, y, angle):
         return { 'x': x, 'y': y, 'angle': angle }
 
@@ -94,8 +91,6 @@ class Service():
     def get_line_segment(self, p1, p2):
         return { 'x': p2['x'] - p1['x'], 'y': p2['y'] - p1['y'] }
 
-    def get_edge(self, axis, line_per_meters):
-        return self.current_size[axis] / (self.canvas_scale[axis] * line_per_meters)
 
     def px_point_to_m(self, px, py, scale_factor = 1):
         x = scale_factor * px
@@ -113,12 +108,6 @@ class Service():
         x = radius * (point['x'] * cosT - point['y'] * sinT) + position['x']
         y = radius * (point['x'] * sinT + point['y'] * cosT) + position['y']
         return x, y
-
-    def change_sys_reference(self, v):
-        return { 'x': v['x'], 'y': self.current_size['y'] - v['y']}
-    
-    def redo_sys_reference(self, v):
-        return { 'x': v['x'], 'y': -(v['y'] - self.current_size['y'])}
 
     def get_laser_value(self, robot_pose, laser_max_point, points):
         l = laser_max_point
@@ -177,8 +166,6 @@ class Service():
         return math.hypot(p2['x'] - p1['x'], p2['y'] - p1['y'])
 
     def m_to_pixels(self, length, pixels_per_m):
-        print(f'{pixels_per_m}')
-        print(f'{length}')
         return  int(pixels_per_m * float(length))
 
     def polar_to_cartesian(self, radius, angle):
@@ -230,13 +217,13 @@ class Service():
             "laser_threshold": laser_threshold
         }
 
-    def get_light_readings(self, robot_pose, robot_radius, light_pose):
+    def get_light_readings(self, robot_pose, light_pose, robot_angle, robot_radius):
         max_index = 0
         max_value = 0.0
         readings = []
 
         for i in range(8):
-            sensor_angle = robot_pose['angle'] + i * math.pi / 4
+            sensor_angle = robot_angle + i * math.pi / 4
             sensor_x = robot_pose['x'] + robot_radius * math.cos(-sensor_angle)
             sensor_y = robot_pose['y'] + robot_radius * math.sin(-sensor_angle)
             x_distance = sensor_x - light_pose['x']
@@ -260,9 +247,9 @@ class Service():
     def get_lidar_readings(self, laser_readings):
         return laser_readings
 
-    def format_goal_pose(self, goal):
+    def format_goal_pose(self, goal, canvas_size):
         if goal is not None:
-            distance = goal.distance * self.current_size['x']
+            distance = goal.distance * canvas_size['width']
             goal = {
                 'angle'   : goal.angle,
                 'distance': distance

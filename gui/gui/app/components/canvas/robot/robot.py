@@ -14,20 +14,21 @@ class Robot:
 
         # self.sensors = Sensors(context)
 
-    def plot(self, e_point = None, rotation = 0):
+    def plot(self, e_point = None, rotation = None):
+        # print(f'rotating->{rotation}')
         self.context.canvas.delete('robot')
         self.radius = self.context.get_context_param('radius')
 
         if e_point:
             self.angle    = self.context.get_context_param('angle')
             self.position = self.context.set_robot_position(e_point.x, e_point.y)
-        else:
-            self.position = self.context.remap_position(self.position) if rotation == 0 else None
+        elif rotation:
+            self.position = self.context.remap_position(self.position)
             self.angle = self.angle + rotation
 
-        self.plot_parts()
+        self._plot_parts()
 
-    def plot_parts(self):   
+    def _plot_parts(self):   
         circular_parts = self.context.get_circles_coords(self.position, self.radius)
         for part in circular_parts:
             self.context.canvas.create_oval(*part['coords'], outline = part['color'], 
@@ -42,11 +43,11 @@ class Robot:
 
     def displace(self, advance):
         x, y = self.context.polar_to_cartesian(advance, self.angle)
-        self.canvas.move('robot', x, y)
+        self.context.canvas.move('robot', x, y)
         self.position  = self.context.set_robot_position(self.position['x'] + x,
                                                          self.position['y'] + y)
 
-    def get_positon(self):
+    def get_position(self):
         return self.position
     
     def set_position(self, position):
