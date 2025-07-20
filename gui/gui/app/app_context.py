@@ -27,15 +27,18 @@ class AppContext:
 
         self.ros_params = None
 
-        self.side_frame   = None
-
         self.light        = None
         self.robot        = None
 
+        self.side_frame      = None
         self.env_section     = None 
         self.sensors_section = None 
         self.robot_section   = None 
         self.buttons_section = None 
+
+
+
+
 
         self.simulation_running  = False
         self.run_last_simulation = False
@@ -51,6 +54,42 @@ class AppContext:
 
 
     # REFACTORED---
+
+    # SETTERS FOR SECTIONS
+    def set_canvas(self, canvas):
+        self.canvas = canvas
+
+    def set_side_frame(self, side_frame):
+        self.side_frame = side_frame
+
+    def set_env_section(self, env_section):
+        self.env_section = env_section
+
+    def set_sensors_section(self, sensors_section):
+        self.sensors_section = sensors_section
+
+    def set_robot_section(self, robot_section):
+        self.robot_section   = robot_section
+
+    def set_buttons_section(self, buttons_section):
+        self.buttons_section = buttons_section
+
+    def set_light(self, light):
+        self.light = light
+
+    def set_robot(self, robot):
+        self.robot = robot
+
+    def set_objects(self, objects):
+        self.objects = objects
+
+    def set_route(self, value):
+        self.route = value
+
+
+    def polar_to_cartesian(self, magnitude, angle):
+        return self.service.polar_to_cartesian_point(magnitude, angle)
+
     def update_params(self):
         self.ros_params = self.service.format_ros_params(self.ros.update_params())
         print(f'ros_params->{self.ros_params}')
@@ -85,6 +124,12 @@ class AppContext:
             return float(self.sensors_section.entry_laser.get())
         else:
             print(f'AppContext.get_context_param()->PARAMETER {name} NOT RECOGNIZED BY CONTEXT')
+    
+    def set_context_param(self, name, value):
+        if name == 'angle':
+            self.robot_section.robot_angle.set(value)
+        else:
+            print(f'AppContext.set_context_param()->PARAMETER {name} NOT RECOGNIZED BY CONTEXT')
 
     def set_light_position(self, x, y):
         xm, ym = self.service.px_point_to_m(x, self.canvas_size['height'] - y)
@@ -106,9 +151,6 @@ class AppContext:
 
     def load_objects(self):
         return self.service.parse_objects_file(self.file.load_objects())
-
-    def set_canvas(self, canvas):
-        self.canvas = canvas
 
     def resize_canvas(self, width, height):
         self.previus_canvas_size = copy(self.canvas_size)
@@ -217,49 +259,16 @@ class AppContext:
         }
 
         return [head, left_wheel, right_wheel]
-
-    def get_head_coords(self, position, angle, radius):
-        # POINTS MAGNITUDES RELATIVE TO ROBOT'S RADIUS
-        points = [{ 'x': 2/3, 'y': - 1/3 },
-                  { 'x': 2/3, 'y':   1/3 },
-                  { 'x': 5/6, 'y':    0  }]
-        polygon = []
-        for point in points:
-            polygon.append(self.service.transform_to_polygon_point(position, angle, radius, point))
-
-        return polygon
-
-    def get_left_wheel_coords(self, position, angle, radius):
-        # POINTS MAGNITUDES RELATIVE TO ROBOT'S RADIUS
-        points = [{'x': -1/2, 'y': -5/6 },
-                 {'x':  1/2, 'y': -5/6 },
-                 {'x':  1/2, 'y': -3/6 },
-                 {'x': -1/2, 'y': -3/6 }]
-        polygon = []
-        for point in points:
-            polygon.append(self.service.transform_to_polygon_point(position, angle, radius, point))
-
-        return polygon
-
-    def get_right_wheel_coods(self, position, angle, radius):
-        # POINTS MAGNITUDES RELATIVE TO ROBOT'S RADIUS
-        points = [{'x': -1/2, 'y':  3/6 },
-                  {'x':  1/2, 'y':  3/6 },
-                  {'x':  1/2, 'y':  5/6 },
-                  {'x': -1/2, 'y':  5/6 }]
-        polygon = []
-        for point in points:
-            polygon.append(self.service.transform_to_polygon_point(position, angle, radius, point))
-
-        return polygon
     
-    def set_angle(self):
-        self.robot_section.robot_angle.set(0.0)
-        # if event is None:
-        #     context.panel_update_value('entry_angle', 0.0)
-        # else:
-        #     context.paqnel_update_value('entry_angle', entry_angle.get())
-        # context.robot.plot()
+    def set_angle(self, event = None):
+        if event is None:
+            self.set_context_param('angle', 0.0)
+            self.robot.set_angle(0) if self.robot.exists() else None
+        else:
+            if self.robot.exists():
+                self.robot.set_angle(self.get_context_param('angle')) 
+
+        self.robot.plot() if self.robot.exists() else None
 
 
     def stop_simulation(self):
@@ -274,80 +283,20 @@ class AppContext:
     def get_canvas_scale(self):
         return self.canvas_scale
 
-    def loop(self):
-        print('todo')
-
-    # SETTERS FOR SECTIONS
-    def set_env_section(self, env_section):
-        self.env_section = env_section
-
-    def set_sensors_section(self, sensors_section):
-        self.sensors_section = sensors_section
-
-    def set_robot_section(self, robot_section):
-        self.robot_section   = robot_section
-
-    def set_buttons_section(self, buttons_section):
-        self.buttons_section = buttons_section
-
-    def polar_to_cartesian(self, magnitude, angle):
-        return self.service.polar_to_cartesian_point(magnitude, angle)
-
-    # SETTERS FOR CANVA'S COMPONENTS
-    def set_canvas_size(self, new_size_x, new_size_y):
-        self.canvas_size  = self.controller.set_canvas_size(new_size_x, new_size_y)
-
-    def set_light(self, light):
-        self.light = light
-
-    def set_robot(self, robot):
-        self.robot = robot
-
-    def set_objects(self, objects):
-        self.objects = objects
-
-    def set_velocity_slider(self, value):
-        self.velocity_slider = value
-    
-    def get_execution_delay(self):
-        return self.controller.get_execution_delay(self.velocity_slider)
-    
     def on_check_fast_mode(self, value):
         self.fast_mode = value
 
     def on_check_show_sensors(self, value):
         self.show_sensors = value
 
-    def set_route(self, value):
-        self.route = value
+    def on_check_load_objects(self, load_objects):
+            self.objects.plot() if load_objects == 1 else self.objects.delete()
 
-    # def get_context_param(self, name):
-    #     if name == 'behavior':
-    #         return self.env_section.behavior_list_cb.get()
-    #     elif name == 'max_steps':
-    #         return int(self.env_section.steps_entry.get())
-    #     # elif name == 'map':
-    #     #     return self.env_section.environment_cb.get()
-    #     elif name == 'entry_angle':
-    #         return self.robot_section.robot_angle.get()
-    #     elif name == 'entry_radius':
-    #         return self.robot_section.robot_radius.get()
-    #     elif name == 'max_advance':
-    #         return float(self.robot_section.entry_advance.get())
-    #     elif name == 'max_turn_angle':
-    #         return float(self.robot_section.entry_turn_angle.get())
-    #     elif name == 'num_sensors':
-    #         return int(self.sensors_section.entry_num_sensors.get())
-    #     elif name == 'origin_angle':
-    #         return float(self.sensors_section.entry_origin_angle.get())
-    #     elif name == 'range_sensor':
-    #         return float(self.sensors_section.entry_range.get())
-    #     elif name == 'light_threshold':
-    #         return float(self.sensors_section.entry_light.get())
-    #     elif name == 'laser_threshold':
-    #         return float(self.sensors_section.entry_laser.get())
-    #     else:
-    #         print(f'get_context_param()->PARAMETER {name} NOT RECOGNIZED BY CONTEXT')
+    def on_check_noise(self, noise):
+        self.sensor_noise = True if noise == 1 else False
+
+    def set_velocity_slider(self, value):
+        self.velocity_slider = value
 
     def enable_button_run(self):
         self.buttons_section.button_stop   .config(state = DISABLED)
@@ -368,32 +317,6 @@ class AppContext:
         self.robot_section.entry_radius    .config(state = DISABLED)
         self.robot_section.entry_advance   .config(state = DISABLED)
         self.robot_section.entry_turn_angle.config(state = DISABLED)
-
-    # SETTERS FOR MAIN FRAMES
-    def set_side_frame(self, side_frame):
-        self.side_frame = side_frame
-
-    # def panel_update_value(self, name, value):
-    #     if name == 'label_light_pose_x':
-    #         self.env_section.label_light_pose_x.config(text = value)
-    #     elif name == 'label_light_pose_y':
-    #         self.env_section.label_light_pose_y.config(text = value)
-    #     elif name == 'label_steps':
-    #         self.env_section.label_steps.config(text = value)
-    #     elif name == 'entry_pose_x':
-    #         self.robot_section.entry_pose_x.delete(0, END)
-    #         self.robot_section.entry_pose_x.insert(0, value)
-    #     elif name == 'entry_pose_y':
-    #         self.robot_section.entry_pose_y.delete(0, END)
-    #         self.robot_section.entry_pose_y.insert(0, value)
-    #     elif name == 'entry_angle':
-    #         self.robot_section.entry_angle.delete(0, END)
-    #         self.robot_section.entry_angle.insert(0, str(value)[:6])
-    #     elif name == 'num_sensors':
-    #         self.sensors_section.entry_num_sensors.delete(0, END)
-    #         self.sensors_section.entry_num_sensors.insert(0, str(value))
-    #     else:
-    #         print(f'PANEL_UPDATE_VALUE()->{name} NOT RECOGNIZED BY CONTEXT')        
 
     # SHARED METHODS
     def run_simulation(self):
@@ -471,8 +394,5 @@ class AppContext:
 
         return polygon_list
 
-    def on_check_load_objects(self, load_objects):
-            self.objects.plot() if load_objects == 1 else self.objects.delete()
-
-    def on_check_noise(self, noise):
-        self.sensor_noise = True if noise == 1 else False
+    def loop(self):
+        print('todo')

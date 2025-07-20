@@ -48,9 +48,15 @@ class Robot:
 
     def get_positon(self):
         return self.position
+    
+    def set_position(self, position):
+        self.position = position
 
     def get_angle(self):
         return self.angle
+    
+    def set_angle(self, angle):
+        self.angle = angle
 
     def grasp(self, object_name):
         if not self.context.objects.in_field:
