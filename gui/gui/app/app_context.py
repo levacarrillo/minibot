@@ -260,7 +260,7 @@ class AppContext:
 
         return [head, left_wheel, right_wheel]
     
-    def set_angle(self, event = None):
+    def set_robot_angle(self, event = None):
         if event is None:
             self.set_context_param('angle', 0.0)
             self.robot.set_angle(0) if self.robot.exists() else None
@@ -270,6 +270,8 @@ class AppContext:
 
         self.robot.plot() if self.robot.exists() else None
 
+    def set_robot_radius(self, event = None):
+        self.robot.plot() if self.robot.exists() else None
 
     def stop_simulation(self):
         print(todo)

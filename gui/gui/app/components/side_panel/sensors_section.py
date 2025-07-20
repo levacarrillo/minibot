@@ -8,9 +8,9 @@ class SensorsSection:
 
         label_sensors       = Label(context.side_frame, text = "Sensors", font = ('arial', 11, 'bold'))
         label_num_sensors   = Label(context.side_frame, text = "Num Sensors:")
-        label_origing_angle = Label(context.side_frame, text = "Origin angle:" )
-        label_range         = Label(context.side_frame, text = "Range:")
-        lidar_value         = Label(context.side_frame, text = "Lidar value:")
+        label_origing_angle = Label(context.side_frame, text = "Origin angle [rad]:" )
+        label_range         = Label(context.side_frame, text = "Range [rad]:")
+        lidar_value         = Label(context.side_frame, text = "Lidar value [m]:")
         light_value         = Label(context.side_frame, text = "Light value:")
 
         entry_num_sensors   = Entry(context.side_frame, validate = 'key', 
