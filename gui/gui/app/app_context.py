@@ -86,6 +86,11 @@ class AppContext:
     def set_route(self, value):
         self.route = value
 
+    def get_canvas_size(self):
+        return self.canvas_size
+
+    def get_canvas_scale(self):
+        return self.canvas_scale
 
     def polar_to_cartesian(self, magnitude, angle):
         return self.service.polar_to_cartesian_point(magnitude, angle)
@@ -102,8 +107,8 @@ class AppContext:
             return self.env_section.behavior_list_cb.get()
         elif name == 'max_steps':
             return int(self.env_section.steps_entry.get())
-        # elif name == 'map':
-        #     return self.env_section.environment_cb.get()
+        elif name == 'map':
+            return self.env_section.environment.get()
         elif name == 'angle':
             return float(self.robot_section.robot_angle.get())
         elif name == 'radius':
@@ -128,19 +133,27 @@ class AppContext:
     def set_context_param(self, name, value):
         if name == 'angle':
             self.robot_section.robot_angle.set(value)
+        elif name == 'light_pose_x':
+            self.env_section.light_pose_x.set(value)
+        elif name == 'light_pose_y':
+            self.env_section.light_pose_y.set(value)
+        elif name == 'robot_pose_x':
+            self.robot_section.robot_pose_x.set(value)
+        elif name == 'robot_pose_y':
+            self.robot_section.robot_pose_y.set(value)
         else:
             print(f'AppContext.set_context_param()->PARAMETER {name} NOT RECOGNIZED BY CONTEXT')
 
     def set_light_position(self, x, y):
         xm, ym = self.service.px_point_to_m(x, self.canvas_size['height'] - y)
-        self.env_section.light_pose_x.set(xm)
-        self.env_section.light_pose_y.set(ym)
+        self.set_context_param('light_pose_x', xm)
+        self.set_context_param('light_pose_y', ym)
         return { 'x': x, 'y': y }
 
     def set_robot_position(self, x, y):
         xm, ym = self.service.px_point_to_m(x, self.canvas_size['height'] - y)
-        self.robot_section.robot_pose_x.set(xm)
-        self.robot_section.robot_pose_y.set(ym)
+        self.set_context_param('robot_pose_x', xm)
+        self.set_context_param('robot_pose_y', xm)
         return { 'x': x, 'y': y }
 
     def m_to_pixels(self, length):
@@ -170,7 +183,7 @@ class AppContext:
     def get_file_path(self, file_name):
         return self.file.get_path(file_name)
 
-    def plot_map(self):
+    def plot_map(self, event = None):
         # self.grid.plot() if self.grid else None
         self.canvas.delete('grid')
 
@@ -184,17 +197,19 @@ class AppContext:
                           i * line if axis != 'width' else self.canvas_size[axis]]
                 self.canvas.create_line(points, dash = (4, 4),
                                     fill = self.color['grid'], tag  = 'grid' )
+        
         self.canvas.delete('map')
-        map_file = self.file.get_map('EMPTY')
+        map_file = self.file.get_map(self.get_context_param('map'))
         polygon_list, polygon_to_plot_list = self.service.parse_map(map_file)
         for polygon_to_plot in polygon_to_plot_list:
-            self.canvas.create_polygon(
-                polygon_to_plot, 
-                outline = self.color['grid'],
-                fill = self.color['grid'],
-                width = 1,
-                tag = 'map'
-            )
+            self.canvas.create_polygon(polygon_to_plot, outline = self.color['grid'], fill = self.color['grid'],
+                                                                                        width = 1, tag = 'map')
+
+
+    # def plot_map(self):
+    #     self.clear_topological_map()
+    #     self.polygon_list, polygon_to_plot_list = self.controller.get_map(self.get_context_param('map'))
+    #     self.grid.plot()
 
     def get_circles_coords(self, position, radius):
         body = {
@@ -279,12 +294,6 @@ class AppContext:
         # context.simulation_running = False
         # context.enable_button_run()
 
-    def get_canvas_size(self):
-        return self.canvas_size
-
-    def get_canvas_scale(self):
-        return self.canvas_scale
-
     def on_check_fast_mode(self, value):
         self.fast_mode = value
 
@@ -299,6 +308,9 @@ class AppContext:
 
     def set_velocity_slider(self, value):
         self.velocity_slider = value
+
+    def on_change_robot_sensors(self, event = None):
+        print('t0d0')
 
     def enable_button_run(self):
         self.buttons_section.button_stop   .config(state = DISABLED)
@@ -336,21 +348,6 @@ class AppContext:
     
     def last_simulation(self):
         self.run_last_simulation = True
-
-    # def plot_map(self):
-    #     self.clear_topological_map()
-    #     self.polygon_list, polygon_to_plot_list = self.controller.get_map(self.get_context_param('map'))
-    #     self.grid.plot()
-
-    #     self.canvas.delete('map')
-    #     for polygon_to_plot in polygon_to_plot_list:
-    #         self.canvas.create_polygon(
-    #             polygon_to_plot, 
-    #             outline = self.color['obstacle_outline'],
-    #             fill = self.color['obstacle_inner'],
-    #             width = 1,
-    #             tag = 'map'
-    #         )
 
         # if self.controller.check_for_topological_map(self.get_context_param('map')):
         #     self.buttons_section.plot_topological.config(state = NORMAL)

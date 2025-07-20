@@ -8,7 +8,7 @@ class SensorsSection:
 
         label_sensors       = Label(context.side_frame, text = "Sensors", font = ('arial', 11, 'bold'))
         label_num_sensors   = Label(context.side_frame, text = "Num Sensors:")
-        label_origing_angle = Label(context.side_frame, text = "Origin angle [rad]:" )
+        label_origing_angle = Label(context.side_frame, text = "Origin [rad]:" )
         label_range         = Label(context.side_frame, text = "Range [rad]:")
         lidar_value         = Label(context.side_frame, text = "Lidar value [m]:")
         light_value         = Label(context.side_frame, text = "Light value:")
@@ -36,9 +36,9 @@ class SensorsSection:
         entry_laser         .grid(column = 1, row = 16, sticky = (N, W), padx = (5, 0))
         entry_light         .grid(column = 1, row = 17, sticky = (N, W), padx = (5, 0))
 
-        entry_num_sensors  .bind("<Return>", context.robot.plot)
-        entry_origin_angle .bind("<Return>", context.robot.plot)
-        entry_range        .bind("<Return>", context.robot.plot)
-        entry_laser        .bind("<Return>", context.robot.plot)
+        entry_num_sensors  .bind("<Return>", context.on_change_robot_sensors)
+        entry_origin_angle .bind("<Return>", context.on_change_robot_sensors)
+        entry_range        .bind("<Return>", context.on_change_robot_sensors)
+        entry_laser        .bind("<Return>", context.on_change_robot_sensors)
 
         context.set_sensors_section(self)
