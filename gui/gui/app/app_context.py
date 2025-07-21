@@ -1,4 +1,3 @@
-# from tkinter import NORMAL, DISABLED, END
 from PIL import Image, ImageDraw, ImageTk
 from copy import copy
 
@@ -49,9 +48,6 @@ class AppContext:
         self.polygon_list = None
         self.objects = None
 
-
-
-    # REFACTORED---
 
     # SETTERS FOR SECTIONS
     def set_canvas(self, canvas):
@@ -145,15 +141,15 @@ class AppContext:
             print(f'AppContext.set_context_param()->PARAMETER {name} NOT RECOGNIZED BY CONTEXT')
 
     def set_light_position(self, x, y):
-        xm, ym = self.service.px_point_to_m(x, self.canvas_size['height'] - y)
+        xm, ym = self.service.px_point_to_m(x, y, self.canvas_size)
         self.set_context_param('light_pose_x', xm)
         self.set_context_param('light_pose_y', ym)
         return { 'x': x, 'y': y }
 
     def set_robot_position(self, x, y):
-        xm, ym = self.service.px_point_to_m(x, self.canvas_size['height'] - y)
+        xm, ym = self.service.px_point_to_m(x, y, self.canvas_size)
         self.set_context_param('robot_pose_x', xm)
-        self.set_context_param('robot_pose_y', xm)
+        self.set_context_param('robot_pose_y', ym)
         return { 'x': x, 'y': y }
 
     def get_environment_list(self):

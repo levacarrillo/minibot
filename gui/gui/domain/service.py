@@ -93,9 +93,9 @@ class Service():
         return { 'x': p2['x'] - p1['x'], 'y': p2['y'] - p1['y'] }
 
 
-    def px_point_to_m(self, px, py, scale_factor = 1):
-        x = scale_factor * px
-        y = scale_factor * py
+    def px_point_to_m(self, px, py, canvas_size):
+        x = px / canvas_size['width']
+        y = (canvas_size['height'] - py)/ canvas_size['height']
         return str(x)[:6], str(y)[:6]
 
     def sleep(self, slider_value):
