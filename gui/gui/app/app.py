@@ -28,7 +28,7 @@ class App(Tk):
         SidePanel(context)
         CanvasPanel(context)
     
-        context.loop()
+        context.animation_loop()
 
     def run(self):
         self.mainloop()

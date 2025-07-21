@@ -1,4 +1,4 @@
-from tkinter import NORMAL, DISABLED, END
+# from tkinter import NORMAL, DISABLED, END
 from PIL import Image, ImageDraw, ImageTk
 from copy import copy
 
@@ -30,11 +30,13 @@ class AppContext:
         self.robot_section   = None 
         self.buttons_section = None 
 
-        self.excecution_delay = 0.01
-
         self.simulation_running  = False
 
+        self.angle_increment = 0.0
+        self.displacement_increment = 0
 
+        self.angle_tolerance = 0.01
+        self.distance_tolerance = 1
 
         self.run_last_simulation = False
         self.show_sensors = None
@@ -47,7 +49,6 @@ class AppContext:
         self.polygon_list = None
         self.objects = None
 
-        self.flag = True
 
 
     # REFACTORED---
@@ -298,24 +299,26 @@ class AppContext:
         print('t0d0')
 
     def enable_button_run(self):
-        self.buttons_section.button_stop   .config(state = DISABLED)
-        self.buttons_section.button_run    .config(state = NORMAL)
-        self.env_section.environment_cb    .config(state = NORMAL)
-        self.env_section.behavior_list_cb  .config(state = NORMAL)
-        self.env_section.steps_entry       .config(state = NORMAL)
-        self.robot_section.entry_radius    .config(state = NORMAL)
-        self.robot_section.entry_advance   .config(state = NORMAL)
-        self.robot_section.entry_turn_angle.config(state = NORMAL)
+        print(f'todo')
+        # self.buttons_section.button_stop   .config(state = DISABLED)
+        # self.buttons_section.button_run    .config(state = NORMAL)
+        # self.env_section.environment_cb    .config(state = NORMAL)
+        # self.env_section.behavior_list_cb  .config(state = NORMAL)
+        # self.env_section.steps_entry       .config(state = NORMAL)
+        # self.robot_section.entry_radius    .config(state = NORMAL)
+        # self.robot_section.entry_advance   .config(state = NORMAL)
+        # self.robot_section.entry_turn_angle.config(state = NORMAL)
 
     def disable_button_run(self):
-        self.buttons_section.button_stop    .config(state = NORMAL)
-        self.buttons_section.button_run     .config(state = DISABLED)
-        self.env_section.environment_cb     .config(state = DISABLED)
-        self.env_section.behavior_list_cb   .config(state = DISABLED)
-        self.env_section.steps_entry        .config(state = DISABLED)
-        self.robot_section.entry_radius     .config(state = DISABLED)
-        self.robot_section.entry_advance    .config(state = DISABLED)
-        self.robot_section.entry_turn_angle .config(state = DISABLED)
+        print(f'todo')
+        # self.buttons_section.button_stop    .config(state = NORMAL)
+        # self.buttons_section.button_run     .config(state = DISABLED)
+        # self.env_section.environment_cb     .config(state = DISABLED)
+        # self.env_section.behavior_list_cb   .config(state = DISABLED)
+        # self.env_section.steps_entry        .config(state = DISABLED)
+        # self.robot_section.entry_radius     .config(state = DISABLED)
+        # self.robot_section.entry_advance    .config(state = DISABLED)
+        # self.robot_section.entry_turn_angle .config(state = DISABLED)
 
     # SHARED METHODS
     def run_simulation(self):
@@ -382,7 +385,7 @@ class AppContext:
 
         return polygon_list
 
-    def loop(self):
+    def animation_loop(self):
         if self.robot.exists():
             goal_pose = self.service.format_goal_pose(self.ros.get_goal_pose(), self.canvas_size)
             if self.light.exists():
@@ -397,12 +400,30 @@ class AppContext:
 
                 self.ros.set_light_readings(light_readings)
 
-                if self.simulation_running and goal_pose and self.flag:
-                    print(f'angle->{goal_pose['angle']}, distance->{goal_pose['distance']}')
-                    self.robot.rotate(goal_pose['angle'])
-                    self.robot.displace(goal_pose['distance'])
-                    self.ros.finish_movement()
-                    # self.flag = False
+                if self.simulation_running and goal_pose:
+                    if self.fast_mode:
+                        # print(f'angle->{goal_pose['angle']}, distance->{goal_pose['distance']}')
+                        self.robot.rotate(goal_pose['angle'])
+                        self.robot.displace(goal_pose['distance'])
+                        self.ros.finish_movement()
+                    else:
+                        delta = goal_pose['angle'] - self.angle_increment
+                        if abs(delta) >= self.angle_tolerance:
+                            direction = 1 if goal_pose['angle'] > 0 else -1 # 1: LEFT, -1: RIGHT
+                            increment = self.service.degrees_to_radians(direction)
+                            self.angle_increment += increment
+                            self.robot.rotate(increment)
+                        else:
+                            delta = goal_pose['distance'] - self.displacement_increment
+                            if abs(delta) >= self.distance_tolerance:
+                                increment = 1 if goal_pose['distance'] > 0 else -1
+                                self.displacement_increment += increment
+                                self.robot.displace(increment)
+                            else:
+                                self.angle_increment = 0.0
+                                self.displacement_increment = 0.0
+                                self.ros.finish_movement()
 
+                        self.service.sleep(self.velocity_slider)
 
-        self.app.after(1, self.loop)
+        self.app.after(1, self.animation_loop)

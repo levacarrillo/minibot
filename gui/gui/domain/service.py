@@ -1,3 +1,4 @@
+import time
 import math
 import numpy as np
 from interfaces.srv import SetParams
@@ -97,9 +98,10 @@ class Service():
         y = scale_factor * py
         return str(x)[:6], str(y)[:6]
 
-    def get_execution_delay(self, slider_value):
+    def sleep(self, slider_value):
         delay = (3 - int(slider_value)) * 0.01
-        return delay
+        time.sleep(delay)
+
 
     def transform_to_polygon_point(self, position, angle, radius, point):
         sinT = math.sin(-float(angle))
