@@ -9,23 +9,15 @@ class Objects:
     def plot(self):
         self.loaded = True
         self.context.canvas.delete('object')
-        for object in self.object_list:
-            rectangle_points = [object['x'] - 10,
-                                object['y'] - 10,
-                                object['x'] + 10,
-                                object['y'] + 10]
-
-            self.context.canvas.create_rectangle(rectangle_points,
+        for obj in self.object_list:
+            self.context.canvas.create_rectangle(obj['rectangle'],
                                                  fill = self.context.color['block'],
                                                  outline = self.context.color['block'],
                                                  tag = 'object')
 
-            self.context.canvas.create_text(object['x'],
-                                            object['y'], 
+            self.context.canvas.create_text(obj['x'], obj['y'], text = object['name'],
                                             fill = self.context.color['block_text'],
-                                            font = 'Calibri 8 bold',
-                                            text = object['name'],
-                                            tag  = 'object')
+                                            font = 'Calibri 8 bold', tag  = 'object')
 
     def remove_object(self, object_name_to_remove):
         for i, obj in enumerate(self.object_list):

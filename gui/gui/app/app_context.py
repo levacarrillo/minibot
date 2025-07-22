@@ -29,13 +29,19 @@ class AppContext:
         self.robot_section   = None 
         self.buttons_section = None 
 
-        self.simulation_running  = False
+        self.objects = None
+        self.route   = None
+
 
         self.angle_increment = 0.0
         self.displacement_increment = 0
 
         self.angle_tolerance = 0.01
         self.distance_tolerance = 1
+        
+        self.start_position = None
+
+        self.simulation_running  = False
 
         self.run_last_simulation = False
         self.show_sensors = None
@@ -45,7 +51,6 @@ class AppContext:
         self.nodes_image = None
 
         self.polygon_list = None
-        self.objects = None
 
 
     # SETTERS FOR SECTIONS
@@ -75,6 +80,9 @@ class AppContext:
 
     def set_objects(self, objects):
         self.objects = objects
+
+    def set_route(self, route):
+        self.route = route
 
     def get_canvas_size(self):
         return self.canvas_size
@@ -323,6 +331,7 @@ class AppContext:
         self.ros_params['max_advance'] = self.get_context_param('max_advance')
         self.ros_params['max_turn_angle'] = self.get_context_param('max_turn_angle')
         self.ros.send_state_params(self.ros_params)
+        self.route.delete()
 
     def stop_simulation(self):
         self.simulation_running = False
@@ -393,11 +402,23 @@ class AppContext:
                 self.ros.set_light_readings(light_readings)
 
                 if self.simulation_running and goal_pose:
+                    current_position = self.robot.get_position()
+                    if self.start_position is None:
+                        self.start_position = current_position
+
+                    if self.route.is_empty():
+                        self.route.initialize_route(current_position, self.robot.get_angle())
+
+
                     if self.fast_mode:
                         # print(f'angle->{goal_pose['angle']}, distance->{goal_pose['distance']}')
                         self.robot.rotate(goal_pose['angle'])
                         self.robot.displace(goal_pose['distance'])
                         self.ros.finish_movement()
+                        self.route.trace(self.start_position,
+                                            self.robot.get_position(),
+                                            self.robot.get_angle())
+                        self.start_position = None
                     else:
                         delta = goal_pose['angle'] - self.angle_increment
                         if abs(delta) >= self.angle_tolerance:
@@ -415,6 +436,10 @@ class AppContext:
                                 self.angle_increment = 0.0
                                 self.displacement_increment = 0.0
                                 self.ros.finish_movement()
+                                self.route.trace(self.start_position,
+                                                 self.robot.get_position(),
+                                                 self.robot.get_angle())
+                                self.start_position = None
 
                         self.service.sleep(self.velocity_slider)
 

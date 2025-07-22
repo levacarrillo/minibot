@@ -60,10 +60,13 @@ class Service():
         for line in lines:
             words = line.split()
             if words:
+                x = float(words[1]) * canvas_size['width']
+                y = canvas_size['height'] - float(words[2]) * canvas_size['height']
                 obj = {
                     'name': words[0],
-                    'x': float(words[1]) * canvas_size['width'],
-                    'y': canvas_size['height'] - float(words[2]) * canvas_size['height']
+                    'x': x,
+                    'y': y,
+                    'rectangle': [x - 10, y - 10, x + 10, y + 10]
                 }
                 object_list.append(obj)
 
