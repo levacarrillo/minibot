@@ -7,7 +7,7 @@ class ButtonsSection:
         plot_topological = Button(context.side_frame, width = 18, text = "Plot topological", 
                                         command = context.plot_topological_map, state = DISABLED)
         button_run       = Button(context.side_frame, width = 18, text = "Run simulation", 
-                                        command = context.run_simulation)
+                                        command = context.run_simulation, state = DISABLED)
         button_run_last  = Button(context.side_frame, width = 18, text = "Run last simulation",
                                         command = context.last_simulation, state = DISABLED)
         button_stop      = Button(context.side_frame, width = 18, text = "Stop simulation",

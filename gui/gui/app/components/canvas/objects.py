@@ -15,7 +15,7 @@ class Objects:
                                                  outline = self.context.color['block'],
                                                  tag = 'object')
 
-            self.context.canvas.create_text(obj['x'], obj['y'], text = object['name'],
+            self.context.canvas.create_text(obj['x'], obj['y'], text = obj['name'],
                                             fill = self.context.color['block_text'],
                                             font = 'Calibri 8 bold', tag  = 'object')
 
