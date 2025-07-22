@@ -331,17 +331,12 @@ class AppContext:
         self.simulation_running = False
         self.set_context_param('panel_status', 'normal')
         self.set_context_param('button_stop',  'disabled')
-        # controller.finish_movement()
-        # context.simulation_running = False
-        # context.enable_button_run()
+        self.ros_params['run_behavior'] = False
+        self.ros.send_state_params(self.ros_params)
+        self.ros.finish_movement()
 
     def last_simulation(self):
         self.run_last_simulation = True
-
-        # if self.controller.check_for_topological_map(self.get_context_param('map')):
-        #     self.buttons_section.plot_topological.config(state = NORMAL)
-        # else:
-        #     self.buttons_section.plot_topological.config(state = DISABLED)
 
     def plot_topological_map(self):
         self.buttons_section.plot_topological.config(state = DISABLED)
@@ -404,9 +399,7 @@ class AppContext:
                         self.route.initialize_route(current_position, self.robot.get_angle())
                         self.current_step = 0
 
-
                     if self.fast_mode:
-                        # print(f'angle->{goal_pose['angle']}, distance->{goal_pose['distance']}')
                         self.robot.rotate(goal_pose['angle'])
                         self.robot.displace(goal_pose['distance'])
                         self.ros.finish_movement()
@@ -442,7 +435,7 @@ class AppContext:
 
                         self.service.sleep(self.velocity_slider)
                     self.set_context_param('current_step', self.current_step)
-                elif self.simulation_running and self.ros.get_ros_params().run_behavior is False:
+                elif self.ros.get_ros_params().run_behavior is False and self.simulation_running:
                     self.simulation_running = False
                     self.set_context_param('panel_status', 'normal')
                     self.set_context_param('button_stop',  'disabled')
