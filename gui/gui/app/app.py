@@ -1,5 +1,6 @@
 from tkinter import *
 from gui.config.colors import colors
+from gui.config.constants import constants
 from gui.app.app_context import AppContext
 from gui.app.components.menu.menu_bar import MenuBar
 from gui.app.components.canvas.canvas_panel import CanvasPanel
@@ -19,6 +20,7 @@ class App(Tk):
             content  = content,
             service  = service,
             ros      = node,
+            constants     = constants,
             file_manager  = file_manager
         )
         

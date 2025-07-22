@@ -3,12 +3,13 @@ from copy import copy
 
 
 class AppContext:
-    def __init__(self, app, color, content, service, ros, file_manager):
+    def __init__(self, app, color, content, service, ros, constants, file_manager):
         self.app      = app
         self.color    = color
         self.content  = content
         self.service  = service
         self.ros      = ros
+        self.const    = constants
         self.file     = file_manager
 
         self.canvas   = None
@@ -249,45 +250,23 @@ class AppContext:
         }
         return [body, hokuyo]
 
-    def get_polygon_coords(self, position, radius, angle):
-        # POINTS MAGNITUDES RELATIVE TO ROBOT'S RADIUS
-        head_rel_points = [{ 'x': 2/3, 'y': - 1/3 },
-                  { 'x': 2/3, 'y':   1/3 },
-                  { 'x': 5/6, 'y':  0.0  }]
-
-        left_wheel_rel_points  = [{'x': -1/2, 'y': -5/6 },
-                        {'x':  1/2, 'y': -5/6 },
-                        {'x':  1/2, 'y': -3/6 },
-                        {'x': -1/2, 'y': -3/6 }]
-
-        right_wheel_rel_points = [{'x': -1/2, 'y':  3/6 },
-                         {'x':  1/2, 'y':  3/6 },
-                         {'x':  1/2, 'y':  5/6 },
-                         {'x': -1/2, 'y':  5/6 }]
-
-        head_polygon = []
-        for relative_point in head_rel_points:
-            head_polygon.append(self.service.transform_to_polygon_point(position, angle, radius, relative_point))
-        left_wheel_polygon = []
-        for relative_point in left_wheel_rel_points:
-            left_wheel_polygon.append(self.service.transform_to_polygon_point(position, angle, radius, relative_point))
-        right_wheel_polygon = []
-        for relative_point in right_wheel_rel_points:
-            right_wheel_polygon.append(self.service.transform_to_polygon_point(position, angle, radius, relative_point))
-
+    def get_polygons_coords(self, position, radius, angle):
         head = {
             'color':  self.color['head'],
-            'coords': head_polygon
+            'coords': self.service.get_polygon(
+                self.const['head_rel_points'], position, angle, radius)
         }
 
         left_wheel = {
             'color':  self.color['wheel'],
-            'coords': left_wheel_polygon
+            'coords': self.service.get_polygon(
+                self.const['left_wheel_rel_points'], position, angle, radius)
         }
 
         right_wheel = {
             'color':  self.color['wheel'],
-            'coords': right_wheel_polygon
+            'coords': self.service.get_polygon(
+                self.const['right_wheel_rel_points'], position, angle, radius)
         }
 
         return [head, left_wheel, right_wheel]

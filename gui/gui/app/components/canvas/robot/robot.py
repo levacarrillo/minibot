@@ -26,7 +26,7 @@ class Robot:
         for part in circular_parts:
             self.context.canvas.create_oval(*part['coords'], outline = part['color'], 
                                             fill = part['color'], width = 1, tag = 'robot')
-        polygon_parts = self.context.get_polygon_coords(self.position, self.radius, self.angle)
+        polygon_parts = self.context.get_polygons_coords(self.position, self.radius, self.angle)
         for part in polygon_parts:
             self.context.canvas.create_polygon(part['coords'], outline = part['color'],
                                             fill = part['color'], width = 1, tag = 'robot')

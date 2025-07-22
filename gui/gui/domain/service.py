@@ -259,3 +259,10 @@ class Service():
                 'distance': distance
             }
         return goal
+
+    def get_polygon(self, relative_points, position, angle, radius):
+        polygon = []
+        for point in relative_points:
+            polygon.append(
+                self.transform_to_polygon_point(position, angle, radius, point))
+        return polygon
