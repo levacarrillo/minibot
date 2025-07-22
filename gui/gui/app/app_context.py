@@ -136,6 +136,8 @@ class AppContext:
         if name == 'angle':
             angle = self.service.normalize_angle(value)
             self.robot_section.robot_angle.set(angle)
+        elif name == 'button_run' :
+            self.buttons_section.button_run     .config(state = value)
         elif name == 'button_stop':
             self.buttons_section.button_stop    .config(state = value)
         elif name == 'panel_status':
@@ -159,6 +161,9 @@ class AppContext:
         else:
             print(f'AppContext.set_context_param()->PARAMETER {name} NOT RECOGNIZED BY CONTEXT')
 
+    def format_to_position(self, x, y):
+        return self.service.format_to_position(x, y)
+
     def set_light_position(self, e_point):
         self.light.plot(self.service.format_to_position(e_point.x, e_point.y))
         xm, ym = self.service.px_point_to_m(e_point.x, e_point.y, self.canvas_size)
@@ -168,10 +173,12 @@ class AppContext:
             self.run_simulation()
 
     def set_robot_position(self, e_point):
-        xm, ym = self.service.px_point_to_m(x, y, self.canvas_size)
+        self.robot.plot(self.service.format_to_position(e_point.x, e_point.y))
+        xm, ym = self.service.px_point_to_m(e_point.x, e_point.y, self.canvas_size)
         self.set_context_param('robot_pose_x', xm)
         self.set_context_param('robot_pose_y', ym)
-        return { 'x': x, 'y': y }
+        if self.light.exists():
+            self.set_context_param('button_run', 'normal')
 
     def get_environment_list(self):
         return self.file.get_environment_list()
@@ -188,7 +195,7 @@ class AppContext:
         self.pixels_per_m = width
         self.plot_map()
         self.light.remap_position() if self.light.exists() else None
-        self.robot.plot() if self.robot.exists() else None
+        self.robot.remap_position() if self.robot.exists() else None
 
     def remap_position(self, position):
         if self.previus_canvas_size is not None:
@@ -421,7 +428,7 @@ class AppContext:
                         else:
                             delta = goal_pose['distance'] - self.displacement_increment
                             if abs(delta) >= self.distance_tolerance:
-                                increment = 1 if goal_pose['distance'] > 0 else -1
+                                increment = 2 if goal_pose['distance'] > 0 else - 2
                                 self.displacement_increment += increment
                                 self.robot.displace(increment)
                             else:
