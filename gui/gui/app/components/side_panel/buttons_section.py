@@ -9,9 +9,12 @@ class ButtonsSection:
         button_run       = Button(context.side_frame, width = 18, text = "Run simulation", 
                                         command = context.run_simulation)
         button_run_last  = Button(context.side_frame, width = 18, text = "Run last simulation",
-                                        command = context.last_simulation, state = NORMAL)
+                                        command = context.last_simulation, state = DISABLED)
         button_stop      = Button(context.side_frame, width = 18, text = "Stop simulation",
-                                        command = context.stop_simulation)
+                                        command = context.stop_simulation, state = DISABLED)
+        self.button_run  = button_run
+        self.button_stop = button_stop
+        self.button_last = button_run_last
 
         label_simulator  .grid(column = 4, row = 12, sticky = (N, W), padx = (5, 0), pady = (0, 5))
         plot_topological .grid(column = 4, row = 13, sticky = (N, W), padx = (5, 0))

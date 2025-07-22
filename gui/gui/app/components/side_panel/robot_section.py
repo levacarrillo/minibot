@@ -30,6 +30,9 @@ class RobotSection:
         entry_turn_angle = Entry(context.side_frame, textvariable = self.max_turn_angle, width = 9)
         button_set_zero  = Button(context.side_frame, text = "Angle Zero", width = 8,
                                                                 command = context.set_robot_angle)
+        self.entry_radius  = entry_radius
+        self.entry_advance = entry_advance
+        self.entry_turn_angle = entry_turn_angle
 
         label_robot      .grid(column = 4, row = 0, sticky = (N, W), padx = (5, 0))     
         label_pose_x     .grid(column = 4, row = 1, sticky = (N, W), padx = (5, 0))
@@ -53,5 +56,6 @@ class RobotSection:
 
         entry_angle  .bind("<Return>", context.set_robot_angle)
         entry_radius .bind("<Return>", context.set_robot_radius)
+
 
         context.set_robot_section(self)

@@ -49,6 +49,7 @@ class AppContext:
         self.velocity_slider = 1
         self.fast_mode = 0
         self.sensor_noise = False
+
         self.nodes_image = None
 
         self.polygon_list = None
@@ -135,6 +136,16 @@ class AppContext:
         if name == 'angle':
             angle = self.service.normalize_angle(value)
             self.robot_section.robot_angle.set(angle)
+        elif name == 'button_stop':
+            self.buttons_section.button_stop    .config(state = value)
+        elif name == 'panel_status':
+            self.buttons_section.button_run     .config(state = value)
+            self.env_section.environment        .config(state = value)
+            self.env_section.behavior           .config(state = value)
+            self.env_section.steps              .config(state = value)
+            self.robot_section.entry_radius     .config(state = value)
+            self.robot_section.entry_advance    .config(state = value)
+            self.robot_section.entry_turn_angle .config(state = value)
         elif name == 'light_pose_x':
             self.env_section.light_pose_x.set(value)
         elif name == 'light_pose_y':
@@ -303,28 +314,6 @@ class AppContext:
     def on_change_robot_sensors(self, event = None):
         print('t0d0')
 
-    def enable_button_run(self):
-        print(f'todo')
-        # self.buttons_section.button_stop   .config(state = DISABLED)
-        # self.buttons_section.button_run    .config(state = NORMAL)
-        # self.env_section.environment_cb    .config(state = NORMAL)
-        # self.env_section.behavior_list_cb  .config(state = NORMAL)
-        # self.env_section.steps_entry       .config(state = NORMAL)
-        # self.robot_section.entry_radius    .config(state = NORMAL)
-        # self.robot_section.entry_advance   .config(state = NORMAL)
-        # self.robot_section.entry_turn_angle.config(state = NORMAL)
-
-    def disable_button_run(self):
-        print(f'todo')
-        # self.buttons_section.button_stop    .config(state = NORMAL)
-        # self.buttons_section.button_run     .config(state = DISABLED)
-        # self.env_section.environment_cb     .config(state = DISABLED)
-        # self.env_section.behavior_list_cb   .config(state = DISABLED)
-        # self.env_section.steps_entry        .config(state = DISABLED)
-        # self.robot_section.entry_radius     .config(state = DISABLED)
-        # self.robot_section.entry_advance    .config(state = DISABLED)
-        # self.robot_section.entry_turn_angle .config(state = DISABLED)
-
     # SHARED METHODS
     def run_simulation(self):
         self.simulation_running = True
@@ -334,11 +323,14 @@ class AppContext:
         self.ros_params['behavior']  = self.get_context_param('behavior')
         self.ros_params['max_advance'] = self.get_context_param('max_advance')
         self.ros_params['max_turn_angle'] = self.get_context_param('max_turn_angle')
+        self.set_context_param('panel_status', 'disabled')
+        self.set_context_param('button_stop',  'normal')
         self.ros.send_state_params(self.ros_params)
         self.route.delete()
 
     def stop_simulation(self):
         self.simulation_running = False
+        self.set_context_param('panel_status', 'normal')
         # controller.finish_movement()
         # context.simulation_running = False
         # context.enable_button_run()
@@ -405,6 +397,7 @@ class AppContext:
 
                 self.ros.set_light_readings(light_readings)
 
+                # self.ros.get_logger().info(f'{self.ros.get_ros_params().run_behavior}')
                 if self.simulation_running and goal_pose:
                     current_position = self.robot.get_position()
                     if self.start_position is None:
@@ -452,6 +445,8 @@ class AppContext:
 
                         self.service.sleep(self.velocity_slider)
                     self.set_context_param('current_step', self.current_step)
-                    # self.ros.get_logger().info(f'{self.ros.get_ros_params().step}')
+                    if self.ros.get_ros_params().run_behavior is False:
+                        self.simulation_running = False
+
 
         self.app.after(1, self.animation_loop)
