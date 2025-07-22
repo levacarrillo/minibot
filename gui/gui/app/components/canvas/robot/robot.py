@@ -15,7 +15,6 @@ class Robot:
         # self.sensors = Sensors(context)
 
     def plot(self, e_point = None, rotation = None):
-        # print(f'rotating->{rotation}')
         self.context.canvas.delete('robot')
         self.radius = self.context.get_context_param('radius')
 
@@ -25,6 +24,7 @@ class Robot:
         elif rotation:
             self.position = self.context.remap_position(self.position)
             self.angle = self.angle + rotation
+            self.context.set_context_param('angle', self.angle)
 
         self._plot_parts()
 

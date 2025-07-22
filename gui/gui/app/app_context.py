@@ -40,6 +40,7 @@ class AppContext:
         self.distance_tolerance = 1
         
         self.start_position = None
+        self.current_step = 0
 
         self.simulation_running  = False
 
@@ -132,11 +133,14 @@ class AppContext:
     
     def set_context_param(self, name, value):
         if name == 'angle':
-            self.robot_section.robot_angle.set(value)
+            angle = self.service.normalize_angle(value)
+            self.robot_section.robot_angle.set(angle)
         elif name == 'light_pose_x':
             self.env_section.light_pose_x.set(value)
         elif name == 'light_pose_y':
             self.env_section.light_pose_y.set(value)
+        elif name == 'current_step':
+            self.env_section.curr_step.set(value)
         elif name == 'robot_pose_x':
             self.robot_section.robot_pose_x.set(value)
         elif name == 'robot_pose_y':
@@ -408,6 +412,7 @@ class AppContext:
 
                     if self.route.is_empty():
                         self.route.initialize_route(current_position, self.robot.get_angle())
+                        self.current_step = 0
 
 
                     if self.fast_mode:
@@ -419,6 +424,8 @@ class AppContext:
                                             self.robot.get_position(),
                                             self.robot.get_angle())
                         self.start_position = None
+                        if self.current_step < self.get_context_param('max_steps'):
+                            self.current_step += 1 
                     else:
                         delta = goal_pose['angle'] - self.angle_increment
                         if abs(delta) >= self.angle_tolerance:
@@ -440,7 +447,11 @@ class AppContext:
                                                  self.robot.get_position(),
                                                  self.robot.get_angle())
                                 self.start_position = None
+                                if self.current_step < self.get_context_param('max_steps'):
+                                    self.current_step += 1 
 
                         self.service.sleep(self.velocity_slider)
+                    self.set_context_param('current_step', self.current_step)
+                    # self.ros.get_logger().info(f'{self.ros.get_ros_params().step}')
 
         self.app.after(1, self.animation_loop)

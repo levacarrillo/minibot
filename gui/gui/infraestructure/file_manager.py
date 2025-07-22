@@ -9,9 +9,9 @@ class FileManager:
         self.map_file = None
         self.objects_file = None
 
-    # def __del__(self):
-    #     self.map_file.close()
-    #     self.objects_file.close()
+    def __del__(self):
+        self.map_file.close()
+        self.objects_file.close()
 
     def get_path(self, file_name):
         return os.path.join(self.resources, file_name)

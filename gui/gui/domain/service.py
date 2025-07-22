@@ -193,9 +193,11 @@ class Service():
     def normalize_angle(self, angle):
         angle = float(angle)
         if angle > math.pi * 2:
-            return angle % (math.pi * 2)
+            angle = angle % (math.pi * 2)
         elif angle < 0:
-            return math.pi * 2 - ((angle * -1) % (math.pi * 2))
+            angle = math.pi * 2 - ((angle * -1) % (math.pi * 2))
+        
+        angle = math.trunc(angle * 10000) / 10000
         return angle
 
     # ROS SERVICES

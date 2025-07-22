@@ -12,11 +12,12 @@ class Ros(Node):
         super().__init__('simulator')
         self.get_logger().info('INITIALIZING SIMULATOR NODE...')
 
+        self._ros_params     = None
         self.goal_pose       = None
         self.light_readings  = None
         self.lidar_readings  = []
         self.movement_execution = Event()
-        self.get_params_cli = self.create_client(GetParams, 'get_params')
+        self._get_params_cli = self.create_client(GetParams, 'get_params')
         self.set_params_cli = self.create_client(SetParams, 'set_params')
         self.get_scan_srv   = self.create_service(GetScan, 'get_scan', self.get_scan)
         self.get_lights_srv = self.create_service(GetLightReadings, 'get_light_readings', 
@@ -24,15 +25,32 @@ class Ros(Node):
         self._action_server = ActionServer(self, GoToPose, 'go_to_pose',
                                                         self.execute_movement_callback)
 
-        while not self.get_params_cli.wait_for_service(timeout_sec = 1.0):
+        while not self._get_params_cli.wait_for_service(timeout_sec = 1.0):
             self.get_logger().warn('SERVICE /get_params NOT AVAILABLE, WAITING AGAIN...')
 
         while not self.set_params_cli.wait_for_service(timeout_sec = 1.0):
             self.get_logger().warn('SERVICE /set_params NOT AVAILABLE, WAITING AGAIN...')
 
+        self.create_timer(0.01, self._update_ros_params)
+
+    def _update_ros_params(self):
+        req = GetParams.Request()
+        params_future = self._get_params_cli.call_async(req)
+        params_future .add_done_callback(self._handle_response)
+    
+    def _handle_response(self, future):
+        try:
+            response = future.result()
+            self._ros_params = response
+        except Exception as e:
+            self._ros_params = None
+
+    def get_ros_params(self):
+        return self._ros_params
+
     def request_ros_params(self):
         req = GetParams.Request()
-        future = self.get_params_cli.call_async(req)
+        future = self._get_params_cli.call_async(req)
         rclpy.spin_until_future_complete(self, future)
         return future.result()
 
