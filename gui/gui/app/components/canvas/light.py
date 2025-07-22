@@ -11,10 +11,10 @@ class Light:
         self.img.zoom(50, 50)
         context.set_light(self)
 
-    def plot(self, e_point = None):
+    def plot(self, position = None):
         self.context.canvas.delete('light')
-        if e_point:
-            self.position = self.context.set_light_position(e_point.x, e_point.y)
+        if position:
+            self.position = position
         else:
             self.position = self.context.remap_position(self.position)
 

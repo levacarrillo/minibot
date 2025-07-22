@@ -159,11 +159,13 @@ class AppContext:
         else:
             print(f'AppContext.set_context_param()->PARAMETER {name} NOT RECOGNIZED BY CONTEXT')
 
-    def set_light_position(self, x, y):
-        xm, ym = self.service.px_point_to_m(x, y, self.canvas_size)
+    def set_light_position(self, e_point):
+        self.light.plot(self.service.format_to_position(e_point.x, e_point.y))
+        xm, ym = self.service.px_point_to_m(e_point.x, e_point.y, self.canvas_size)
         self.set_context_param('light_pose_x', xm)
         self.set_context_param('light_pose_y', ym)
-        return { 'x': x, 'y': y }
+        if self.robot.exists():
+            self.run_simulation()
 
     def set_robot_position(self, x, y):
         xm, ym = self.service.px_point_to_m(x, y, self.canvas_size)

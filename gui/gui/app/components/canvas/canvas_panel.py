@@ -22,7 +22,7 @@ class CanvasPanel:
         Route(context)
         Objects(context)
 
-        canvas.bind("<Button-3>", light.plot)
+        canvas.bind("<Button-3>", context.set_light_position)
         canvas.bind("<Button-1>", robot.plot)
         context.plot_map()
 

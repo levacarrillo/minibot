@@ -83,11 +83,8 @@ class Service():
         return obj
 
     # GUI'S SERVICES
-    def set_pose(self, x, y, angle):
-        return { 'x': x, 'y': y, 'angle': angle }
-
-    def set_position(self, x, y):
-        return { 'x': int(x), 'y': int(y) }
+    def format_to_position(self, x, y):
+        return { 'x': x, 'y': y }
 
     def sum_vectors(self, p1, p2):
         return { 'x': p1['x'] + p2['x'], 'y': p1['y'] + p2['y'] }        
