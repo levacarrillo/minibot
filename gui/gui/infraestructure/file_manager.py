@@ -43,6 +43,6 @@ class FileManager:
         finally:
             return self.map_file
 
-    def load_objects(self):
+    def get_objects_file(self):
         self.objects_file = open(os.path.join(self.objects_path, 'objects.txt'), 'r')
         return self.objects_file

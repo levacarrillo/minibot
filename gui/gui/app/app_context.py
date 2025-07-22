@@ -42,7 +42,6 @@ class AppContext:
         self.velocity_slider = 1
         self.fast_mode = 0
         self.sensor_noise = False
-        self.route = None
         self.nodes_image = None
 
         self.polygon_list = None
@@ -77,9 +76,6 @@ class AppContext:
     def set_objects(self, objects):
         self.objects = objects
 
-    def set_route(self, value):
-        self.route = value
-
     def get_canvas_size(self):
         return self.canvas_size
 
@@ -92,8 +88,8 @@ class AppContext:
     def polar_to_cartesian(self, magnitude, angle):
         return self.service.polar_to_cartesian(magnitude, angle)
 
-    def update_params(self):
-        self.ros_params = self.service.format_ros_params(self.ros.update_params())
+    def request_ros_params(self):
+        self.ros_params = self.service.format_ros_params(self.ros.request_ros_params())
 
     def get_ros_param(self, param_name):
         return self.ros_params[param_name]
@@ -155,8 +151,9 @@ class AppContext:
     def get_environment_list(self):
         return self.file.get_environment_list()
 
-    def load_objects(self):
-        return self.service.parse_objects_file(self.file.load_objects())
+    def get_object_list(self):
+        return self.service.parse_objects_file(self.file.get_objects_file(),
+                                               self.canvas_size)
 
     def resize_canvas(self, width, height):
         self.previus_canvas_size = copy(self.canvas_size)
@@ -318,7 +315,6 @@ class AppContext:
 
     # SHARED METHODS
     def run_simulation(self):
-        # self.route.delete()
         self.simulation_running = True
         self.ros_params['run_behavior'] = True
         self.ros_params['step'] = 0

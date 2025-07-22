@@ -30,7 +30,7 @@ class Ros(Node):
         while not self.set_params_cli.wait_for_service(timeout_sec = 1.0):
             self.get_logger().warn('SERVICE /set_params NOT AVAILABLE, WAITING AGAIN...')
 
-    def update_params(self):
+    def request_ros_params(self):
         req = GetParams.Request()
         future = self.get_params_cli.call_async(req)
         rclpy.spin_until_future_complete(self, future)

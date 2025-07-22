@@ -22,7 +22,7 @@ class App(Tk):
             file_manager  = file_manager
         )
         
-        context.update_params()
+        context.request_ros_params()
 
         MenuBar(context)
         SidePanel(context)

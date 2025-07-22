@@ -52,7 +52,7 @@ class Service():
     #                 connections.append([int(words[2]), int(words[3])])
     #     return node_coords, node_coords_to_plot, connections
 
-    def parse_objects_file(self, objects_file):
+    def parse_objects_file(self, objects_file, canvas_size):
         if objects_file is None:
             return None
         lines = objects_file.readlines()
@@ -62,8 +62,8 @@ class Service():
             if words:
                 obj = {
                     'name': words[0],
-                    'x': float(words[1]),
-                    'y': float(words[2])
+                    'x': float(words[1]) * canvas_size['width'],
+                    'y': canvas_size['height'] - float(words[2]) * canvas_size['height']
                 }
                 object_list.append(obj)
 
