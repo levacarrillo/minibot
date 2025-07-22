@@ -316,7 +316,6 @@ class AppContext:
 
     # SHARED METHODS
     def run_simulation(self):
-        self.simulation_running = True
         self.ros_params['run_behavior'] = True
         self.ros_params['step'] = 0
         self.ros_params['max_steps'] = self.get_context_param('max_steps')
@@ -331,6 +330,7 @@ class AppContext:
     def stop_simulation(self):
         self.simulation_running = False
         self.set_context_param('panel_status', 'normal')
+        self.set_context_param('button_stop',  'disabled')
         # controller.finish_movement()
         # context.simulation_running = False
         # context.enable_button_run()
@@ -387,19 +387,16 @@ class AppContext:
             goal_pose = self.service.format_goal_pose(self.ros.get_goal_pose(), self.canvas_size)
             if self.light.exists():
 
-                # print(f'running->{self.simulation_running}')
-
                 light_readings = self.service.get_light_readings(self.robot.get_position(),
                                                                  self.light.get_position(),
                                                                  self.robot.get_angle(),
                                                                  self.get_context_param('radius'))
-                # print(f'light_readings->{light_readings['max_index']}')
-
                 self.ros.set_light_readings(light_readings)
 
-                # self.ros.get_logger().info(f'{self.ros.get_ros_params().run_behavior}')
-                if self.simulation_running and goal_pose:
+                if self.ros.get_ros_params().run_behavior and goal_pose:
+                    self.simulation_running = True
                     current_position = self.robot.get_position()
+
                     if self.start_position is None:
                         self.start_position = current_position
 
@@ -445,8 +442,9 @@ class AppContext:
 
                         self.service.sleep(self.velocity_slider)
                     self.set_context_param('current_step', self.current_step)
-                    if self.ros.get_ros_params().run_behavior is False:
-                        self.simulation_running = False
-
+                elif self.simulation_running and self.ros.get_ros_params().run_behavior is False:
+                    self.simulation_running = False
+                    self.set_context_param('panel_status', 'normal')
+                    self.set_context_param('button_stop',  'disabled')
 
         self.app.after(1, self.animation_loop)
