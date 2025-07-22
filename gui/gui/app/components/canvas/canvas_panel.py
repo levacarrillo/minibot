@@ -23,7 +23,7 @@ class CanvasPanel:
         Objects(context)
 
         canvas.bind("<Button-3>", context.set_light_position)
-        canvas.bind("<Button-1>", robot.plot)
+        canvas.bind("<Button-1>", context.set_robot_position)
         context.plot_map()
 
         frame.grid(column = 0, row = 0, columnspan = 3, rowspan = 2, sticky = (N, S, E, W))                          

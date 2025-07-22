@@ -167,7 +167,7 @@ class AppContext:
         if self.robot.exists():
             self.run_simulation()
 
-    def set_robot_position(self, x, y):
+    def set_robot_position(self, e_point):
         xm, ym = self.service.px_point_to_m(x, y, self.canvas_size)
         self.set_context_param('robot_pose_x', xm)
         self.set_context_param('robot_pose_y', ym)
@@ -187,7 +187,7 @@ class AppContext:
         self.canvas.configure(width = width, height = height)
         self.pixels_per_m = width
         self.plot_map()
-        self.light.plot() if self.light.exists() else None
+        self.light.remap_position() if self.light.exists() else None
         self.robot.plot() if self.robot.exists() else None
 
     def remap_position(self, position):
