@@ -359,7 +359,6 @@ class AppContext:
         origin_angle = self.get_context_param('origin_angle')
         range_sensor = self.get_context_param('range_sensor')
         lidar_max_value = self.get_context_param('laser_threshold')
-
         # laser_vector = self.controller.polar_to_cartesian_point(lidar_max_value, step_angle)
         # laser_max_point = self.controller.sum_vectors(robot_pose, laser_vector)
         # polygon_list = self.context.get_polygon_list()
@@ -373,11 +372,13 @@ class AppContext:
         lasers_list = []
         for i in range(num_sensors):
             angle = start_angle + i * step_angle
-            radius_x, radius_y = self.polar_to_cartesian(robot_radius, angle)
-            laser_x,  laser_y  = self.polar_to_cartesian(lidar_max_value, angle)
-            laser = [robot_position['x'] + radius_x, robot_position['y'] + radius_y, 
-                     robot_position['x'] + laser_x , robot_position['y'] + laser_y]
-            lasers_list.append(laser)
+            noise = self.service.get_noise(self.const['sigma']) if self.sensor_noise else 0
+            radius = self.service.polar_to_cartesian_point(robot_radius, angle)
+            laser  = self.service.polar_to_cartesian_point(lidar_max_value + noise, angle)
+            r = self.service.sum_vectors(robot_position, radius)
+            l = self.service.sum_vectors(robot_position, laser)
+            laser1 = self.service.format_to_line(r, l)
+            lasers_list.append(laser1)
         return lasers_list
 
     def animation_loop(self):
@@ -415,14 +416,16 @@ class AppContext:
                     else:
                         delta = goal_pose['angle'] - self.angle_increment
                         if abs(delta) >= self.angle_tolerance:
-                            direction = 1 if goal_pose['angle'] > 0 else -1 # 1: LEFT, -1: RIGHT
+                            direction =  1 if goal_pose['angle'] > 0 else - 1 # 1: LEFT, -1: RIGHT
+                            direction *= self.const['angle_increment']
                             increment = self.service.degrees_to_radians(direction)
                             self.angle_increment += increment
                             self.robot.rotate(increment)
                         else:
                             delta = goal_pose['distance'] - self.displacement_increment
                             if abs(delta) >= self.distance_tolerance:
-                                increment = 2 if goal_pose['distance'] > 0 else - 2
+                                increment = 1 if goal_pose['distance'] > 0 else - 1
+                                increment *= self.const['distance_increment']
                                 self.displacement_increment += increment
                                 self.robot.displace(increment)
                             else:

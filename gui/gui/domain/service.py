@@ -1,8 +1,7 @@
 import time
 import math
 import numpy as np
-from interfaces.srv import SetParams
-
+import random
 
 class Service():
     # FILES SERVICES
@@ -84,10 +83,7 @@ class Service():
 
     # GUI'S SERVICES
     def format_to_position(self, x, y):
-        return { 'x': x, 'y': y }
-
-    def sum_vectors(self, p1, p2):
-        return { 'x': p1['x'] + p2['x'], 'y': p1['y'] + p2['y'] }        
+        return { 'x': x, 'y': y }      
 
     def get_line_segment(self, p1, p2):
         return { 'x': p2['x'] - p1['x'], 'y': p2['y'] - p1['y'] }
@@ -277,3 +273,12 @@ class Service():
             'color':  color,
             'coords': coords
         }
+
+    def sum_vectors(self, p1, p2):
+        return { 'x': p1['x'] + p2['x'], 'y': p1['y'] + p2['y'] }  
+
+    def format_to_line(self, p1, p2):
+        return [p1['x'], p1['y'], p2['x'], p2['y']]
+
+    def get_noise(self, sigma):
+        return int(random.gauss(0, sigma))
