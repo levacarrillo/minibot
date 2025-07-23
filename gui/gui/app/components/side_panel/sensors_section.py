@@ -13,16 +13,17 @@ class SensorsSection:
         lidar_value         = Label(context.side_frame, text = "Lidar value [m]:")
         light_value         = Label(context.side_frame, text = "Light value:")
 
-        entry_num_sensors   = Entry(context.side_frame, validate = 'key', 
-                                        textvariable = StringVar(value = "50"),      width = 10)
-        entry_origin_angle  = Entry(context.side_frame, validate = 'key',
-                                        textvariable = StringVar(value = "-1.5707"), width = 10)
-        entry_range         = Entry(context.side_frame, validate = 'key',
-                                        textvariable = StringVar(value = "3.1416"),  width = 10)
-        entry_light         = Entry(context.side_frame, validate = 'key', 
-                                                textvariable = light_threshold, width = 10)
-        entry_laser         = Entry(context.side_frame, validate = 'key',
-                                                textvariable = laser_threshold, width = 10)
+        entry_num_sensors   = Entry(context.side_frame, textvariable = StringVar(value = "50"),      width = 10)
+        entry_origin_angle  = Entry(context.side_frame, textvariable = StringVar(value = "-1.5707"), width = 10)
+        entry_range         = Entry(context.side_frame, textvariable = StringVar(value = "3.1416"),  width = 10)
+        entry_light         = Entry(context.side_frame, textvariable = light_threshold, width = 10)
+        entry_laser         = Entry(context.side_frame, textvariable = laser_threshold, width = 10)
+
+        self.num_sensors  = entry_num_sensors
+        self.origin_angle = entry_origin_angle
+        self.range        = entry_range
+        self.light_value  = entry_light
+        self.laser_value  = entry_laser
 
         label_sensors       .grid(column = 0, row = 12, sticky = (N, W), padx = (5, 0))     
         label_num_sensors   .grid(column = 0, row = 13, sticky = (N, W), padx = (5, 0))

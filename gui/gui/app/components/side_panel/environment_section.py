@@ -41,7 +41,7 @@ class EnvironmentSection:
         ck_button_fast    = Checkbutton(context.side_frame, text="Fast mode", variable = fast_mode,
                                         command = lambda: context.on_check_fast_mode(fast_mode.get()))
         ck_button_sensors = Checkbutton(context.side_frame, text="Show sensors", variable = show_sensors,
-                                        command = lambda: on_check_show_sensors(show_sensors.get()))
+                                        command = lambda: context.on_check_show_sensors(show_sensors.get()))
         ck_add_noise      = Checkbutton(context.side_frame, text="Add Noise",  variable = add_noise,
                                         command = lambda: context.on_check_noise(add_noise.get()))
         ck_button_load    = Checkbutton(context.side_frame, text="Load Objects", variable = load_objects,

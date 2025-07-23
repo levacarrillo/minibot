@@ -11,7 +11,7 @@ class Robot:
 
         context.set_robot(self)
 
-        # self.sensors = Sensors(context)
+        self.sensors = Sensors(context)
 
     def plot(self, position = None):
         if position:
@@ -19,6 +19,8 @@ class Robot:
         self.context.canvas.delete('robot')
         self.radius = self.context.get_context_param('radius')
         self._plot_parts()
+        if self.context.show_sensors:
+            self.context.sensors.plot()
     
     def _plot_parts(self):   
         circular_parts = self.context.get_circles_coords(self.position, self.radius)

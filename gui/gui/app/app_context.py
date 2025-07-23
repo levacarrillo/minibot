@@ -21,8 +21,9 @@ class AppContext:
 
         self.ros_params = None
 
-        self.light        = None
-        self.robot        = None
+        self.light      = None
+        self.robot      = None
+        self.sensors    = None  
 
         self.side_frame      = None
         self.env_section     = None 
@@ -81,6 +82,9 @@ class AppContext:
     def set_robot(self, robot):
         self.robot = robot
 
+    def set_sensors(self, sensors):
+        self.sensors = sensors
+
     def set_objects(self, objects):
         self.objects = objects
 
@@ -121,15 +125,15 @@ class AppContext:
         elif name == 'max_turn_angle':
             return float(self.robot_section.max_turn_angle.get())
         elif name == 'num_sensors':
-            return int(self.sensors_section.entry_num_sensors.get())
+            return int(self.sensors_section.num_sensors.get())
         elif name == 'origin_angle':
-            return float(self.sensors_section.entry_origin_angle.get())
+            return float(self.sensors_section.origin_angle.get())
         elif name == 'range_sensor':
-            return float(self.sensors_section.entry_range.get())
+            return float(self.sensors_section.range.get())
         elif name == 'light_threshold':
-            return float(self.sensors_section.entry_light.get())
+            return float(self.sensors_section.light_value.get())
         elif name == 'laser_threshold':
-            return float(self.sensors_section.entry_laser.get())
+            return self.service.m_to_pixels(self.sensors_section.laser_value.get(), self.pixels_per_m)
         else:
             print(f'AppContext.get_context_param()->PARAMETER {name} NOT RECOGNIZED BY CONTEXT')
     
@@ -269,6 +273,8 @@ class AppContext:
 
     def on_check_show_sensors(self, value):
         self.show_sensors = value
+        if self.robot.exists():
+            self.sensors.plot() if value == 1 else self.sensors.delete()
 
     def on_check_load_objects(self, load_objects):
             self.objects.plot() if load_objects == 1 else self.objects.delete()
