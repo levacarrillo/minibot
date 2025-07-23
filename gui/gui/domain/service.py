@@ -102,15 +102,6 @@ class Service():
         delay = (3 - int(slider_value)) * 0.01
         time.sleep(delay)
 
-
-    def transform_to_polygon_point(self, position, angle, radius, point):
-        sinT = math.sin(-float(angle))
-        cosT = math.cos(-float(angle))
-
-        x = radius * (point['x'] * cosT - point['y'] * sinT) + position['x']
-        y = radius * (point['x'] * sinT + point['y'] * cosT) + position['y']
-        return x, y
-
     def get_laser_value(self, robot_pose, laser_max_point, points):
         l = laser_max_point
         robot_pose = self.change_sys_reference(robot_pose)
@@ -260,9 +251,29 @@ class Service():
             }
         return goal
 
-    def get_polygon(self, relative_points, position, angle, radius):
+    def transform_to_polygon_point(self, anchor, angle, radius, point):
+        sinT = math.sin(-float(angle))
+        cosT = math.cos(-float(angle))
+
+        x = radius * (point['x'] * cosT - point['y'] * sinT) + anchor['x']
+        y = radius * (point['x'] * sinT + point['y'] * cosT) + anchor['y']
+        return x, y
+
+    def get_circle_coords(self, center, radius):
+        return [center['x'] - radius,
+                center['y'] - radius,
+                center['x'] + radius,
+                center['y'] + radius]
+
+    def get_polygon(self, relative_points, anchor, angle, radius):
         polygon = []
         for point in relative_points:
             polygon.append(
-                self.transform_to_polygon_point(position, angle, radius, point))
+                self.transform_to_polygon_point(anchor, angle, radius, point))
         return polygon
+
+    def format_figure_to_plot(self, coords, color):
+        return {
+            'color':  color,
+            'coords': coords
+        }

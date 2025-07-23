@@ -229,45 +229,25 @@ class AppContext:
             self.canvas.create_polygon(polygon_to_plot, outline = self.color['grid'], fill = self.color['grid'],
                                                                                         width = 1, tag = 'map')
 
-    def get_circles_coords(self, position, radius):
-        body = {
-            'color' : self.color['robot'],
-            'coords': [
-                position['x'] - radius,
-                position['y'] - radius,
-                position['x'] + radius,
-                position['y'] + radius
-            ]
-        }
-        hokuyo = {
-            'color': self.color['hokuyo'],
-            'coords': [
-                position['x'] - (radius / 5),
-                position['y'] - (radius / 5),
-                position['x'] + (radius / 5),
-                position['y'] + (radius / 5)
-            ] 
-        }
+    def get_circles_coords(self, center, radius):
+        body_coords   = self.service.get_circle_coords(center, radius)
+        body = self.service.format_figure_to_plot(body_coords, self.color['robot'])
+        hokuyo_coords = self.service.get_circle_coords(center, radius / 5)
+        hokuyo = self.service.format_figure_to_plot(hokuyo_coords, self.color['hokuyo'])
         return [body, hokuyo]
 
-    def get_polygons_coords(self, position, radius, angle):
-        head = {
-            'color':  self.color['head'],
-            'coords': self.service.get_polygon(
-                self.const['head_rel_points'], position, angle, radius)
-        }
+    def get_polygons_coords(self, anchor, radius, angle):
+        coords = self.service.get_polygon(
+            self.const['head_rel_points'], anchor, angle, radius)
 
-        left_wheel = {
-            'color':  self.color['wheel'],
-            'coords': self.service.get_polygon(
-                self.const['left_wheel_rel_points'], position, angle, radius)
-        }
+        head = self.service.format_figure_to_plot(coords, self.color['head'])
+        coords = self.service.get_polygon(
+            self.const['left_wheel_rel_points'], anchor, angle, radius)
+        left_wheel = self.service.format_figure_to_plot(coords, self.color['wheel'])
 
-        right_wheel = {
-            'color':  self.color['wheel'],
-            'coords': self.service.get_polygon(
-                self.const['right_wheel_rel_points'], position, angle, radius)
-        }
+        coords = self.service.get_polygon(
+            self.const['right_wheel_rel_points'], anchor, angle, radius)
+        right_wheel = self.service.format_figure_to_plot(coords, self.color['wheel'])
 
         return [head, left_wheel, right_wheel]
     

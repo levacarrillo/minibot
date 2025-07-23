@@ -20,7 +20,6 @@ class Robot:
         self.radius = self.context.get_context_param('radius')
         self._plot_parts()
     
-
     def _plot_parts(self):   
         circular_parts = self.context.get_circles_coords(self.position, self.radius)
         for part in circular_parts:
@@ -30,6 +29,7 @@ class Robot:
         for part in polygon_parts:
             self.context.canvas.create_polygon(part['coords'], outline = part['color'],
                                             fill = part['color'], width = 1, tag = 'robot')
+
     def rotate(self, rotation):
         self.angle    = self.context.get_context_param('angle') + rotation
         self.context.set_context_param('angle', self.angle)
