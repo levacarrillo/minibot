@@ -210,12 +210,9 @@ class AppContext:
 
     def get_file_path(self, file_name):
         return self.file.get_path(file_name)
-
-    def plot_map(self, event = None):
+    
+    def plot_grid(self):
         self.canvas.delete('grid')
-        map_file = self.file.get_map(self.get_context_param('map'))
-        scale, polygon_to_plot_list = self.service.parse_map(map_file, self.canvas_size)
-        self.set_canvas_scale(scale)
         line_per_meters = 10
         for axis in self.canvas_size:
             line = self.canvas_size[axis] / (line_per_meters * self.canvas_scale[axis])
@@ -226,12 +223,19 @@ class AppContext:
                           i * line if axis != 'width' else self.canvas_size[axis]]
 
                 self.canvas.create_line(points, dash = (4, 4), fill = self.color['grid'], tag  = 'grid' )
-        
+
+    def plot_map(self, event = None):
+        map_file = self.file.get_map(self.get_context_param('map'))
+        scale, self.polygon_list, polygon_to_plot_list = self.service.parse_map(map_file, self.canvas_size)
+        self.set_canvas_scale(scale)
+        self.plot_grid()
         self.canvas.delete('map')
-        # print(f'polygon_to_plot_list->{polygon_to_plot_list}')
         for polygon_to_plot in polygon_to_plot_list:
-            self.canvas.create_polygon(polygon_to_plot, outline = self.color['grid'], fill = self.color['grid'],
-                                                                                        width = 1, tag = 'map')
+            self.canvas.create_polygon(
+                polygon_to_plot,
+                outline = self.color['obstacle_outline'],
+                fill = self.color['obstacle_inner'],
+                width = 1, tag = 'map')
 
     def get_circles_coords(self, center, radius):
         body_coords   = self.service.get_circle_coords(center, radius)
@@ -359,8 +363,6 @@ class AppContext:
         origin_angle = self.get_context_param('origin_angle')
         range_sensor = self.get_context_param('range_sensor')
         lidar_max_value = self.get_context_param('laser_threshold')
-        # laser_vector = self.controller.polar_to_cartesian_point(lidar_max_value, step_angle)
-        # laser_max_point = self.controller.sum_vectors(robot_pose, laser_vector)
         # polygon_list = self.context.get_polygon_list()
         # laser_point = self.controller.get_laser_value(robot_pose, laser_max_point, polygon_points)
         # laser = self.controller.get_line_segment(robot_pose, laser_max_point)

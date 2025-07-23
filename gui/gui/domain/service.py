@@ -25,7 +25,7 @@ class Service():
                     polygon_to_plot = [vertices_xy for xy in zip(vertices_x, vertices_yp) for vertices_xy in xy]
                     polygon_list.append(polygon)
                     polygon_to_plot_list.append(polygon_to_plot)
-        return scale, polygon_to_plot_list
+        return scale, polygon_list, polygon_to_plot_list
 
     # def parse_topological_map(self, map_file):
     #     node_coords = []
