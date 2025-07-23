@@ -351,6 +351,35 @@ class AppContext:
 
         return polygon_list
 
+    def get_lasers_readings(self):
+        robot_position = self.robot.get_position()
+        robot_angle  = self.get_context_param('angle')
+        robot_radius = self.get_context_param('radius')
+        num_sensors  = self.get_context_param('num_sensors')
+        origin_angle = self.get_context_param('origin_angle')
+        range_sensor = self.get_context_param('range_sensor')
+        lidar_max_value = self.get_context_param('laser_threshold')
+
+        # laser_vector = self.controller.polar_to_cartesian_point(lidar_max_value, step_angle)
+        # laser_max_point = self.controller.sum_vectors(robot_pose, laser_vector)
+        # polygon_list = self.context.get_polygon_list()
+        # laser_point = self.controller.get_laser_value(robot_pose, laser_max_point, polygon_points)
+        # laser = self.controller.get_line_segment(robot_pose, laser_max_point)
+
+        # self.controller.simulate_lidar_readings(1)
+
+        start_angle = robot_angle + origin_angle
+        step_angle  = range_sensor / ( num_sensors - 1 )
+        lasers_list = []
+        for i in range(num_sensors):
+            angle = start_angle + i * step_angle
+            radius_x, radius_y = self.polar_to_cartesian(robot_radius, angle)
+            laser_x,  laser_y  = self.polar_to_cartesian(lidar_max_value, angle)
+            laser = [robot_position['x'] + radius_x, robot_position['y'] + radius_y, 
+                     robot_position['x'] + laser_x , robot_position['y'] + laser_y]
+            lasers_list.append(laser)
+        return lasers_list
+
     def animation_loop(self):
         if self.robot.exists():
             goal_pose = self.service.format_goal_pose(self.ros.get_goal_pose(), self.canvas_size)

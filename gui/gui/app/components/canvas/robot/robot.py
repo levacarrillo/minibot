@@ -32,13 +32,13 @@ class Robot:
             self.context.canvas.create_polygon(part['coords'], outline = part['color'],
                                             fill = part['color'], width = 1, tag = 'robot')
 
+    def remap_position(self):
+        self.plot(self.context.remap_position(self.position))
+
     def rotate(self, rotation):
         self.angle    = self.context.get_context_param('angle') + rotation
         self.context.set_context_param('angle', self.angle)
         self.plot()
-
-    def remap_position(self):
-        self.plot(self.context.remap_position(self.position))
 
     def displace(self, advance):
         x, y = self.context.polar_to_cartesian(advance, self.angle)
@@ -57,6 +57,9 @@ class Robot:
     
     def set_angle(self, angle):
         self.angle = angle
+
+    def exists(self):
+        return True if self.position else False
 
     def grasp(self, object_name):
         if not self.context.objects.in_field:
@@ -81,5 +84,3 @@ class Robot:
             self.context.objects.add(self.grasped, self.pose, self.radius)
             self.grasped = None
 
-    def exists(self):
-        return True if self.position else False
