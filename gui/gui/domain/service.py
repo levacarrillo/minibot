@@ -111,7 +111,6 @@ class Service():
         aux_segment  = None
         for i in range(0, len(points)):
             if i + 1 < len(points):
-                print(f'\tsegment->{points[i]} - {points[i + 1]}')
                 polygon_edge = self.get_line_segment(points[i], points[i + 1])
                 print(f'polygon_edge->{polygon_edge}')
                 aux_segment = self.get_line_segment(points[i], robot_pose)
@@ -162,8 +161,8 @@ class Service():
         y = radius * math.sin(-angle)
         return x, y
     
-    def cartesian_to_polar(self, point):
-        return math.hypot(point['x'], point['y']), math.atan2(point['y'], point['x'])
+    def get_line_magnitude(self, point):
+        return math.hypot(point['x'], point['y'])
 
     def polar_to_cartesian_point(self, radius, angle):
         x = radius * math.cos(-angle)

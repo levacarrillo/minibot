@@ -15,7 +15,7 @@ class Ros(Node):
         self._ros_params     = None
         self.goal_pose       = None
         self.light_readings  = None
-        self.lidar_readings  = []
+        self.lidar_response  = None
         self.movement_execution = Event()
         self._get_params_cli = self.create_client(GetParams, 'get_params')
         self.set_params_cli = self.create_client(SetParams, 'set_params')
@@ -88,8 +88,13 @@ class Ros(Node):
     def set_light_readings(self, light_readings):
         self.light_readings = light_readings
 
-    def set_lidar_readings(self, lidar_readings):
-        self.lidar_readings = lidar_readings
+    def set_lidar_readings(self, readings, angle_min, angle_max, max_value):
+        self.lidar_response = {
+            'readings':  readings,
+            'angle_min': angle_min,
+            'angle_max': angle_max,
+            'max_value': float(max_value)
+        } 
 
     def update_light_readings(self, request, response):
         response.readings  = self.light_readings['readings']
@@ -98,6 +103,8 @@ class Ros(Node):
         return response
 
     def get_scan(self, request, response):
-        # response.scan = self.lidar_readings
-        response.scan = [1, 1, 1]
+        response.scan = self.lidar_response['readings']
+        response.angle_min = self.lidar_response['angle_min']
+        response.angle_max = self.lidar_response['angle_max']
+        response.max_value = self.lidar_response['max_value']
         return response
