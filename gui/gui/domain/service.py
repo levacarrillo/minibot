@@ -249,10 +249,10 @@ class Service():
             "laser_threshold": laser_threshold
         }
 
-    def simulate_light_readings(self, robot_pose, light_pose, robot_angle, robot_radius):
-        max_index = 0
+    def simulate_light_data(self, robot_pose, light_pose, robot_angle, robot_radius):
+        max_index =   0
         max_value = 0.0
-        readings = []
+        readings  =  []
 
         for i in range(8):
             sensor_angle = robot_angle + i * math.pi / 4
@@ -268,16 +268,27 @@ class Service():
 
             readings.append(simulated_reading)
 
-        light_readings = {
+        light_data = {
             'max_index': max_index,
             'max_value': max_value,
             'readings' : readings
         }
 
-        return light_readings
+        return light_data
     
-    def get_lidar_readings(self, laser_readings):
-        return laser_readings
+    def simulate_lidar_data(self):
+        angle_min = 0.0
+        angle_max = 0.0
+        max_value = 0.0
+        readings  =  [0.0]
+
+        lidar_data = {
+            'angle_min': angle_min,
+            'angle_max': angle_max,
+            'max_value': max_value,
+            'readings':  readings
+        } 
+        return lidar_data
 
     def format_goal_pose(self, goal, canvas_size):
         if goal is not None:

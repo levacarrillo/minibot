@@ -85,26 +85,17 @@ class Ros(Node):
     def get_goal_pose(self):
         return self.goal_pose
 
-    def set_light_readings(self, light_readings):
-        self.light_data = light_readings
+    def set_light_data(self, light_data):
+        self.light_data = light_data
 
-    def set_lidar_readings(self, readings, angle_min, angle_max, max_value):
-        self.lidar_data     = {
-            'readings':  readings,
-            'angle_min': angle_min,
-            'angle_max': angle_max,
-            'max_value': float(max_value)
-        } 
+    def set_lidar_data(self, lidar_data):
+        self.lidar_data = lidar_data
 
     def _light_readings_res(self, request, response):
         if self.light_data:
             response.readings  = self.light_data['readings']
             response.max_index = self.light_data['max_index']
             response.max_value = self.light_data['max_value']
-        else:
-            response.readings  =  []
-            response.max_index =   0
-            response.max_value = 0.0
         return response
 
     def _lidar_readings_res(self, request, response):
@@ -113,9 +104,4 @@ class Ros(Node):
             response.angle_min = self.lidar_data['angle_min']
             response.angle_max = self.lidar_data['angle_max']
             response.max_value = self.lidar_data['max_value']
-        else:
-            response.scan      =  []
-            response.angle_min = 0.0
-            response.angle_max = 0.0
-            response.max_value = 0.0
         return response

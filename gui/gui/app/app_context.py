@@ -304,21 +304,22 @@ class AppContext:
 
     # SHARED METHODS
     def run_simulation(self):
-        self.ros_params['run_behavior'] = True
-        self.ros_params['step'] = 0
-        self.ros_params['max_steps'] = self.get_context_param('max_steps')
-        self.ros_params['behavior']  = self.get_context_param('behavior')
-        self.ros_params['max_advance'] = self.get_context_param('max_advance')
-        self.ros_params['max_turn_angle'] = self.get_context_param('max_turn_angle')
-        self.set_context_param('panel_status', 'disabled')
-        self.set_context_param('button_stop',  'normal')
-        self.ros.send_state_params(self.ros_params)
-        self.route.delete()
+        if self.robot.exists():
+            self.ros_params['run_behavior'] = True
+            self.ros_params['step'] = 0
+            self.ros_params['max_steps'] = self.get_context_param('max_steps')
+            self.ros_params['behavior']  = self.get_context_param('behavior')
+            self.ros_params['max_advance'] = self.get_context_param('max_advance')
+            self.ros_params['max_turn_angle'] = self.get_context_param('max_turn_angle')
+            # self.set_context_param('panel_status', 'disabled')
+            # self.set_context_param('button_stop',  'normal')
+            self.ros.send_state_params(self.ros_params)
+            self.route.delete()
 
     def stop_simulation(self):
         self.simulation_running = False
-        self.set_context_param('panel_status', 'normal')
-        self.set_context_param('button_stop',  'disabled')
+        # self.set_context_param('panel_status', 'normal')
+        # self.set_context_param('button_stop',  'disabled')
         self.ros_params['run_behavior'] = False
         self.ros.send_state_params(self.ros_params)
         self.ros.finish_movement()
@@ -354,8 +355,6 @@ class AppContext:
             self.canvas.delete(self.nodes_image)
 
     def get_polygon_points_list(self):
-        # print(f'POLYGONS NUM->{len(self.polygon_list)}')
-        # print(f'POLYGONS LIST->{self.polygon_list}')
         polygon_points = []
         for polygon in self.polygon_list:
             points = []
@@ -373,7 +372,7 @@ class AppContext:
         origin_angle = self.get_context_param('origin_angle')
         range_sensor = self.get_context_param('range_sensor')
         lidar_max_value = self.get_context_param('laser_threshold')
-        # print(f'{self.get_polygon_points_list()}')
+
         polygon_points = self.get_polygon_points_list()
 
         start_angle = robot_angle + origin_angle
@@ -397,7 +396,7 @@ class AppContext:
             lasers_points_list.append(laser_line_points)
             lasers_list_values.append(laser_value)
 
-        self.ros.set_lidar_readings(lasers_list_values, origin_angle, range_sensor, lidar_max_value)
+        # self.ros.set_lidar_readings(lasers_list_values, origin_angle, range_sensor, lidar_max_value)
         # print(f'lasers_list_values->{lasers_list_values}')
         return lasers_points_list
 
@@ -405,12 +404,15 @@ class AppContext:
         if self.robot.exists():
             goal_pose = self.service.format_goal_pose(self.ros.get_goal_pose(), self.canvas_size)
             if self.light.exists():
+                light_data = self.service.simulate_light_data(self.robot.get_position(),
+                                                              self.light.get_position(),
+                                                              self.robot.get_angle(),
+                                                              self.get_context_param('radius'))
+                self.ros.set_light_data(light_data)
+                
+                lidar_data = self.service.simulate_lidar_data()
+                self.ros.set_lidar_data(lidar_data)
 
-                light_readings = self.service.get_light_readings(self.robot.get_position(),
-                                                                 self.light.get_position(),
-                                                                 self.robot.get_angle(),
-                                                                 self.get_context_param('radius'))
-                self.ros.set_light_readings(light_readings)
 
                 if self.ros.get_ros_params().run_behavior and goal_pose:
                     self.simulation_running = True
