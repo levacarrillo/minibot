@@ -162,6 +162,16 @@ class AppContext:
             self.robot_section.robot_pose_x.set(value)
         elif name == 'robot_pose_y':
             self.robot_section.robot_pose_y.set(value)
+        elif name == 'num_sensors':
+            self.sensors_section.num_sensors.set(value)
+        elif name == 'origin_angle':
+            self.sensors_section.origin_angle.set(value)
+        elif name == 'range_sensor':
+            self.sensors_section.range.set(value)
+        elif name == 'light_threshold':
+            self.sensors_section.light_value.set(value)
+        elif name == 'laser_threshold':
+            self.sensors_section.laser_value.set(value)
         else:
             print(f'AppContext.set_context_param()->PARAMETER {name} NOT RECOGNIZED BY CONTEXT')
 
@@ -289,7 +299,8 @@ class AppContext:
         self.velocity_slider = value
 
     def on_change_robot_sensors(self, event = None):
-        print('t0d0')
+        if self.show_sensors and self.robot.exists():
+            self.robot.plot()
 
     # SHARED METHODS
     def run_simulation(self):

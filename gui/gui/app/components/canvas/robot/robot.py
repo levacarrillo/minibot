@@ -83,4 +83,3 @@ class Robot:
         if self.grasped:
             self.context.objects.add(self.grasped, self.pose, self.radius)
             self.grasped = None
-
