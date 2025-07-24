@@ -21,7 +21,7 @@ class Service():
                     vertices_x  = [float(x) * canvas_size['width']  / scale['width']  for x in words[4:len(words)-1:2]]
                     vertices_y  = [float(y) * canvas_size['height'] / scale['height'] for y in words[5:len(words)-1:2]]
                     vertices_yp = [canvas_size['height'] - (float(y) * canvas_size['height'] / scale['height']) for y in words[5:len(words)-1:2]]
-                    polygon = [vertices_xy for xy in zip(vertices_x, vertices_y) for vertices_xy in xy]
+                    polygon = [vertices_xy for xy in zip(vertices_x, vertices_yp) for vertices_xy in xy]
                     polygon_to_plot = [vertices_xy for xy in zip(vertices_x, vertices_yp) for vertices_xy in xy]
                     polygon_list.append(polygon)
                     polygon_to_plot_list.append(polygon_to_plot)
@@ -88,6 +88,8 @@ class Service():
     def get_line_segment(self, p1, p2):
         return { 'x': p2['x'] - p1['x'], 'y': p2['y'] - p1['y'] }
 
+    def multiply_scalar_vector(self, vector, scalar):
+        return { 'x': scalar * vector['x'], 'y': scalar * vector['y']}
 
     def px_point_to_m(self, px, py, canvas_size):
         x = px / canvas_size['width']
@@ -97,6 +99,46 @@ class Service():
     def sleep(self, slider_value):
         delay = (3 - int(slider_value)) * 0.01
         time.sleep(delay)
+
+    def check_for_obstacle(self, l0, l1, polygons_points):
+        # print('\n\n')
+        for polygon_points in polygons_points:
+            # print('***')
+            # print(f'polygon_points->{polygon_points}')
+            # print(f'laser->{self.get_line_segment(l1, l0)}')
+            det_s = None
+            min_t = None
+            # print('---')
+            for i in range(0, len(polygon_points)):
+                # print(f'polygon_point[{i}]->{polygon_points[i]}')
+                if i + 1 < len(polygon_points):
+                    det_s = - (l1['x'] - l0['x']) * (polygon_points[i+1]['y'] - polygon_points[i]['y']) + (l1['y'] - l0['y']) * (polygon_points[i+1]['x'] - polygon_points[i]['x'])
+                    # print(f'\tpolygon_segment[{i}-{i+1}]->{polygon_points[i]} - {polygon_points[i+1]} {'\t->PARALLEL SEGMENT' if det_s == 0.0 else ''}')
+                    if det_s == 0:
+                        continue
+                    det_t = - (polygon_points[i]['x'] - l0['x']) * (polygon_points[i+1]['y'] - polygon_points[i]['y']) + (polygon_points[i]['y'] - l0['y']) * (polygon_points[i+1]['x'] - polygon_points[i]['x'])
+                    det_u =   (l1['x'] - l0['x']) * (polygon_points[i]['y'] - l0['y']) - (l1['y'] - l0['y']) * (polygon_points[i]['x'] - l0['x'])
+                else:
+                    det_s = - (l1['x'] - l0['x']) * (polygon_points[0]['y'] - polygon_points[len(polygon_points) - 1]['y']) + (l1['y'] - l0['y']) * (polygon_points[0]['x'] - polygon_points[len(polygon_points) - 1]['x'])
+                    # print(f'\tpolygon_segment[{0}-{len(polygon_points) - 1}]->{polygon_points[0]} - {polygon_points[len(polygon_points) - 1]} {'\t->PARALLEL SEGMENT' if det_s == 0.0 else ''}')
+                    if det_s == 0:
+                        continue
+                    det_t = - (polygon_points[len(polygon_points) - 1]['x'] - l0['x']) * (polygon_points[0]['y'] - polygon_points[len(polygon_points) - 1]['y']) + (polygon_points[len(polygon_points) - 1]['y'] - l0['y']) * (polygon_points[0]['x'] - polygon_points[len(polygon_points) - 1]['x'])
+                    det_u =   (l1['x'] - l0['x']) * (polygon_points[len(polygon_points) - 1]['y'] - l0['y']) - (l1['y'] - l0['y']) * (polygon_points[len(polygon_points) - 1]['x'] - l0['x'])
+                if det_s != 0:
+                    t = det_t / det_s
+                    u = det_u / det_s
+                    if 0 <= t <= 1 and 0 <= u <= 1:
+                        if min_t is None:
+                            min_t = t
+                        elif t < min_t:
+                            min_t = t
+            if min_t and min_t >= 0:
+                rel_laser = self.get_line_segment(l0, l1)
+                new_laser = self.sum_vectors(l0, self.multiply_scalar_vector(rel_laser, min_t))
+                print(f'************** INTERSECTION AT -> t: {min_t}, new_laser->{new_laser} ***********************')
+                return new_laser
+        return l1
 
     def get_laser_value(self, robot_pose, laser_max_point, points):
         l = laser_max_point

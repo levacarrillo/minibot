@@ -1,7 +1,6 @@
 from PIL import Image, ImageDraw, ImageTk
 from copy import copy
 
-
 class AppContext:
     def __init__(self, app, color, content, service, ros, constants, file_manager):
         self.app      = app
@@ -364,23 +363,29 @@ class AppContext:
         range_sensor = self.get_context_param('range_sensor')
         lidar_max_value = self.get_context_param('laser_threshold')
         # print(f'{self.get_polygon_points_list()}')
+        polygon_points = self.get_polygon_points_list()
 
         start_angle = robot_angle + origin_angle
         step_angle  = range_sensor / ( num_sensors - 1 )
         lasers_points_list = []
         lasers_list_values = []
+
         for i in range(num_sensors):
             angle = start_angle + i * step_angle
             noise = self.service.get_noise(self.const['sigma']) if self.sensor_noise else 0
-            radius = self.service.polar_to_cartesian_point(robot_radius, angle)
-            laser  = self.service.polar_to_cartesian_point(lidar_max_value + noise, angle)
-            r = self.service.sum_vectors(robot_position, radius)
-            l = self.service.sum_vectors(robot_position, laser)
-            laser_points = self.service.format_to_line(r, l)
-            laser_value = self.service.get_line_magnitude(self.service.get_line_segment(r, l))
-            lasers_points_list.append(laser_points)
+            sensor = self.service.polar_to_cartesian_point(robot_radius, angle)
+            laser_max  = self.service.polar_to_cartesian_point(lidar_max_value + noise, angle)
+
+            sensor_point = self.service.sum_vectors(robot_position, sensor)
+            laser_max_point = self.service.sum_vectors(robot_position, laser_max)
+
+            laser_point = self.service.check_for_obstacle(sensor_point, laser_max_point, polygon_points)
+
+            laser_line_points = self.service.format_to_line(sensor_point, laser_point)
+            laser_value = self.service.get_line_magnitude(self.service.get_line_segment(sensor_point, laser_max_point))
+            lasers_points_list.append(laser_line_points)
             lasers_list_values.append(laser_value)
-        
+
         self.ros.set_lidar_readings(lasers_list_values, origin_angle, range_sensor, lidar_max_value)
         # print(f'lasers_list_values->{lasers_list_values}')
         return lasers_points_list
