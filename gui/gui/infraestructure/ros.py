@@ -14,14 +14,14 @@ class Ros(Node):
 
         self._ros_params     = None
         self.goal_pose       = None
-        self.light_readings  = None
-        self.lidar_response  = None
+        self.light_data      = None
+        self.lidar_data      = None
         self.movement_execution = Event()
         self._get_params_cli = self.create_client(GetParams, 'get_params')
         self.set_params_cli = self.create_client(SetParams, 'set_params')
-        self.get_scan_srv   = self.create_service(GetScan, 'get_scan', self.get_scan)
+        self.get_scan_srv   = self.create_service(GetScan, 'get_scan', self._lidar_readings_res)
         self.get_lights_srv = self.create_service(GetLightReadings, 'get_light_readings', 
-                                                    self.update_light_readings)
+                                                    self._light_readings_res)
         self._action_server = ActionServer(self, GoToPose, 'go_to_pose',
                                                         self.execute_movement_callback)
 
@@ -86,25 +86,36 @@ class Ros(Node):
         return self.goal_pose
 
     def set_light_readings(self, light_readings):
-        self.light_readings = light_readings
+        self.light_data = light_readings
 
     def set_lidar_readings(self, readings, angle_min, angle_max, max_value):
-        self.lidar_response = {
+        self.lidar_data     = {
             'readings':  readings,
             'angle_min': angle_min,
             'angle_max': angle_max,
             'max_value': float(max_value)
         } 
 
-    def update_light_readings(self, request, response):
-        response.readings  = self.light_readings['readings']
-        response.max_index = self.light_readings['max_index']
-        response.max_value = self.light_readings['max_value']
+    def _light_readings_res(self, request, response):
+        if self.light_data:
+            response.readings  = self.light_data['readings']
+            response.max_index = self.light_data['max_index']
+            response.max_value = self.light_data['max_value']
+        else:
+            response.readings  =  []
+            response.max_index =   0
+            response.max_value = 0.0
         return response
 
-    def get_scan(self, request, response):
-        response.scan = self.lidar_response['readings']
-        response.angle_min = self.lidar_response['angle_min']
-        response.angle_max = self.lidar_response['angle_max']
-        response.max_value = self.lidar_response['max_value']
+    def _lidar_readings_res(self, request, response):
+        if self.lidar_data:
+            response.scan      = self.lidar_data['readings']
+            response.angle_min = self.lidar_data['angle_min']
+            response.angle_max = self.lidar_data['angle_max']
+            response.max_value = self.lidar_data['max_value']
+        else:
+            response.scan      =  []
+            response.angle_min = 0.0
+            response.angle_max = 0.0
+            response.max_value = 0.0
         return response

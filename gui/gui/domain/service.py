@@ -249,7 +249,7 @@ class Service():
             "laser_threshold": laser_threshold
         }
 
-    def get_light_readings(self, robot_pose, light_pose, robot_angle, robot_radius):
+    def simulate_light_readings(self, robot_pose, light_pose, robot_angle, robot_radius):
         max_index = 0
         max_value = 0.0
         readings = []
