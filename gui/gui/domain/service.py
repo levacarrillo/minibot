@@ -4,7 +4,12 @@ import numpy as np
 import random
 
 class Service():
-    # FILES SERVICES
+
+    def remap_position(self, position, canvas_size, previus_canvas_size):
+        position['x'] = canvas_size['width']  * position['x'] / previus_canvas_size['width']
+        position['y'] = canvas_size['height'] * position['y'] / previus_canvas_size['height']
+        return position
+
     def parse_map(self, map_file, canvas_size):
         scale = None
         polygon_list = []
@@ -99,6 +104,36 @@ class Service():
     def sleep(self, slider_value):
         delay = (3 - int(slider_value)) * 0.01
         time.sleep(delay)
+
+    def generate_lasers_readings(self, robot_state, params, noise = 0):
+        lasers_list   = []
+        lasers_values = [0.0]
+        for i in range(params['num_sensors']):
+            angle = params['start_angle'] + i * params['step_angle']
+            sensor = self.polar_to_cartesian_point(robot_state['radius'], angle)
+            laser_max_vect  = self.polar_to_cartesian_point(params['max_value'],  angle)
+            sensor_point    = self.sum_vectors(robot_state['position'], sensor)
+            laser_max_point = self.sum_vectors(robot_state['position'], laser_max_vect)
+            lasers_list.append(self.format_to_line(sensor_point, laser_max_point))
+        return lasers_list, lasers_values
+
+    def format_to_robot_state(self, position, angle, radius):
+        return {
+            'position': position,
+            'angle'   : angle,
+            'radius'  : radius
+        }
+
+    def format_to_sensors_params(
+            self, robot_angle, num_sensors, origin_angle, range_sensors, max_value):
+        start_angle = robot_angle + origin_angle
+        step_angle  = range_sensors / ( num_sensors - 1 )
+        return { 
+            'num_sensors': num_sensors,
+            'start_angle': start_angle,
+            'step_angle':  step_angle,
+            'max_value' :  max_value
+        }
 
     def check_for_obstacle(self, l0, l1, polygons_points):
         # print('\n\n')
@@ -276,11 +311,11 @@ class Service():
 
         return light_data
     
-    def simulate_lidar_data(self):
+    def format_lidar_data(self, lasers_values):
         angle_min = 0.0
         angle_max = 0.0
         max_value = 0.0
-        readings  =  []
+        readings  =  lasers_values
 
         lidar_data = {
             'angle_min': angle_min,

@@ -33,7 +33,6 @@ class AppContext:
         self.objects = None
         self.route   = None
 
-
         self.angle_increment = 0.0
         self.displacement_increment = 0
 
@@ -45,6 +44,10 @@ class AppContext:
 
         self.simulation_running  = False
 
+        self.map_polygons_points = None
+        self.lasers_lines  = []
+        self.lasers_values = []
+
         self.run_last_simulation = False
         self.show_sensors = None
         self.velocity_slider = 1
@@ -52,8 +55,6 @@ class AppContext:
         self.sensor_noise = False
 
         self.nodes_image = None
-
-        self.polygon_list = None
 
 
     # SETTERS FOR SECTIONS
@@ -115,7 +116,7 @@ class AppContext:
             return int(self.env_section.max_steps.get())
         elif name == 'map':
             return self.env_section.environment.get()
-        elif name == 'angle':
+        elif name == 'robot_angle':
             return float(self.robot_section.robot_angle.get())
         elif name == 'radius':
             return self.service.m_to_pixels(self.robot_section.robot_radius.get(), self.pixels_per_m)
@@ -137,7 +138,7 @@ class AppContext:
             print(f'AppContext.get_context_param()->PARAMETER {name} NOT RECOGNIZED BY CONTEXT')
     
     def set_context_param(self, name, value):
-        if name == 'angle':
+        if name == 'robot_angle':
             angle = self.service.normalize_angle(value)
             self.robot_section.robot_angle.set(angle)
         elif name == 'button_run' :
@@ -178,6 +179,9 @@ class AppContext:
     def format_to_position(self, x, y):
         return self.service.format_to_position(x, y)
 
+    def format_to_robot_state(self, position, angle, radius):
+        return self.service.format_to_robot_state(position, angle, radius)
+
     def set_light_position(self, e_point):
         self.light.plot(self.service.format_to_position(e_point.x, e_point.y))
         xm, ym = self.service.px_point_to_m(e_point.x, e_point.y, self.canvas_size)
@@ -198,8 +202,7 @@ class AppContext:
         return self.file.get_environment_list()
 
     def get_object_list(self):
-        return self.service.parse_objects_file(self.file.get_objects_file(),
-                                               self.canvas_size)
+        return self.service.parse_objects_file(self.file.get_objects_file(), self.canvas_size)
 
     def resize_canvas(self, width, height):
         self.previus_canvas_size = copy(self.canvas_size)
@@ -213,8 +216,7 @@ class AppContext:
 
     def remap_position(self, position):
         if self.previus_canvas_size is not None:
-            position['x'] = self.canvas_size['width'] * position['x'] / self.previus_canvas_size['width']
-            position['y'] = self.canvas_size['height'] * position['y'] / self.previus_canvas_size['height']
+            position = self.service.remap_position(position, self.canvas_size, self.previus_canvas_size)
         return position
 
     def get_file_path(self, file_name):
@@ -230,10 +232,11 @@ class AppContext:
 
     def plot_map(self, event = None):
         map_file = self.file.get_map(self.get_context_param('map'))
-        scale, self.polygon_list, polygon_to_plot_list = self.service.parse_map(map_file, self.canvas_size)
+        scale, polygon_list, polygon_to_plot_list = self.service.parse_map(map_file, self.canvas_size)
         self.set_canvas_scale(scale)
         self.plot_grid()
         self.canvas.delete('map')
+        self.set_map_polygons_points(polygon_list)
         for polygon_to_plot in polygon_to_plot_list:
             self.canvas.create_polygon(
                 polygon_to_plot,
@@ -323,7 +326,7 @@ class AppContext:
         self.run_last_simulation = True
 
     def plot_topological_map(self):
-        self.buttons_section.plot_topological.config(state = DISABLED)
+        self.buttons_section.plot_topological.config(state = "disabled")
         node_coords, node_coords_to_plot, connections = self.controller.get_topological_map(self.get_context_param('map'), topological = True)
         # print(node_coords)
         # print(node_coords_to_plot)
@@ -349,55 +352,57 @@ class AppContext:
         if self.nodes_image is not None:
             self.canvas.delete(self.nodes_image)
 
-    def get_polygon_points_list(self):
-        polygon_points = []
-        for polygon in self.polygon_list:
+    def set_map_polygons_points(self, polygon_list):
+        self.map_polygons_points = []
+        for polygon in polygon_list:
             points = []
             for i in range(0, len(polygon), 2):
                 point = self.service.format_to_position(polygon[i], polygon[i+1])
                 points.append(point)
-            polygon_points.append(points)
-        return polygon_points
+            self.map_polygons_points.append(points)
 
-    def get_lasers_readings(self):
-        robot_position = self.robot.get_position()
-        robot_angle  = self.get_context_param('angle')
-        robot_radius = self.get_context_param('radius')
-        num_sensors  = self.get_context_param('num_sensors')
-        origin_angle = self.get_context_param('origin_angle')
-        range_sensor = self.get_context_param('range_sensor')
-        lidar_max_value = self.get_context_param('laser_threshold')
+    def get_lasers_lines(self):
+        return self.lasers_lines
 
-        polygon_points = self.get_polygon_points_list()
+    def generate_laser_readings(self):
+        robot_state   = self.robot.get_state()
+        sensor_params = self.service.format_to_sensors_params(
+            self.get_context_param('robot_angle'),
+            self.get_context_param('num_sensors'),
+            self.get_context_param('origin_angle'),
+            self.get_context_param('range_sensor'),
+            self.get_context_param('laser_threshold'))
 
-        start_angle = robot_angle + origin_angle
-        step_angle  = range_sensor / ( num_sensors - 1 )
-        lasers_points_list = []
-        lasers_list_values = []
+        self.lasers_lines, self.lasers_values = self.service.generate_lasers_readings(
+            robot_state, sensor_params)
 
-        for i in range(num_sensors):
-            angle = start_angle + i * step_angle
-            noise = self.service.get_noise(self.const['sigma']) if self.sensor_noise else 0
-            sensor = self.service.polar_to_cartesian_point(robot_radius, angle)
-            laser_max  = self.service.polar_to_cartesian_point(lidar_max_value + noise, angle)
+        # for i in range(num_sensors):
+        #     angle = start_angle + i * step_angle
+        #     noise = self.service.get_noise(self.const['sigma']) if self.sensor_noise else 0
+        #     sensor = self.service.polar_to_cartesian_point(robot_radius, angle)
+        #     laser_max  = self.service.polar_to_cartesian_point(lidar_max_value + noise, angle)
 
-            sensor_point = self.service.sum_vectors(robot_position, sensor)
-            laser_max_point = self.service.sum_vectors(robot_position, laser_max)
+        #     sensor_point = self.service.sum_vectors(robot_position, sensor)
+        #     laser_max_point = self.service.sum_vectors(robot_position, laser_max)
 
-            laser_point = self.service.check_for_obstacle(sensor_point, laser_max_point, polygon_points)
+        #     laser_point = self.service.check_for_obstacle(sensor_point, laser_max_point, polygon_points)
 
-            laser_line_points = self.service.format_to_line(sensor_point, laser_point)
-            laser_value = self.service.get_line_magnitude(self.service.get_line_segment(sensor_point, laser_max_point))
-            lasers_points_list.append(laser_line_points)
-            lasers_list_values.append(laser_value)
+        #     laser_line_points = self.service.format_to_line(sensor_point, laser_point)
+        #     laser_value = self.service.get_line_magnitude(self.service.get_line_segment(sensor_point, laser_max_point))
+        #     lasers_list_points.append(laser_line_points)
+        #     lasers_list_values.append(laser_value)
 
         # self.ros.set_lidar_readings(lasers_list_values, origin_angle, range_sensor, lidar_max_value)
         # print(f'lasers_list_values->{lasers_list_values}')
-        return lasers_points_list
+        # return lasers_list_values
 
     def animation_loop(self):
         if self.robot.exists():
             goal_pose = self.service.format_goal_pose(self.ros.get_goal_pose(), self.canvas_size)
+            
+            lidar_data = self.service.format_lidar_data(self.lasers_values)
+            self.ros.set_lidar_data(lidar_data)
+            
             if self.light.exists():
                 light_data = self.service.simulate_light_data(self.robot.get_position(),
                                                               self.light.get_position(),
@@ -405,8 +410,6 @@ class AppContext:
                                                               self.get_context_param('radius'))
                 self.ros.set_light_data(light_data)
                 
-                lidar_data = self.service.simulate_lidar_data()
-                self.ros.set_lidar_data(lidar_data)
 
 
                 if self.ros.get_ros_params().run_behavior and goal_pose:

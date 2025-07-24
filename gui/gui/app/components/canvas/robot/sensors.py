@@ -4,7 +4,7 @@ class Sensors:
         context.set_sensors(self)
 
     def plot(self, laser_readings = None):
-        lasers_list = self.context.get_lasers_readings()
+        lasers_list = self.context.get_lasers_lines()
         for laser in lasers_list:
             self.context.canvas.create_line(laser, fill = self.context.color['laser'],
                                                             tags = ('robot', 'laser'))

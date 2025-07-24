@@ -7,10 +7,9 @@ class Robot:
         self.position = None
         self.radius   = None
         self.grasped  = None
-        self.angle    = self.context.get_context_param('angle')
+        self.angle    = self.context.get_context_param('robot_angle')
 
         context.set_robot(self)
-
         self.sensors = Sensors(context)
 
     def plot(self, position = None):
@@ -19,6 +18,7 @@ class Robot:
         self.context.canvas.delete('robot')
         self.radius = self.context.get_context_param('radius')
         self._plot_parts()
+        self.context.generate_laser_readings()
         if self.context.show_sensors:
             self.context.sensors.plot()
     
@@ -36,8 +36,8 @@ class Robot:
         self.plot(self.context.remap_position(self.position))
 
     def rotate(self, rotation):
-        self.angle    = self.context.get_context_param('angle') + rotation
-        self.context.set_context_param('angle', self.angle)
+        self.angle    = self.context.get_context_param('robot_angle') + rotation
+        self.context.set_context_param('robot_angle', self.angle)
         self.plot()
 
     def displace(self, advance):
@@ -57,6 +57,9 @@ class Robot:
     
     def set_angle(self, angle):
         self.angle = angle
+    
+    def get_state(self):
+        return self.context.format_to_robot_state(self.position, self.angle, self.radius)
 
     def exists(self):
         return True if self.position else False
