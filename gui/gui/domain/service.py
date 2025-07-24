@@ -115,7 +115,12 @@ class Service():
             sensor_point    = self.sum_vectors(robot_state['position'], sensor)
             laser_max_point = self.sum_vectors(robot_state['position'], laser_max_vect)
             lasers_list.append(self.format_to_line(sensor_point, laser_max_point))
-        return lasers_list, lasers_values
+            lidar_values = self.format_lidar_data(
+                params['origin_angle'],
+                params['range_sensors'],
+                params['max_value'],
+                lasers_values)
+        return lasers_list, lidar_values
 
     def format_to_robot_state(self, position, angle, radius):
         return {
@@ -128,7 +133,9 @@ class Service():
             self, robot_angle, num_sensors, origin_angle, range_sensors, max_value):
         start_angle = robot_angle + origin_angle
         step_angle  = range_sensors / ( num_sensors - 1 )
-        return { 
+        return {
+            'range_sensors': range_sensors,
+            'origin_angle': origin_angle,
             'num_sensors': num_sensors,
             'start_angle': start_angle,
             'step_angle':  step_angle,
@@ -311,17 +318,12 @@ class Service():
 
         return light_data
     
-    def format_lidar_data(self, lasers_values):
-        angle_min = 0.0
-        angle_max = 0.0
-        max_value = 0.0
-        readings  =  lasers_values
-
+    def format_lidar_data(self, angle_min, angle_max, max_value, lasers_values):
         lidar_data = {
             'angle_min': angle_min,
             'angle_max': angle_max,
-            'max_value': max_value,
-            'readings':  readings
+            'max_value': float(max_value),
+            'readings':  lasers_values
         } 
         return lidar_data
 

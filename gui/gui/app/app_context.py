@@ -400,8 +400,7 @@ class AppContext:
         if self.robot.exists():
             goal_pose = self.service.format_goal_pose(self.ros.get_goal_pose(), self.canvas_size)
             
-            lidar_data = self.service.format_lidar_data(self.lasers_values)
-            self.ros.set_lidar_data(lidar_data)
+            self.ros.set_lidar_data(self.lasers_values)
             
             if self.light.exists():
                 light_data = self.service.simulate_light_data(self.robot.get_position(),
