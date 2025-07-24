@@ -280,7 +280,7 @@ class Service():
         angle_min = 0.0
         angle_max = 0.0
         max_value = 0.0
-        readings  =  [0.0]
+        readings  =  []
 
         lidar_data = {
             'angle_min': angle_min,
@@ -312,6 +312,15 @@ class Service():
                 center['y'] - radius,
                 center['x'] + radius,
                 center['y'] + radius]
+
+    def get_grid_line(self, canvas_axis_size, canvas_axis_scale, line_per_meters):
+        return canvas_axis_size / (line_per_meters * canvas_axis_scale)
+    
+    def get_line_points(self, i, line, axis, canvas_axis_size):
+        return [i * line if axis == 'width' else 0,
+                i * line if axis != 'width' else 0,
+                i * line if axis == 'width' else canvas_axis_size,
+                i * line if axis != 'width' else canvas_axis_size]
 
     def get_polygon(self, relative_points, anchor, angle, radius):
         polygon = []

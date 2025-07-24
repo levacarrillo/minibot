@@ -222,16 +222,11 @@ class AppContext:
     
     def plot_grid(self):
         self.canvas.delete('grid')
-        line_per_meters = 10
         for axis in self.canvas_size:
-            line = self.canvas_size[axis] / (line_per_meters * self.canvas_scale[axis])
-            for i in range(1, int(line_per_meters * self.canvas_scale[axis])):
-                points = [i * line if axis == 'width' else 0,
-                          i * line if axis != 'width' else 0,
-                          i * line if axis == 'width' else self.canvas_size[axis],
-                          i * line if axis != 'width' else self.canvas_size[axis]]
-
-                self.canvas.create_line(points, dash = (4, 4), fill = self.color['grid'], tag  = 'grid' )
+            line = self.service.get_grid_line(self.canvas_size[axis], self.canvas_scale[axis], self.const['line_per_meters'])
+            for i in range(1, int(self.const['line_per_meters'] * self.canvas_scale[axis])):
+                line_points = self.service.get_line_points(i, line, axis, self.canvas_size[axis])
+                self.canvas.create_line(line_points, dash = (4, 4), fill = self.color['grid'], tag  = 'grid' )
 
     def plot_map(self, event = None):
         map_file = self.file.get_map(self.get_context_param('map'))
