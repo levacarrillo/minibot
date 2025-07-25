@@ -189,6 +189,7 @@ class AppContext:
             self.run_simulation()
 
     def set_robot_position(self, e_point):
+        # self.route.delete()
         self.robot.plot(self.service.format_to_position(e_point.x, e_point.y))
         xm, ym = self.service.px_point_to_m(e_point.x, e_point.y, self.canvas_size)
         self.set_context_param('robot_pose_x', xm)
@@ -199,7 +200,7 @@ class AppContext:
     def plot_lidar_sensors(self):
         self.canvas.delete('laser')
         for laser in self.lasers_lines:
-            self.canvas.create_line(laser, fill = self.color['laser'], tags = ('robot', 'laser'))
+            self.canvas.create_line(laser, fill = self.color['laser'], tag = 'laser')
 
     def get_environment_list(self):
         return self.file.get_environment_list()
@@ -365,12 +366,31 @@ class AppContext:
         self.lasers_lines, self.lasers_values = self.service.generate_lasers_readings(
             robot_state, sensor_params, self.map_polygons_points, noise_param)
 
+    def check_for_collision(self):
+        ids_robot   = self.canvas.find_withtag('robot')
+        ids_map = self.canvas.find_withtag('map')
+
+        for id_robot in ids_robot:
+            bbox_robot = self.canvas.bbox(id_robot)
+            if bbox_robot is None:
+                continue
+            overlapping = self.canvas.find_overlapping(*bbox_robot)
+            for id_map in ids_map:
+                if id_robot != id_map and id_map in overlapping:
+                    return True
+        return False
+
     def animation_loop(self):
         if self.robot.exists():
+
             goal_pose = self.service.format_goal_pose(self.ros.get_goal_pose(), self.canvas_size)
             
             self.ros.set_lidar_data(self.lasers_values)
             
+            if self.check_for_collision() and goal_pose:
+                print('OVERLAPPING...')
+                self.stop_simulation()
+
             if self.light.exists():
                 light_data = self.service.simulate_light_data(self.robot.get_position(),
                                                               self.light.get_position(),
@@ -378,7 +398,7 @@ class AppContext:
                                                               self.get_context_param('radius'))
                 self.ros.set_light_data(light_data)
 
-                if self.ros.get_ros_params().run_behavior and goal_pose:
+                if self.ros.get_ros_params().run_behavior and goal_pose and self.check_for_collision() is False:
                     self.simulation_running = True
                     current_position = self.robot.get_position()
 
