@@ -390,6 +390,7 @@ class AppContext:
             if self.check_for_collision() and goal_pose:
                 print('OVERLAPPING...')
                 self.stop_simulation()
+                self.start_position = None
 
             if self.light.exists():
                 light_data = self.service.simulate_light_data(self.robot.get_position(),

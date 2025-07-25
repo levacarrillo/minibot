@@ -16,6 +16,8 @@ class Robot:
         self.context.generate_laser_readings()
         if self.context.show_sensors:
             self.context.plot_lidar_sensors()
+        else:
+            self.context.canvas.delete('laser')
         self._plot_parts()
     
     def _plot_parts(self):   
