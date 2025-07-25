@@ -22,9 +22,6 @@
 !gui/app/components/menu/
 !gui/app/components/menu/*.py
 
-!gui/app/components/side_panel/
-!gui/app/components/side_panel/*.py
-
 !gui/app/components/panels/
 !gui/app/components/panels/*.py
 
