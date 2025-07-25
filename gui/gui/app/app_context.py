@@ -53,8 +53,8 @@ class AppContext:
         self.fast_mode = 0
         self.sensor_noise = False
 
-        self.nodes_image = None
-
+        self.list_position = []
+        self.list_angles   = []
 
     # SETTERS FOR SECTIONS
     def set_canvas(self, canvas):
@@ -349,8 +349,7 @@ class AppContext:
 
         image.save('nodes.png')
         self.gif1 = ImageTk.PhotoImage( file ='nodes.png')
-        self.nodes_image = self.canvas.create_image(250, 250, image = self.gif1, tag = 'topological_map')
-
+        self.canvas.create_image(250, 250, image = self.gif1, tag = 'topological_map')
 
     def generate_laser_readings(self):
         robot_state   = self.robot.get_state()
@@ -428,8 +427,19 @@ class AppContext:
                         self.service.sleep(self.velocity_slider)
                     self.set_context_param('current_step', self.current_step)
                 elif self.ros.get_ros_params().run_behavior is False and self.simulation_running:
+                    print(f'REACHED GOAL')
+                    self.list_position, self.list_angles= self.route.get_all_route()
+
+
                     self.simulation_running = False
                     self.set_context_param('panel_status', 'normal')
                     self.set_context_param('button_stop',  'disabled')
+                elif self.run_last_simulation:
+                    for i in range(len(self.list_position)):
+                        self.robot.set_angle(self.list_angles[i])
+                        self.robot.plot(self.list_position[i])
+                        self.service.sleep(-10)
+                        self.canvas.update()
+                    self.run_last_simulation = False
 
         self.app.after(1, self.animation_loop)

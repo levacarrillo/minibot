@@ -23,6 +23,9 @@ class Route:
     def is_empty(self):
         return True if len(self.list_position) == 0 else False
 
+    def get_all_route(self):
+        return self.list_position, self.list_angles
+
     def delete(self):
         self.list_angles   = []
         self.list_position = []
