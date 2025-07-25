@@ -128,9 +128,7 @@ class Service():
                 params['max_value'],
                 lasers_values)
         return lasers_list, lidar_values
-    
-
-    
+        
     def transoform_to_points_list(self, list_of_list):
         points_lists = []
         for list in list_of_list:
@@ -140,8 +138,6 @@ class Service():
                 points.append(point)
             points_lists.append(points)
         return points_lists
-
-        return list
 
     def format_to_robot_state(self, position, angle, radius):
         return {
@@ -164,26 +160,18 @@ class Service():
         }
 
     def check_for_obstacle(self, l0, l1, polygons_points):
-        # print('\n\n')
         min_t = None
         for polygon_points in polygons_points:
-            # print('***')
-            # print(f'polygon_points->{polygon_points}')
-            # print(f'laser->{self.get_line_segment(l1, l0)}')
             det_s = None
-            # print('---')
             for i in range(0, len(polygon_points)):
-                # print(f'polygon_point[{i}]->{polygon_points[i]}')
                 if i + 1 < len(polygon_points):
                     det_s = - (l1['x'] - l0['x']) * (polygon_points[i+1]['y'] - polygon_points[i]['y']) + (l1['y'] - l0['y']) * (polygon_points[i+1]['x'] - polygon_points[i]['x'])
-                    # print(f'\tpolygon_segment[{i}-{i+1}]->{polygon_points[i]} - {polygon_points[i+1]} {'\t->PARALLEL SEGMENT' if det_s == 0.0 else ''}')
                     if det_s == 0:
                         continue
                     det_t = - (polygon_points[i]['x'] - l0['x']) * (polygon_points[i+1]['y'] - polygon_points[i]['y']) + (polygon_points[i]['y'] - l0['y']) * (polygon_points[i+1]['x'] - polygon_points[i]['x'])
                     det_u =   (l1['x'] - l0['x']) * (polygon_points[i]['y'] - l0['y']) - (l1['y'] - l0['y']) * (polygon_points[i]['x'] - l0['x'])
                 else:
                     det_s = - (l1['x'] - l0['x']) * (polygon_points[0]['y'] - polygon_points[len(polygon_points) - 1]['y']) + (l1['y'] - l0['y']) * (polygon_points[0]['x'] - polygon_points[len(polygon_points) - 1]['x'])
-                    # print(f'\tpolygon_segment[{0}-{len(polygon_points) - 1}]->{polygon_points[0]} - {polygon_points[len(polygon_points) - 1]} {'\t->PARALLEL SEGMENT' if det_s == 0.0 else ''}')
                     if det_s == 0:
                         continue
                     det_t = - (polygon_points[len(polygon_points) - 1]['x'] - l0['x']) * (polygon_points[0]['y'] - polygon_points[len(polygon_points) - 1]['y']) + (polygon_points[len(polygon_points) - 1]['y'] - l0['y']) * (polygon_points[0]['x'] - polygon_points[len(polygon_points) - 1]['x'])
@@ -199,62 +187,9 @@ class Service():
         if min_t and min_t >= 0:
             rel_laser = self.get_line_segment(l0, l1)
             new_laser = self.sum_vectors(l0, self.multiply_scalar_vector(rel_laser, min_t))
-            print(f'************** INTERSECTION AT -> {new_laser} ***********************')
             return new_laser
         return l1
 
-    def get_laser_value(self, robot_pose, laser_max_point, points):
-        l = laser_max_point
-        robot_pose = self.change_sys_reference(robot_pose)
-        laser_max_point = self.change_sys_reference(laser_max_point)
-        print(f'\trobot_pose->{robot_pose}')
-        print(f'\tlaser_max_point->{laser_max_point}')
-        
-        laser_segment = self.get_line_segment(robot_pose, laser_max_point)
-        print(f'laser_segment->{laser_segment}')
-        polygon_edge = None
-        aux_segment  = None
-        for i in range(0, len(points)):
-            if i + 1 < len(points):
-                polygon_edge = self.get_line_segment(points[i], points[i + 1])
-                print(f'polygon_edge->{polygon_edge}')
-                aux_segment = self.get_line_segment(points[i], robot_pose)
-            else:
-                print(f'\tsegment->{points[0]} - {points[len(points) - 1]}')
-                polygon_edge = self.get_line_segment(points[0], points[len(points) - 1])
-                aux_segment = self.get_line_segment(points[0], robot_pose)
-            
-            matrix_det = np.array([ [laser_segment['x'], - polygon_edge['x']],
-                                    [laser_segment['y'], - polygon_edge['y']]])
-
-            matrix_det_t = np.array([[aux_segment['x'], - polygon_edge['x']],
-                                     [aux_segment['y'], - polygon_edge['y']]])
-
-            matrix_det_u = np.array([[laser_segment['x'], aux_segment['x']],
-                                     [laser_segment['y'], aux_segment['y']]])  
-
-            det = np.linalg.det(matrix_det)
-            det_t = np.linalg.det(matrix_det_t)
-            det_u = np.linalg.det(matrix_det_u)
-            print(f'\t\tdet->{det}')
-            print(f'\t\tdet_t->{det_t}')
-            print(f'\t\tdet_u->{det_u}')
-            if det != 0:
-                t = - det_t / det
-                u = - det_u / det
-                print(f'\t\tt->{t} - u->{u}')
-                if 0 <= t <= 1 and 0 <= u <= 1:
-                    print(f'\t\tINTERSECTION!')
-                    x = robot_pose['x'] + t * (laser_max_point['x'] - robot_pose['x'])
-                    y = robot_pose['y'] + t * (laser_max_point['y'] - robot_pose['y'])
-
-                    print(f'----------------{self.redo_sys_reference({ 'x': int(x), 'y': int(y) })}')
-                    l = self.redo_sys_reference({ 'x': int(x), 'y': int(y) })
-
-        return l
-        # return self.redo_sys_reference(laser_max_point)
-
-    # MATH CONVERTIONS
     def get_magnitude_between_two_points(self, p1, p2):
         return math.hypot(p2['x'] - p1['x'], p2['y'] - p1['y'])
 
@@ -288,7 +223,6 @@ class Service():
         angle = math.trunc(angle * 10000) / 10000
         return angle
 
-    # ROS SERVICES
     def format_ros_params(self, params):
         behavior_list = params.behavior_list
         if '' in behavior_list:

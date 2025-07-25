@@ -311,15 +311,12 @@ class AppContext:
             self.ros_params['behavior']  = self.get_context_param('behavior')
             self.ros_params['max_advance'] = self.get_context_param('max_advance')
             self.ros_params['max_turn_angle'] = self.get_context_param('max_turn_angle')
-            # self.set_context_param('panel_status', 'disabled')
-            # self.set_context_param('button_stop',  'normal')
+
             self.ros.send_state_params(self.ros_params)
             self.route.delete()
 
     def stop_simulation(self):
         self.simulation_running = False
-        # self.set_context_param('panel_status', 'normal')
-        # self.set_context_param('button_stop',  'disabled')
         self.ros_params['run_behavior'] = False
         self.ros.send_state_params(self.ros_params)
         self.ros.finish_movement()
@@ -363,30 +360,9 @@ class AppContext:
             self.get_context_param('range_sensor'),
             self.get_context_param('laser_threshold'))
         
-        # noise = self.service.get_noise(self.const['sigma']) if self.sensor_noise else 0
         noise_param = self.const['sigma'] if self.sensor_noise else None
         self.lasers_lines, self.lasers_values = self.service.generate_lasers_readings(
             robot_state, sensor_params, self.map_polygons_points, noise_param)
-
-        # for i in range(num_sensors):
-        #     angle = start_angle + i * step_angle
-        #     noise = self.service.get_noise(self.const['sigma']) if self.sensor_noise else 0
-        #     sensor = self.service.polar_to_cartesian_point(robot_radius, angle)
-        #     laser_max  = self.service.polar_to_cartesian_point(lidar_max_value + noise, angle)
-
-        #     sensor_point = self.service.sum_vectors(robot_position, sensor)
-        #     laser_max_point = self.service.sum_vectors(robot_position, laser_max)
-
-        #     laser_point = self.service.check_for_obstacle(sensor_point, laser_max_point, polygon_points)
-
-        #     laser_line_points = self.service.format_to_line(sensor_point, laser_point)
-        #     laser_value = self.service.get_line_magnitude(self.service.get_line_segment(sensor_point, laser_max_point))
-        #     lasers_list_points.append(laser_line_points)
-        #     lasers_list_values.append(laser_value)
-
-        # self.ros.set_lidar_readings(lasers_list_values, origin_angle, range_sensor, lidar_max_value)
-        # print(f'lasers_list_values->{lasers_list_values}')
-        # return lasers_list_values
 
     def animation_loop(self):
         if self.robot.exists():
@@ -400,8 +376,6 @@ class AppContext:
                                                               self.robot.get_angle(),
                                                               self.get_context_param('radius'))
                 self.ros.set_light_data(light_data)
-                
-
 
                 if self.ros.get_ros_params().run_behavior and goal_pose:
                     self.simulation_running = True
