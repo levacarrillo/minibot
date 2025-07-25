@@ -1,8 +1,8 @@
 from tkinter import *
+from gui.app.components.canvas.robot import Robot
 from gui.app.components.canvas.route import Route
 from gui.app.components.canvas.light import Light
 from gui.app.components.canvas.objects import Objects
-from gui.app.components.canvas.robot.robot import Robot
 
 
 class CanvasPanel:

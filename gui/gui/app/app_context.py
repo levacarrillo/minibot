@@ -22,7 +22,6 @@ class AppContext:
 
         self.light      = None
         self.robot      = None
-        self.sensors    = None  
 
         self.side_frame      = None
         self.env_section     = None 
@@ -82,8 +81,6 @@ class AppContext:
     def set_robot(self, robot):
         self.robot = robot
 
-    def set_sensors(self, sensors):
-        self.sensors = sensors
 
     def set_objects(self, objects):
         self.objects = objects
@@ -198,6 +195,10 @@ class AppContext:
         if self.light.exists():
             self.set_context_param('button_run', 'normal')
 
+    def plot_lidar_sensors(self):
+        for laser in self.lasers_lines:
+            self.canvas.create_line(laser, fill = self.color['laser'], tags = ('robot', 'laser'))
+
     def get_environment_list(self):
         return self.file.get_environment_list()
 
@@ -236,7 +237,8 @@ class AppContext:
         self.set_canvas_scale(scale)
         self.plot_grid()
         self.canvas.delete('map')
-        self.set_map_polygons_points(polygon_list)
+        self.map_polygons_points = self.service.transoform_to_points_list(polygon_list)
+
         for polygon_to_plot in polygon_to_plot_list:
             self.canvas.create_polygon(
                 polygon_to_plot,
@@ -285,7 +287,7 @@ class AppContext:
     def on_check_show_sensors(self, value):
         self.show_sensors = value
         if self.robot.exists():
-            self.sensors.plot() if value == 1 else self.sensors.delete()
+            self.robot.plot()
 
     def on_check_load_objects(self, load_objects):
             self.objects.plot() if load_objects == 1 else self.objects.delete()
@@ -352,18 +354,6 @@ class AppContext:
         if self.nodes_image is not None:
             self.canvas.delete(self.nodes_image)
 
-    def set_map_polygons_points(self, polygon_list):
-        self.map_polygons_points = []
-        for polygon in polygon_list:
-            points = []
-            for i in range(0, len(polygon), 2):
-                point = self.service.format_to_position(polygon[i], polygon[i+1])
-                points.append(point)
-            self.map_polygons_points.append(points)
-
-    def get_lasers_lines(self):
-        return self.lasers_lines
-
     def generate_laser_readings(self):
         robot_state   = self.robot.get_state()
         sensor_params = self.service.format_to_sensors_params(
@@ -372,9 +362,11 @@ class AppContext:
             self.get_context_param('origin_angle'),
             self.get_context_param('range_sensor'),
             self.get_context_param('laser_threshold'))
-
+        
+        # noise = self.service.get_noise(self.const['sigma']) if self.sensor_noise else 0
+        noise_param = self.const['sigma'] if self.sensor_noise else None
         self.lasers_lines, self.lasers_values = self.service.generate_lasers_readings(
-            robot_state, sensor_params)
+            robot_state, sensor_params, self.map_polygons_points, noise_param)
 
         # for i in range(num_sensors):
         #     angle = start_angle + i * step_angle

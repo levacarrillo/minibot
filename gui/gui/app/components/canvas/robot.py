@@ -1,6 +1,3 @@
-from gui.app.components.canvas.robot.sensors import Sensors
-
-
 class Robot:
     def __init__(self, context):
         self.context  = context
@@ -10,17 +7,16 @@ class Robot:
         self.angle    = self.context.get_context_param('robot_angle')
 
         context.set_robot(self)
-        self.sensors = Sensors(context)
 
     def plot(self, position = None):
         if position:
             self.position = position
         self.context.canvas.delete('robot')
         self.radius = self.context.get_context_param('radius')
-        self._plot_parts()
         self.context.generate_laser_readings()
         if self.context.show_sensors:
-            self.context.sensors.plot()
+            self.context.plot_lidar_sensors()
+        self._plot_parts()
     
     def _plot_parts(self):   
         circular_parts = self.context.get_circles_coords(self.position, self.radius)

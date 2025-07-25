@@ -105,22 +105,43 @@ class Service():
         delay = (3 - int(slider_value)) * 0.01
         time.sleep(delay)
 
-    def generate_lasers_readings(self, robot_state, params, noise = 0):
+    def generate_lasers_readings(self, robot_state, params, polygons, noise_param):
         lasers_list   = []
         lasers_values = [0.0]
         for i in range(params['num_sensors']):
+            noise = self.get_noise(noise_param) if noise_param else 0
             angle = params['start_angle'] + i * params['step_angle']
-            sensor = self.polar_to_cartesian_point(robot_state['radius'], angle)
-            laser_max_vect  = self.polar_to_cartesian_point(params['max_value'],  angle)
-            sensor_point    = self.sum_vectors(robot_state['position'], sensor)
+
+            sensor_vec = self.polar_to_cartesian_point(robot_state['radius'], angle)
+            laser_max_vect  = self.polar_to_cartesian_point(params['max_value'], angle)
+
+            sensor_point    = self.sum_vectors(robot_state['position'], sensor_vec)
             laser_max_point = self.sum_vectors(robot_state['position'], laser_max_vect)
-            lasers_list.append(self.format_to_line(sensor_point, laser_max_point))
+            laser_value_point = self.check_for_obstacle(
+                robot_state['position'], laser_max_point, polygons)
+
+            # lasers_list.append(self.format_to_line(sensor_point, laser_max_point))
+            lasers_list.append(self.format_to_line(robot_state['position'], laser_value_point))
             lidar_values = self.format_lidar_data(
                 params['origin_angle'],
                 params['range_sensors'],
                 params['max_value'],
                 lasers_values)
         return lasers_list, lidar_values
+    
+
+    
+    def transoform_to_points_list(self, list_of_list):
+        points_lists = []
+        for list in list_of_list:
+            points = []
+            for i in range(0, len(list), 2):
+                point = self.format_to_position(list[i], list[i+1])
+                points.append(point)
+            points_lists.append(points)
+        return points_lists
+
+        return list
 
     def format_to_robot_state(self, position, angle, radius):
         return {
@@ -144,12 +165,12 @@ class Service():
 
     def check_for_obstacle(self, l0, l1, polygons_points):
         # print('\n\n')
+        min_t = None
         for polygon_points in polygons_points:
             # print('***')
             # print(f'polygon_points->{polygon_points}')
             # print(f'laser->{self.get_line_segment(l1, l0)}')
             det_s = None
-            min_t = None
             # print('---')
             for i in range(0, len(polygon_points)):
                 # print(f'polygon_point[{i}]->{polygon_points[i]}')
@@ -175,11 +196,11 @@ class Service():
                             min_t = t
                         elif t < min_t:
                             min_t = t
-            if min_t and min_t >= 0:
-                rel_laser = self.get_line_segment(l0, l1)
-                new_laser = self.sum_vectors(l0, self.multiply_scalar_vector(rel_laser, min_t))
-                print(f'************** INTERSECTION AT -> t: {min_t}, new_laser->{new_laser} ***********************')
-                return new_laser
+        if min_t and min_t >= 0:
+            rel_laser = self.get_line_segment(l0, l1)
+            new_laser = self.sum_vectors(l0, self.multiply_scalar_vector(rel_laser, min_t))
+            print(f'************** INTERSECTION AT -> {new_laser} ***********************')
+            return new_laser
         return l1
 
     def get_laser_value(self, robot_pose, laser_max_point, points):
