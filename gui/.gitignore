@@ -19,9 +19,6 @@
 !gui/app/components/canvas/
 !gui/app/components/canvas/*.py
 
-!gui/app/components/canvas/robot/
-!gui/app/components/canvas/robot/*.py
-
 !gui/app/components/menu/
 !gui/app/components/menu/*.py
 
