@@ -81,7 +81,6 @@ class AppContext:
     def set_robot(self, robot):
         self.robot = robot
 
-
     def set_objects(self, objects):
         self.objects = objects
 
@@ -270,11 +269,11 @@ class AppContext:
     
     def set_robot_angle(self, event = None):
         if event is None:
-            self.set_context_param('angle', 0.0)
+            self.set_context_param('robot_angle', 0.0)
             self.robot.set_angle(0) if self.robot.exists() else None
         else:
             if self.robot.exists():
-                self.robot.set_angle(self.get_context_param('angle')) 
+                self.robot.set_angle(self.get_context_param('robot_angle')) 
 
         self.robot.plot() if self.robot.exists() else None
 

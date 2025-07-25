@@ -112,15 +112,12 @@ class Service():
             noise = self.get_noise(noise_param) if noise_param else 0
             angle = params['start_angle'] + i * params['step_angle']
 
-            sensor_vec = self.polar_to_cartesian_point(robot_state['radius'], angle)
-            laser_max_vect  = self.polar_to_cartesian_point(params['max_value'], angle)
+            laser_max_vect  = self.polar_to_cartesian_point(params['max_value'] + noise, angle)
 
-            sensor_point    = self.sum_vectors(robot_state['position'], sensor_vec)
             laser_max_point = self.sum_vectors(robot_state['position'], laser_max_vect)
             laser_value_point = self.check_for_obstacle(
                 robot_state['position'], laser_max_point, polygons)
 
-            # lasers_list.append(self.format_to_line(sensor_point, laser_max_point))
             lasers_list.append(self.format_to_line(robot_state['position'], laser_value_point))
             lidar_values = self.format_lidar_data(
                 params['origin_angle'],

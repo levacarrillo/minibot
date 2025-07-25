@@ -1,5 +1,5 @@
 from tkinter import *
-from gui.app.components.canvas.robot import Robot
+from gui.app.components.canvas.minibot import Robot
 from gui.app.components.canvas.route import Route
 from gui.app.components.canvas.light import Light
 from gui.app.components.canvas.objects import Objects
@@ -17,8 +17,8 @@ class CanvasPanel:
 
         context.set_canvas(canvas)
 
-        light = Light(context)
-        robot = Robot(context)
+        Light(context)
+        Robot(context)
         Route(context)
         Objects(context)
 
