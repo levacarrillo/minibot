@@ -137,18 +137,20 @@ class AppContext:
         if name == 'robot_angle':
             angle = self.service.normalize_angle(value)
             self.robot_section.robot_angle.set(angle)
+        elif name == 'button_plot_topological':
+            self.buttons_section.plot_topological .config(state = value)
         elif name == 'button_run' :
-            self.buttons_section.button_run     .config(state = value)
+            self.buttons_section.button_run       .config(state = value)
         elif name == 'button_stop':
-            self.buttons_section.button_stop    .config(state = value)
+            self.buttons_section.button_stop      .config(state = value)
         elif name == 'panel_status':
-            self.buttons_section.button_run     .config(state = value)
-            self.env_section.environment        .config(state = value)
-            self.env_section.behavior           .config(state = value)
-            self.env_section.steps              .config(state = value)
-            self.robot_section.entry_radius     .config(state = value)
-            self.robot_section.entry_advance    .config(state = value)
-            self.robot_section.entry_turn_angle .config(state = value)
+            self.buttons_section.button_run       .config(state = value)
+            self.env_section.environment          .config(state = value)
+            self.env_section.behavior             .config(state = value)
+            self.env_section.steps                .config(state = value)
+            self.robot_section.entry_radius       .config(state = value)
+            self.robot_section.entry_advance      .config(state = value)
+            self.robot_section.entry_turn_angle   .config(state = value)
         elif name == 'light_pose_x':
             self.env_section.light_pose_x.set(value)
         elif name == 'light_pose_y':
@@ -231,11 +233,12 @@ class AppContext:
                 self.canvas.create_line(line_points, dash = (4, 4), fill = self.color['grid'], tag  = 'grid' )
 
     def plot_map(self, event = None):
+        self.canvas.delete('map')
+        self.canvas.delete('topological_map')
         map_file = self.file.get_map(self.get_context_param('map'))
         scale, polygon_list, polygon_to_plot_list = self.service.parse_map(map_file, self.canvas_size)
         self.set_canvas_scale(scale)
         self.plot_grid()
-        self.canvas.delete('map')
         self.map_polygons_points = self.service.transoform_to_points_list(polygon_list)
 
         for polygon_to_plot in polygon_to_plot_list:
@@ -324,13 +327,15 @@ class AppContext:
         self.run_last_simulation = True
 
     def plot_topological_map(self):
-        self.buttons_section.plot_topological.config(state = "disabled")
-        node_coords, node_coords_to_plot, connections = self.controller.get_topological_map(self.get_context_param('map'), topological = True)
-        # print(node_coords)
+        # self.buttons_section.plot_topological.config(state = "disabled")
+        map = self.get_context_param('map')
+        topological_file = self.file.get_map(map, topological = True)
+        node_coords, node_coords_to_plot, connections = self.service.parse_topological_map(topological_file, self.canvas_size, self.canvas_scale)
+        # # print(node_coords)
         # print(node_coords_to_plot)
-        if node_coords is None:
-            return
-        # print(connections)
+        # if node_coords is None:
+        #     return
+        # # print(connections)
         image = Image.new('RGBA', (500, 500))
         draw = ImageDraw.Draw(image)
         for i in range(len(node_coords_to_plot)):
@@ -344,11 +349,8 @@ class AppContext:
 
         image.save('nodes.png')
         self.gif1 = ImageTk.PhotoImage( file ='nodes.png')
-        self.nodes_image = self.canvas.create_image(250, 250, image = self.gif1)
+        self.nodes_image = self.canvas.create_image(250, 250, image = self.gif1, tag = 'topological_map')
 
-    def clear_topological_map(self):
-        if self.nodes_image is not None:
-            self.canvas.delete(self.nodes_image)
 
     def generate_laser_readings(self):
         robot_state   = self.robot.get_state()

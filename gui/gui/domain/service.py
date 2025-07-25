@@ -4,7 +4,6 @@ import numpy as np
 import random
 
 class Service():
-
     def remap_position(self, position, canvas_size, previus_canvas_size):
         position['x'] = canvas_size['width']  * position['x'] / previus_canvas_size['width']
         position['y'] = canvas_size['height'] * position['y'] / previus_canvas_size['height']
@@ -32,29 +31,29 @@ class Service():
                     polygon_to_plot_list.append(polygon_to_plot)
         return scale, polygon_list, polygon_to_plot_list
 
-    # def parse_topological_map(self, map_file):
-    #     node_coords = []
-    #     node_coords_to_plot = []
-    #     connections = []
-    #     if map_file is None:
-    #         return None, None, None
-    #     lines = map_file.readlines()
+    def parse_topological_map(self, map_file, canvas_size, canvas_scale):
+        node_coords = []
+        node_coords_to_plot = []
+        connections = []
+        if map_file is None:
+            return None, None, None
+        lines = map_file.readlines()
 
-    #     for line in lines:
-    #         words = line.split()
-    #         if words and words[0] == "(": # IGNORE EMPTY LINES AND COMMENTS
-    #             if words[1] == "num":
-    #                 number_nodes = float(words[3])
-    #             elif words[1] == "node":
-    #                 # print(f'node->[{words[3]}, {words[4]}], px->[{self.m_to_pixels(words[3])}, {self.m_to_pixels(words[4])}]')
-    #                 node_id = words[2]
-    #                 node = { 'x': self.m_to_pixels(words[3]), 'y': self.m_to_pixels(words[4]) }
-    #                 node_to_plot = { 'x': self.m_to_pixels(words[3]), 'y': self.current_size['y'] - self.m_to_pixels(words[4])}
-    #                 node_coords.append(node)
-    #                 node_coords_to_plot.append(node_to_plot)
-    #             elif words[1] == "connection":
-    #                 connections.append([int(words[2]), int(words[3])])
-    #     return node_coords, node_coords_to_plot, connections
+        for line in lines:
+            words = line.split()
+            if words and words[0] == "(": # IGNORE EMPTY LINES AND COMMENTS
+                if words[1] == "num":
+                    number_nodes = int(words[3])
+                elif words[1] == "node":
+                    # print(f'node->[{words[3]}, {words[4]}], px->[{float(words[3])}, {float(words[4])}]')
+                    node_id = words[2]
+                    node = { 'x': (float(words[3]) * canvas_size['width']) / canvas_scale['width'],         'y': canvas_size['height'] - (float(words[4]) * canvas_size['height']) / canvas_scale['height']}
+                    node_to_plot = { 'x': (float(words[3]) * canvas_size['width']) / canvas_scale['width'], 'y': canvas_size['height'] - (float(words[4]) * canvas_size['height']) / canvas_scale['height']}
+                    node_coords.append(node)
+                    node_coords_to_plot.append(node_to_plot)
+                elif words[1] == "connection":
+                    connections.append([int(words[2]), int(words[3])])
+        return node_coords, node_coords_to_plot, connections
 
     def parse_objects_file(self, objects_file, canvas_size):
         if objects_file is None:
