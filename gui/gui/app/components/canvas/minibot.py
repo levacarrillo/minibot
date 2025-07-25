@@ -38,9 +38,9 @@ class Robot:
 
     def displace(self, advance):
         x, y = self.context.polar_to_cartesian(advance, self.angle)
-        self.context.canvas.move('robot', x, y)
         self.position = self.context.format_to_position(self.position['x'] + x,
                                                         self.position['y'] + y)
+        self.plot()
 
     def get_position(self):
         return self.position

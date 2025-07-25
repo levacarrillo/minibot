@@ -197,6 +197,7 @@ class AppContext:
             self.set_context_param('button_run', 'normal')
 
     def plot_lidar_sensors(self):
+        self.canvas.delete('laser')
         for laser in self.lasers_lines:
             self.canvas.create_line(laser, fill = self.color['laser'], tags = ('robot', 'laser'))
 
