@@ -3,8 +3,8 @@ from gui.config.colors import colors
 from gui.config.constants import constants
 from gui.app.app_context import AppContext
 from gui.app.components.menu.menu_bar import MenuBar
-from gui.app.components.canvas.canvas_panel import CanvasPanel
-from gui.app.components.side_panel.side_panel import SidePanel
+from gui.app.components.panels.canvas_panel import CanvasPanel
+from gui.app.components.panels.side_panel import SidePanel
 
 
 class App(Tk):
