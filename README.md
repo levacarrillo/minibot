@@ -16,12 +16,15 @@ ToDo: Description
 ## Build
 
 1. Clone inside your `ros2_ws/src/` directory
-2. Run the following commands
+2. To install just the following commands
 ```
+cd ~/ros2_ws/src/minibot/
+sudo ./installer.sh
+cd ~/ros2_ws
 colcon build
 source /opt/ros/${ROS_DISTRO}/setup.bash
 source install/setup.bash
 
 ## Run with
-ros2 launch motion_planner motion_planner.launch.py
+ros2 launch tests tests.launch.py
 ```
