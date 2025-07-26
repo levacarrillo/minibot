@@ -1,4 +1,6 @@
 #include "rclcpp/rclcpp.hpp"
+#include "geometry_msgs/msg/twist.hpp"
+#include "tf2_ros/transform_broadcaster.h"
 #include "visualization_msgs/msg/marker.hpp"
 
 
@@ -58,8 +60,22 @@ private:
         }
 
         publisher_->publish(marker);
+
+        geometry_msgs::msg::TransformStamped transform;
+
+        transform.header.stamp = this->get_clock()->now();
+        transform.header.frame_id = "map";
+        transform.child_frame_id = "spot_light";
+
+        transform.transform.translation.x = position_x;
+        transform.transform.translation.y = position_y;
+        transform.transform.translation.z = 0.0;
+
+        tf_broadcaster_->sendTransform(transform);
+
     }
 
+    std::shared_ptr<tf2_ros::TransformBroadcaster> tf_broadcaster_;
     rclcpp::Publisher<visualization_msgs::msg::Marker>::SharedPtr publisher_;
     rclcpp::TimerBase::SharedPtr timer_;
 };
