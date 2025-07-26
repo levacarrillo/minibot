@@ -22,13 +22,13 @@ add_executable(lidar_simulator src/lidar_simulator.cpp)
 ament_target_dependencies(lidar_simulator rclcpp sensor_msgs interfaces tf2 tf2_ros geometry_msgs random_numbers)
 
 add_executable(light_sensors_simulator src/light_sensors_simulator.cpp)
-ament_target_dependencies(light_sensors_simulator rclcpp interfaces visualization_msgs)
+ament_target_dependencies(light_sensors_simulator rclcpp interfaces visualization_msgs tf2_ros geometry_msgs)
 
 add_executable(robot_introspection src/robot_introspection.cpp)
 ament_target_dependencies(robot_introspection rclcpp interfaces)
 
 add_executable(spot_light_marker src/spot_light_marker.cpp)
-ament_target_dependencies(spot_light_marker rclcpp visualization_msgs)
+ament_target_dependencies(spot_light_marker rclcpp visualization_msgs geometry_msgs tf2_ros)
 
 add_executable(static_tf_map_to_odom src/static_tf_map_to_odom.cpp)
 ament_target_dependencies(static_tf_map_to_odom rclcpp geometry_msgs tf2 tf2_ros)

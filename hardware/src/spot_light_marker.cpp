@@ -11,10 +11,11 @@ public:
     {
         publisher_ = this->create_publisher<visualization_msgs::msg::Marker>("spot_light_marker", 10);
 
-        this->declare_parameter("spot_light_state", false);
-        this->declare_parameter("spot_light_position_x", 2.20);
-        this->declare_parameter("spot_light_position_y", 0.75);
+        this->declare_parameter("spot_light_state", true);
+        this->declare_parameter("position_x", 2.20);
+        this->declare_parameter("position_y", 0.75);
 
+        tf_broadcaster_ = std::make_shared<tf2_ros::TransformBroadcaster>(this);
         timer_ = this->create_wall_timer(
             std::chrono::milliseconds(500),
             std::bind(&SpotLightMarker::timer_callback, this));
@@ -24,8 +25,8 @@ private:
     void timer_callback()
     {
         bool spot_light_turned = this->get_parameter("spot_light_state").as_bool();
-        double position_x = this->get_parameter("spot_light_position_x").as_double();
-        double position_y = this->get_parameter("spot_light_position_y").as_double();
+        position_x_ = this->get_parameter("spot_light_position_x_").as_double();
+        position_y_ = this->get_parameter("spot_light_position_y_").as_double();
 
         auto marker = visualization_msgs::msg::Marker();
         marker.header.frame_id = "map";
@@ -34,8 +35,8 @@ private:
         marker.id = 0;
         marker.type = visualization_msgs::msg::Marker::SPHERE;
         marker.action = visualization_msgs::msg::Marker::ADD;
-        marker.pose.position.x = position_x;
-        marker.pose.position.y = position_y;
+        marker.pose.position.x = position_x_;
+        marker.pose.position.y = position_y_;
         marker.pose.position.z = 0.3;
         marker.pose.orientation.w = 1.0;
         marker.scale.x = 0.12;
@@ -67,14 +68,15 @@ private:
         transform.header.frame_id = "map";
         transform.child_frame_id = "spot_light";
 
-        transform.transform.translation.x = position_x;
-        transform.transform.translation.y = position_y;
-        transform.transform.translation.z = 0.0;
+        transform.transform.translation.x = position_x_;
+        transform.transform.translation.y = position_y_;
+        transform.transform.translation.z = 0.3;
 
         tf_broadcaster_->sendTransform(transform);
 
     }
 
+    double position_x_, position_y_;
     std::shared_ptr<tf2_ros::TransformBroadcaster> tf_broadcaster_;
     rclcpp::Publisher<visualization_msgs::msg::Marker>::SharedPtr publisher_;
     rclcpp::TimerBase::SharedPtr timer_;
