@@ -10,13 +10,17 @@
 #include "geometry_msgs/msg/transform_stamped.hpp"
 #include <random_numbers/random_numbers.h>
 
+
+using namespace random_numbers;
+using namespace std::placeholders;
+
 class LidarSimulator : public rclcpp::Node {
     public:
         LidarSimulator() : Node("lidar_simulator") {
             publisher_ = this->create_publisher<sensor_msgs::msg::LaserScan>("/scan", 10);
             service_ = this->create_service<interfaces::srv::GetScan>(
                 "/get_scan",
-                std::bind(&LidarSimulator::handle_get_scan, this, std::placeholders::_1, std::placeholders::_2)
+                std::bind(&LidarSimulator::handle_get_scan, this, _1, _2)
             );
             tf_static_broadcaster_ = std::make_shared<tf2_ros::StaticTransformBroadcaster>(this);
 
@@ -35,7 +39,7 @@ class LidarSimulator : public rclcpp::Node {
         float angle_max =   1.5708f;
         float angle_increment = 0.01745f * 5;
         float robot_radius = 0.0635f;
-        random_numbers::RandomNumberGenerator rng;
+        RandomNumberGenerator rng;
 
         void publish_scan() {
             auto msg = sensor_msgs::msg::LaserScan();
@@ -78,14 +82,11 @@ class LidarSimulator : public rclcpp::Node {
             t.header.frame_id = "base_link";
             t.child_frame_id = "laser_frame";
 
-            t.transform.translation.x = 0;
-            t.transform.translation.y = 0;
-            t.transform.translation.z = 0;
+            t.transform.translation.x = 0.00;
+            t.transform.translation.y = 0.00;
+            t.transform.translation.z = 0.05;
             tf2::Quaternion q;
-            q.setRPY(
-            0,
-            0,
-            0);
+            q.setRPY(0, 0, 0);
             t.transform.rotation.x = q.x();
             t.transform.rotation.y = q.y();
             t.transform.rotation.z = q.z();
