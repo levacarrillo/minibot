@@ -89,6 +89,13 @@ def generate_launch_description():
             condition=IfCondition(use_sim)
         ),
         Node(
+            package='hardware',
+            executable='spot_lights_marker',
+            name='spot_lights_marker',
+            output='screen',
+            condition=IfCondition(use_sim)
+        ),
+        Node(
             package='nav2_map_server',
             executable='map_server',
             name='map_server',
