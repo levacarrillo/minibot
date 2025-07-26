@@ -1,4 +1,5 @@
 #include "rclcpp/rclcpp.hpp"
+#include "visualization_msgs/msg/marker.hpp"
 #include "interfaces/srv/get_light_readings.hpp"
 
 #include <vector>
@@ -6,12 +7,17 @@
 #include <ctime>
 #include <memory>
 #include <algorithm>
-
 #include <array>
+
+
+using std::placeholders::_1;
+
 
 class LightSensorsSimulator : public rclcpp::Node {
 public:
     LightSensorsSimulator() : Node("light_sensors_simulator") {
+        subscription_ = this->create_subscription<visualization_msgs::msg::Marker>(
+            "spot_light_marker", 10, std::bind(&LightSensorsSimulator::topic_callback, this, _1));
         service_ = this->create_service<interfaces::srv::GetLightReadings>(
             "/get_light_readings",
             std::bind(&LightSensorsSimulator::handle_request, this, std::placeholders::_1, std::placeholders::_2)
@@ -28,6 +34,11 @@ public:
     }
 
 private:
+    void topic_callback(const visualization_msgs::msg::Marker::SharedPtr msg) const
+    {
+        RCLCPP_INFO(this->get_logger(), "SPOT LIGHT STATE: %s", msg->text.c_str());
+        RCLCPP_INFO(this->get_logger(), "SPOT LIGHT POSITION: x->%f, y->%f", msg->pose.position.x, msg->pose.position.y);
+    }
     void update_readings() {
         // std::cout<<"[";
         // for (auto& val : readings_) {
@@ -55,6 +66,7 @@ private:
 
     std::array<float, 8> readings_;
     rclcpp::TimerBase::SharedPtr timer_;
+    rclcpp::Subscription<visualization_msgs::msg::Marker>::SharedPtr subscription_;
     rclcpp::Service<interfaces::srv::GetLightReadings>::SharedPtr service_;
 };
 

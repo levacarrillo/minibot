@@ -90,8 +90,8 @@ def generate_launch_description():
         ),
         Node(
             package='hardware',
-            executable='spot_lights_marker',
-            name='spot_lights_marker',
+            executable='spot_light_marker',
+            name='spot_light_marker',
             output='screen',
             condition=IfCondition(use_sim)
         ),
