@@ -27,8 +27,8 @@ ament_target_dependencies(light_sensors_simulator rclcpp interfaces visualizatio
 add_executable(robot_introspection src/robot_introspection.cpp)
 ament_target_dependencies(robot_introspection rclcpp interfaces)
 
-add_executable(spot_light_marker src/spot_light_marker.cpp)
-ament_target_dependencies(spot_light_marker rclcpp visualization_msgs geometry_msgs tf2_ros)
+add_executable(spotlight_marker src/spotlight_marker.cpp)
+ament_target_dependencies(spotlight_marker rclcpp visualization_msgs geometry_msgs tf2_ros)
 
 add_executable(static_tf_map_to_odom src/static_tf_map_to_odom.cpp)
 ament_target_dependencies(static_tf_map_to_odom rclcpp geometry_msgs tf2 tf2_ros)
@@ -37,7 +37,7 @@ install(TARGETS
   lidar_simulator
   light_sensors_simulator
   robot_introspection
-  spot_light_marker
+  spotlight_marker
   static_tf_map_to_odom
   DESTINATION lib/${PROJECT_NAME}
 )

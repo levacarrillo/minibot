@@ -4,34 +4,34 @@
 #include "visualization_msgs/msg/marker.hpp"
 
 
-class SpotLightMarker : public rclcpp::Node
+class SpotlightMarker : public rclcpp::Node
 {
 public:
-    SpotLightMarker() : Node("spot_light_marker")
+    SpotlightMarker() : Node("spotlight_marker")
     {
-        publisher_ = this->create_publisher<visualization_msgs::msg::Marker>("spot_light_marker", 10);
+        publisher_ = this->create_publisher<visualization_msgs::msg::Marker>("spotlight_state", 10);
 
-        this->declare_parameter("spot_light_state", true);
+        this->declare_parameter("spotlight_state", true);
         this->declare_parameter("position_x", 2.20);
         this->declare_parameter("position_y", 0.75);
 
         tf_broadcaster_ = std::make_shared<tf2_ros::TransformBroadcaster>(this);
         timer_ = this->create_wall_timer(
             std::chrono::milliseconds(500),
-            std::bind(&SpotLightMarker::timer_callback, this));
+            std::bind(&SpotlightMarker::timer_callback, this));
     }
 
 private:
     void timer_callback()
     {
-        bool spot_light_turned = this->get_parameter("spot_light_state").as_bool();
-        position_x_ = this->get_parameter("spot_light_position_x_").as_double();
-        position_y_ = this->get_parameter("spot_light_position_y_").as_double();
+        bool spot_light_turned = this->get_parameter("spotlight_state").as_bool();
+        position_x_ = this->get_parameter("position_x").as_double();
+        position_y_ = this->get_parameter("position_y").as_double();
 
         auto marker = visualization_msgs::msg::Marker();
         marker.header.frame_id = "map";
         marker.header.stamp = this->get_clock()->now();
-        marker.ns = "spot_light";
+        marker.ns = "spotlight";
         marker.id = 0;
         marker.type = visualization_msgs::msg::Marker::SPHERE;
         marker.action = visualization_msgs::msg::Marker::ADD;
@@ -66,7 +66,7 @@ private:
 
         transform.header.stamp = this->get_clock()->now();
         transform.header.frame_id = "map";
-        transform.child_frame_id = "spot_light";
+        transform.child_frame_id = "spotlight";
 
         transform.transform.translation.x = position_x_;
         transform.transform.translation.y = position_y_;
@@ -85,7 +85,7 @@ private:
 int main(int argc, char **argv)
 {
     rclcpp::init(argc, argv);
-    rclcpp::spin(std::make_shared<SpotLightMarker>());
+    rclcpp::spin(std::make_shared<SpotlightMarker>());
     rclcpp::shutdown();
     return 0;
 }

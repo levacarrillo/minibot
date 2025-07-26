@@ -27,7 +27,7 @@ public:
         tf_listener_ = std::make_shared<tf2_ros::TransformListener>(*tf_buffer_);
 
         subscription_ = this->create_subscription<visualization_msgs::msg::Marker>(
-            "spot_light_marker", 10, std::bind(&LightSensorsSimulator::topic_callback, this, _1));
+            "spotlight_state", 10, std::bind(&LightSensorsSimulator::topic_callback, this, _1));
         service_ = this->create_service<interfaces::srv::GetLightReadings>(
             "/get_light_readings",
             std::bind(&LightSensorsSimulator::handle_request, this, std::placeholders::_1, std::placeholders::_2)
@@ -44,14 +44,14 @@ private:
     void topic_callback(const visualization_msgs::msg::Marker::SharedPtr msg)
     {
         // RCLCPP_INFO(this->get_logger(), "SPOT LIGHT STATE: %s", msg->text.c_str());
-        spot_light_turned_ = (msg->text == "T") ? true : false;
+        spotlight_turned_ = (msg->text == "T") ? true : false;
     }
 
     void update_readings() {
-        if (spot_light_turned_) {
+        if (spotlight_turned_) {
             geometry_msgs::msg::TransformStamped t;
             std::string fromFrameRel = "base_link";
-            std::string toFrameRel = "spot_light";
+            std::string toFrameRel = "spotlight";
             try {
                 t = tf_buffer_->lookupTransform(toFrameRel, fromFrameRel, tf2::TimePointZero);
             } catch (const tf2::TransformException & ex) {
@@ -63,9 +63,9 @@ private:
             tf2::Quaternion tf2_quat(quaternion.x, quaternion.y, quaternion.z, quaternion.w);
             double roll, pitch, yaw;
             tf2::Matrix3x3(tf2_quat).getRPY(roll, pitch, yaw);
-            RCLCPP_INFO(this->get_logger(), "DISTANCE TO SPOTLIGHT: x->%f, y->%f, angle->%f", t.transform.translation.x, t.transform.translation.y, yaw);
+            // RCLCPP_INFO(this->get_logger(), "DISTANCE TO SPOTLIGHT: x->%f, y->%f, angle->%f", t.transform.translation.x, t.transform.translation.y, yaw);
 
-            for (int i=0; i<readings_.size(); i++) {
+            for (int i=0; i<8; i++) {
                 float sensor_distance_x = t.transform.translation.x + ROBOT_RADIUS * std::cos(yaw - i * M_PI / 4);
                 float sensor_distance_y = t.transform.translation.y + ROBOT_RADIUS * std::sin(yaw - i * M_PI / 4);
                 readings_[i] = 1 / std::hypot(sensor_distance_x, sensor_distance_y);
@@ -92,7 +92,7 @@ private:
         }
     }
 
-    bool spot_light_turned_ = false;
+    bool spotlight_turned_ = false;
     std::array<float, 8> readings_;
     rclcpp::TimerBase::SharedPtr timer_;
     rclcpp::Subscription<visualization_msgs::msg::Marker>::SharedPtr subscription_;
