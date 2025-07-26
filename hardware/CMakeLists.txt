@@ -16,6 +16,7 @@ find_package(tf2 REQUIRED)
 find_package(tf2_ros REQUIRED)
 find_package(geometry_msgs REQUIRED)
 find_package(random_numbers REQUIRED)
+find_package(visualization_msgs REQUIRED)
 
 add_executable(lidar_simulator src/lidar_simulator.cpp)
 ament_target_dependencies(lidar_simulator rclcpp sensor_msgs interfaces tf2 tf2_ros geometry_msgs random_numbers)
@@ -26,6 +27,9 @@ ament_target_dependencies(light_sensors_simulator rclcpp interfaces)
 add_executable(robot_introspection src/robot_introspection.cpp)
 ament_target_dependencies(robot_introspection rclcpp interfaces)
 
+add_executable(spot_lights_marker src/spot_lights_marker.cpp)
+ament_target_dependencies(spot_lights_marker rclcpp visualization_msgs)
+
 add_executable(static_tf_map_to_odom src/static_tf_map_to_odom.cpp)
 ament_target_dependencies(static_tf_map_to_odom rclcpp geometry_msgs tf2 tf2_ros)
 
@@ -33,6 +37,7 @@ install(TARGETS
   lidar_simulator
   light_sensors_simulator
   robot_introspection
+  spot_lights_marker
   static_tf_map_to_odom
   DESTINATION lib/${PROJECT_NAME}
 )

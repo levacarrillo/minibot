@@ -7,7 +7,7 @@
       </geometry>
       <origin xyz="0 0 0.058"/>
       <material name="chassis">
-        <color rgba="0.933 1 0.0706 0.8"/>
+        <color rgba="0.933 1 0.0706 1"/>
       </material>
     </visual>
   </link>
