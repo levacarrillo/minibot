@@ -82,11 +82,30 @@ def generate_launch_description():
             condition=IfCondition(use_sim)
         ),
         Node(
+            package='hardware',
+            executable='static_tf_map_to_odom',
+            name='static_tf_map_to_odom',
+            output='screen',
+            condition=IfCondition(use_sim)
+        ),
+        Node(
             package='nav2_map_server',
             executable='map_server',
             name='map_server',
             output='screen',
             parameters=[{'yaml_filename': map_path}],
+            condition=IfCondition(use_sim)
+        ),
+        Node(
+            package='nav2_lifecycle_manager',
+            executable='lifecycle_manager',
+            name='lifecycle_manager_map',
+            output='screen',
+            parameters=[
+                {'use_sim_time': use_sim},
+                {'autostart': True},
+                {'node_names': ['map_server']}
+            ],
             condition=IfCondition(use_sim)
         ),
         # Node(

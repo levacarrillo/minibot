@@ -26,10 +26,14 @@ ament_target_dependencies(light_sensors_simulator rclcpp interfaces)
 add_executable(robot_introspection src/robot_introspection.cpp)
 ament_target_dependencies(robot_introspection rclcpp interfaces)
 
+add_executable(static_tf_map_to_odom src/static_tf_map_to_odom.cpp)
+ament_target_dependencies(static_tf_map_to_odom rclcpp geometry_msgs tf2 tf2_ros)
+
 install(TARGETS
   lidar_simulator
   light_sensors_simulator
   robot_introspection
+  static_tf_map_to_odom
   DESTINATION lib/${PROJECT_NAME}
 )
 

@@ -33,7 +33,7 @@ private:
     }
 
     void updatePosition() {
-        auto current_time = this->now();
+        auto current_time = this->get_clock()->now();
         double dt = (current_time - last_time_).seconds();
         last_time_ = current_time;
 
