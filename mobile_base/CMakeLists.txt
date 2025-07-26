@@ -11,9 +11,10 @@ find_package(rclcpp REQUIRED)
 find_package(geometry_msgs REQUIRED)
 find_package(tf2 REQUIRED)
 find_package(tf2_ros REQUIRED)
+find_package(nav_msgs REQUIRED)
 
 add_executable(mobile_base_simul src/mobile_base_simul.cpp)
-ament_target_dependencies(mobile_base_simul rclcpp tf2 tf2_ros geometry_msgs)
+ament_target_dependencies(mobile_base_simul rclcpp tf2 tf2_ros geometry_msgs nav_msgs)
 
 install(TARGETS
   mobile_base_simul

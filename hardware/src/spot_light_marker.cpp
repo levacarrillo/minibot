@@ -9,7 +9,7 @@ public:
     {
         publisher_ = this->create_publisher<visualization_msgs::msg::Marker>("spot_light_marker", 10);
 
-        this->declare_parameter("spot_light_state", true);
+        this->declare_parameter("spot_light_state", false);
         this->declare_parameter("spot_light_position_x", 2.20);
         this->declare_parameter("spot_light_position_y", 0.75);
 

@@ -12,6 +12,7 @@
 
 using std::placeholders::_1;
 
+#define ROBOT_RADIUS 0.08
 
 class LightSensorsSimulator : public rclcpp::Node {
 public:
@@ -23,9 +24,6 @@ public:
             std::bind(&LightSensorsSimulator::handle_request, this, std::placeholders::_1, std::placeholders::_2)
         );
 
-        // readings_.resize(8, 0.0);
-        std::srand(std::time(nullptr));  // Semilla aleatoria
-
         timer_ = this->create_wall_timer(
             std::chrono::milliseconds(500),  // 2 Hz
             std::bind(&LightSensorsSimulator::update_readings, this)
@@ -34,19 +32,21 @@ public:
     }
 
 private:
-    void topic_callback(const visualization_msgs::msg::Marker::SharedPtr msg) const
+    void topic_callback(const visualization_msgs::msg::Marker::SharedPtr msg)
     {
-        RCLCPP_INFO(this->get_logger(), "SPOT LIGHT STATE: %s", msg->text.c_str());
-        RCLCPP_INFO(this->get_logger(), "SPOT LIGHT POSITION: x->%f, y->%f", msg->pose.position.x, msg->pose.position.y);
+        // RCLCPP_INFO(this->get_logger(), "SPOT LIGHT STATE: %s", msg->text.c_str());
+        // RCLCPP_INFO(this->get_logger(), "SPOT LIGHT POSITION: x->%f, y->%f", msg->pose.position.x, msg->pose.position.y);
+        spot_light_turned_ = (msg->text == "T") ? true : false;
+        spot_light_x_ = msg->pose.position.x;
+        spot_light_y_ = msg->pose.position.y;
     }
+
     void update_readings() {
-        // std::cout<<"[";
-        // for (auto& val : readings_) {
-        //     // val = static_cast<float>(rand() % 100) / 10.0f;
-        //     std::cout<<val<<", ";
-        // }
-        // std::cout<<"]"<<std::endl;
-        // RCLCPP_INFO(this->get_logger(), "Lecturas actualizadas.");
+        if (spot_light_turned_) {
+            readings_ = { 0.0f, 0.0f, 0.1f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f };
+        } else {
+            readings_.fill(0.0f);
+        }
     }
 
     void handle_request(
@@ -59,11 +59,14 @@ private:
             response->max_value = std::numeric_limits<float>::quiet_NaN();
         }
         else {
+            response->readings  = readings_;
             response->max_value = *max_it;
             response->max_index = static_cast<int32_t>(std::distance(readings_.begin(), max_it));
         }
     }
 
+    bool spot_light_turned_ = false;
+    double spot_light_x_, spot_light_y_ = 0.0f;
     std::array<float, 8> readings_;
     rclcpp::TimerBase::SharedPtr timer_;
     rclcpp::Subscription<visualization_msgs::msg::Marker>::SharedPtr subscription_;
