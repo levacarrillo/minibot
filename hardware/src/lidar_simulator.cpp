@@ -6,6 +6,7 @@
 #include "interfaces/srv/get_scan.hpp"
 #include "tf2/LinearMath/Quaternion.h"
 #include "sensor_msgs/msg/laser_scan.hpp"
+#include <nav_msgs/msg/occupancy_grid.hpp>
 #include "tf2_ros/static_transform_broadcaster.h"
 #include "geometry_msgs/msg/transform_stamped.hpp"
 #include <random_numbers/random_numbers.h>
@@ -14,10 +15,13 @@
 using namespace random_numbers;
 using namespace std::placeholders;
 
+
 class LidarSimulator : public rclcpp::Node {
     public:
         LidarSimulator() : Node("lidar_simulator") {
             publisher_ = this->create_publisher<sensor_msgs::msg::LaserScan>("/scan", 10);
+            map_sub_   = this->create_subscription<nav_msgs::msg::OccupancyGrid>(
+                "/map", 10, std::bind(&LidarSimulator::map_callback, this, _1));
             service_ = this->create_service<interfaces::srv::GetScan>(
                 "/get_scan",
                 std::bind(&LidarSimulator::handle_get_scan, this, _1, _2)
@@ -28,7 +32,7 @@ class LidarSimulator : public rclcpp::Node {
 
             timer_ = this->create_wall_timer(
                 std::chrono::milliseconds(100),
-                std::bind(&LidarSimulator::publish_scan, this)
+                std::bind(&LidarSimulator::simulate_scan, this)
             );
         }
 
@@ -40,8 +44,12 @@ class LidarSimulator : public rclcpp::Node {
         float angle_increment = 0.01745f * 5;
         float robot_radius = 0.0635f;
         RandomNumberGenerator rng;
+        nav_msgs::msg::OccupancyGrid map_;
+        bool map_loaded_ = false;
 
-        void publish_scan() {
+        void simulate_scan() {
+            if (!map_loaded_) return;
+
             auto msg = sensor_msgs::msg::LaserScan();
 
             msg.header.stamp = this->get_clock()->now();
@@ -57,12 +65,17 @@ class LidarSimulator : public rclcpp::Node {
 
             laser_scan.clear();
             for (size_t i = 0; i < num_readings; ++i) {
-                msg.ranges[i] = this->max_value + this->rng.gaussian(0.0, 0.01);;
+                msg.ranges[i] = get_simulated_ray(this->max_value + this->rng.gaussian(0.0, 0.01));
                 laser_scan.push_back(msg.ranges[i]);
             }
 
             last_scan_ = msg;
             publisher_->publish(msg);
+        }
+
+        void map_callback(const nav_msgs::msg::OccupancyGrid::SharedPtr msg) {
+            map_ = *msg;
+            map_loaded_ = true;
         }
 
         void handle_get_scan(
@@ -95,8 +108,13 @@ class LidarSimulator : public rclcpp::Node {
             tf_static_broadcaster_->sendTransform(t);
         }
 
+        double get_simulated_ray(double ray) {
+            return ray;
+        }
+
         rclcpp::Publisher<sensor_msgs::msg::LaserScan>::SharedPtr publisher_;
         rclcpp::Service<interfaces::srv::GetScan>::SharedPtr service_;
+        rclcpp::Subscription<nav_msgs::msg::OccupancyGrid>::SharedPtr map_sub_;
         rclcpp::TimerBase::SharedPtr timer_;
         sensor_msgs::msg::LaserScan last_scan_;
         std::vector<float> laser_scan;
