@@ -6,7 +6,9 @@
 #include "interfaces/srv/get_scan.hpp"
 #include "tf2/LinearMath/Quaternion.h"
 #include "sensor_msgs/msg/laser_scan.hpp"
-#include <nav_msgs/msg/occupancy_grid.hpp>
+#include "nav_msgs/msg/occupancy_grid.hpp"
+#include "tf2_ros/buffer.h"
+#include "tf2_ros/transform_listener.h"
 #include "tf2_ros/static_transform_broadcaster.h"
 #include "geometry_msgs/msg/transform_stamped.hpp"
 #include <random_numbers/random_numbers.h>
@@ -26,6 +28,8 @@ class LidarSimulator : public rclcpp::Node {
                 "/get_scan",
                 std::bind(&LidarSimulator::handle_get_scan, this, _1, _2)
             );
+            tf_buffer_ = std::make_unique<tf2_ros::Buffer>(this->get_clock());
+            tf_listener_ = std::make_shared<tf2_ros::TransformListener>(*tf_buffer_);
             tf_static_broadcaster_ = std::make_shared<tf2_ros::StaticTransformBroadcaster>(this);
 
             this->make_transforms();
@@ -46,9 +50,34 @@ class LidarSimulator : public rclcpp::Node {
         RandomNumberGenerator rng;
         nav_msgs::msg::OccupancyGrid map_;
         bool map_loaded_ = false;
+        rclcpp::Publisher<sensor_msgs::msg::LaserScan>::SharedPtr publisher_;
+        rclcpp::Service<interfaces::srv::GetScan>::SharedPtr service_;
+        rclcpp::Subscription<nav_msgs::msg::OccupancyGrid>::SharedPtr map_sub_;
+        rclcpp::TimerBase::SharedPtr timer_;
+        sensor_msgs::msg::LaserScan last_scan_;
+        std::vector<float> laser_scan;
+        std::shared_ptr<tf2_ros::StaticTransformBroadcaster> tf_static_broadcaster_;
+        std::shared_ptr<tf2_ros::TransformListener> tf_listener_{nullptr};
+        std::unique_ptr<tf2_ros::Buffer> tf_buffer_;
 
         void simulate_scan() {
             if (!map_loaded_) return;
+
+            geometry_msgs::msg::TransformStamped t;
+            std::string fromFrameRel = "map";
+            std::string toFrameRel = "base_link";
+            try {
+                t = tf_buffer_->lookupTransform(toFrameRel, fromFrameRel, tf2::TimePointZero);
+            } catch (const tf2::TransformException & ex) {
+                RCLCPP_INFO(
+                    this->get_logger(), "Could not transform %s to %s: %s",
+                    toFrameRel.c_str(), fromFrameRel.c_str(), ex.what());
+            }
+            geometry_msgs::msg::Quaternion quaternion = t.transform.rotation;
+            tf2::Quaternion tf2_quat(quaternion.x, quaternion.y, quaternion.z, quaternion.w);
+            double roll, pitch, yaw;
+            tf2::Matrix3x3(tf2_quat).getRPY(roll, pitch, yaw);
+            RCLCPP_INFO(this->get_logger(), "ROBOT POSITION: x->%f, y->%f, angle->%f", t.transform.translation.x, t.transform.translation.y, yaw);
 
             auto msg = sensor_msgs::msg::LaserScan();
 
@@ -111,14 +140,6 @@ class LidarSimulator : public rclcpp::Node {
         double get_simulated_ray(double ray) {
             return ray;
         }
-
-        rclcpp::Publisher<sensor_msgs::msg::LaserScan>::SharedPtr publisher_;
-        rclcpp::Service<interfaces::srv::GetScan>::SharedPtr service_;
-        rclcpp::Subscription<nav_msgs::msg::OccupancyGrid>::SharedPtr map_sub_;
-        rclcpp::TimerBase::SharedPtr timer_;
-        sensor_msgs::msg::LaserScan last_scan_;
-        std::vector<float> laser_scan;
-        std::shared_ptr<tf2_ros::StaticTransformBroadcaster> tf_static_broadcaster_;
 };
 
 int main(int argc, char * argv[])
