@@ -180,9 +180,9 @@ class AppContext:
         self._draw_panel.clear()
 
         for i in range(8):
-            coords = self._service.get_spot_light_coords(i, width)
+            coords = self._service.get_spotlight_coords(i, width)
             light = 'yellow' if id_max == i else None   
-            self._draw_panel.plot_spot_light(coords, color = light)
+            self._draw_panel.plot_spotlight(coords, color = light)
 
         for i in range(lidar_params['num_readings']):
             coords = self._service.get_laser_coords(i, lidar_params, width)

@@ -61,8 +61,8 @@ class Service():
 
         return lidar_params
 
-    def get_spot_light_coords(self, i, width):
-        step_angle = i * math.pi / 4 - math.pi / 2
+    def get_spotlight_coords(self, i, width):
+        step_angle = - i * math.pi / 4 - math.pi / 2
         x = width * (1 / 2 + 4 * math.cos(step_angle) / 11)
         y = width * (1 / 2 + 4 * math.sin(step_angle) / 11)
         coords = [

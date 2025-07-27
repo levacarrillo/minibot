@@ -15,7 +15,7 @@ class DrawPanel:
         self.canvas.grid(column = 0, row = 1, sticky = (N, W), padx = (5, 0), pady = (10, 10))
         context.set_draw_panel(self)
 
-    def plot_spot_light(self, coords, color = '#d9d9d9'):
+    def plot_spotlight(self, coords, color = '#d9d9d9'):
         self.canvas.create_oval(*coords, fill = color, outline = 'black', tag = 'spot_lights')
     
     def plot_laser(self, coords):

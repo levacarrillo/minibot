@@ -66,8 +66,8 @@ private:
             // RCLCPP_INFO(this->get_logger(), "DISTANCE TO SPOTLIGHT: x->%f, y->%f, angle->%f", t.transform.translation.x, t.transform.translation.y, yaw);
 
             for (int i=0; i<8; i++) {
-                float sensor_distance_x = t.transform.translation.x + ROBOT_RADIUS * std::cos(yaw - i * M_PI / 4);
-                float sensor_distance_y = t.transform.translation.y + ROBOT_RADIUS * std::sin(yaw - i * M_PI / 4);
+                float sensor_distance_x = t.transform.translation.x + ROBOT_RADIUS * std::cos(yaw + i * M_PI / 4);
+                float sensor_distance_y = t.transform.translation.y + ROBOT_RADIUS * std::sin(yaw + i * M_PI / 4);
                 readings_[i] = 1 / std::hypot(sensor_distance_x, sensor_distance_y);
             }
             // readings_ = { 0.0f, 0.0f, 0.1f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f };
