@@ -73,6 +73,8 @@ class Ros(Node):
         params_req.max_steps = params['max_steps']
         params_req.max_advance = params['max_advance']
         params_req.max_turn_angle = params['max_turn_angle']
+        params_req.light_threshold = params['light_threshold']
+        params_req.laser_threshold = params['laser_threshold']
         future = self._set_params_motion_planner_client.call_async(params_req)
         rclpy.spin_until_future_complete(self, future)
         return future.result()

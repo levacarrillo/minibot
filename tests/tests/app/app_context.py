@@ -154,8 +154,8 @@ class AppContext:
         self._params['angular_velocity'] = float(self._params_pop_up.angular_vel .get().replace('rad/s', ''))
         self._params['max_advance'] = float(self._params_pop_up.max_advance.get().replace('m', ''))
         self._params['max_turn_angle'] = float(self._params_pop_up.max_turn_angle.get().replace('rad', ''))
-        self._params['light_threshold'] = self._params_pop_up.light_threshold.get()
-        self._params['laser_threshold'] = self._params_pop_up.laser_threshold.get()
+        self._params['light_threshold'] = float(self._params_pop_up.light_threshold.get())
+        self._params['laser_threshold'] = float(self._params_pop_up.laser_threshold.get())
         self._params_pop_up.window.destroy()
 
     # GENERAL METHOD
