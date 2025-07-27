@@ -6,7 +6,7 @@ ToDo: Description
 
 ## Prerrequisites
 
-1. ROS 2 Jazzy Jalisco or later
+1. ROS 2 Jazzy Jalisco desktop or later (install it from the official page: https://docs.ros.org/en/jazzy/Installation/Ubuntu-Install-Debs.html)
 2. Dependencies
     1. `xterm`
     2. `python3`
