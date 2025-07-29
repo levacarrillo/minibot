@@ -58,7 +58,7 @@ private:
                 RCLCPP_INFO(
                     this->get_logger(), "Could not transform %s to %s: %s",
                     toFrameRel.c_str(), fromFrameRel.c_str(), ex.what());
-                }
+            }
             geometry_msgs::msg::Quaternion quaternion = t.transform.rotation;
             tf2::Quaternion tf2_quat(quaternion.x, quaternion.y, quaternion.z, quaternion.w);
             double roll, pitch, yaw;

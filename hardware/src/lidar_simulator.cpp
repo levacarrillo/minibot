@@ -64,8 +64,8 @@ class LidarSimulator : public rclcpp::Node {
             if (!map_loaded_) return;
 
             geometry_msgs::msg::TransformStamped t;
-            std::string fromFrameRel = "map";
-            std::string toFrameRel = "base_link";
+            std::string fromFrameRel = "base_link";
+            std::string toFrameRel = "map";
             try {
                 t = tf_buffer_->lookupTransform(toFrameRel, fromFrameRel, tf2::TimePointZero);
             } catch (const tf2::TransformException & ex) {
@@ -77,7 +77,6 @@ class LidarSimulator : public rclcpp::Node {
             tf2::Quaternion tf2_quat(quaternion.x, quaternion.y, quaternion.z, quaternion.w);
             double roll, pitch, yaw;
             tf2::Matrix3x3(tf2_quat).getRPY(roll, pitch, yaw);
-            RCLCPP_INFO(this->get_logger(), "ROBOT POSITION: x->%f, y->%f, angle->%f", t.transform.translation.x, t.transform.translation.y, yaw);
 
             auto msg = sensor_msgs::msg::LaserScan();
 
@@ -94,7 +93,9 @@ class LidarSimulator : public rclcpp::Node {
 
             laser_scan.clear();
             for (size_t i = 0; i < num_readings; ++i) {
-                msg.ranges[i] = get_simulated_ray(this->max_value + this->rng.gaussian(0.0, 0.01));
+                double angle = msg.angle_min + i * msg.angle_increment + yaw;
+                double range = raycast(t.transform.translation.x, t.transform.translation.y, angle, this->max_value);
+                msg.ranges[i] = range + this->rng.gaussian(0.0, 0.01);
                 laser_scan.push_back(msg.ranges[i]);
             }
 
@@ -137,8 +138,28 @@ class LidarSimulator : public rclcpp::Node {
             tf_static_broadcaster_->sendTransform(t);
         }
 
-        double get_simulated_ray(double ray) {
-            return ray;
+        double raycast(double x, double y, double theta, double max_range) {
+            double step = map_.info.resolution / 2.0; 
+            double range = 0.0;
+            while (range < max_range) {
+                double nx = x + range * std::cos(theta);
+                double ny = y + range * std::sin(theta);
+
+
+                int mx = static_cast<int>((nx - map_.info.origin.position.x) / map_.info.resolution);
+                int my = static_cast<int>((ny - map_.info.origin.position.y) / map_.info.resolution);
+
+
+                if (mx < 0 || my < 0 || mx >= static_cast<int>(map_.info.width) || my >= static_cast<int>(map_.info.height))
+                return range;
+                
+                int idx = my * map_.info.width + mx;
+                if (map_.data[idx] > 50) 
+                return range;
+                range += step;
+            }
+
+            return max_range;
         }
 };
 
