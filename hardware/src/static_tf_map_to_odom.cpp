@@ -14,7 +14,7 @@ public:
         tf.child_frame_id = "odom";
 
         tf.transform.translation.x = 0.5;
-        tf.transform.translation.y = 0.5;
+        tf.transform.translation.y = 1.0;
         tf.transform.translation.z = 0.0;
 
         tf2::Quaternion q;
