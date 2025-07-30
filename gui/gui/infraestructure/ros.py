@@ -16,14 +16,14 @@ class Ros(Node):
         self.goal_pose       = None
         self.light_data      = None
         self.lidar_data      = None
-        self.movement_execution = Event()
+        self._movement_execution = Event()
         self._get_params_cli = self.create_client(GetParams, 'get_params')
-        self.set_params_cli = self.create_client(SetParams, 'set_params')
-        self.get_scan_srv   = self.create_service(GetScan, 'get_scan', self._lidar_readings_res)
-        self.get_lights_srv = self.create_service(GetLightReadings, 'get_light_readings', 
+        self.set_params_cli  = self.create_client(SetParams, 'set_params')
+        self.get_scan_srv    = self.create_service(GetScan, 'get_scan', self._lidar_readings_res)
+        self.get_lights_srv  = self.create_service(GetLightReadings, 'get_light_readings', 
                                                     self._light_readings_res)
         self._action_server = ActionServer(self, GoToPose, 'go_to_pose',
-                                                        self.execute_movement_callback)
+                                                        self._execute_movement_callback)
 
         while not self._get_params_cli.wait_for_service(timeout_sec = 1.0):
             self.get_logger().warn('SERVICE /get_params NOT AVAILABLE, WAITING AGAIN...')
@@ -69,12 +69,12 @@ class Ros(Node):
         return future.result()
 
     def finish_movement(self):
-        self.movement_execution.set()
+        self._movement_execution.set()
 
-    def execute_movement_callback(self, goal_handle):
+    def _execute_movement_callback(self, goal_handle):
         self.goal_pose = goal_handle.request
-        self.movement_execution.clear()
-        self.movement_execution.wait(timeout = 10)
+        self._movement_execution.clear()
+        self._movement_execution.wait(timeout = 5)
 
         goal_handle.succeed()
         result = GoToPose.Result()

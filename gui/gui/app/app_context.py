@@ -309,6 +309,7 @@ class AppContext:
     # SHARED METHODS
     def run_simulation(self):
         if self.robot.exists():
+            self.simulation_running = True
             self.ros_params['run_behavior'] = True
             self.ros_params['step'] = 0
             self.ros_params['max_steps'] = self.get_context_param('max_steps')
@@ -399,8 +400,8 @@ class AppContext:
                                                               self.get_context_param('radius'))
                 self.ros.set_light_data(light_data)
 
-                if self.ros.get_ros_params().run_behavior and goal_pose and self.check_for_collision() is False:
-                    self.simulation_running = True
+                if self.ros_params['run_behavior'] and goal_pose and self.check_for_collision() is False:
+                    # self.simulation_running = True
                     current_position = self.robot.get_position()
 
                     if self.start_position is None:
@@ -409,6 +410,7 @@ class AppContext:
                     if self.route.is_empty():
                         self.route.initialize_route(current_position, self.robot.get_angle())
                         self.current_step = 0
+
 
                     if self.fast_mode:
                         self.robot.rotate(goal_pose['angle'])
