@@ -26,7 +26,7 @@ MotionPlanner::MotionPlanner() : Node("motion_planner") {
   this->light_readings_client = this->create_client<GetLightReadings>("get_light_readings");
 
   timer_ = this->create_wall_timer(
-    1000ms, std::bind(&MotionPlanner::timer_callback, this));
+    100ms, std::bind(&MotionPlanner::timer_callback, this));
 }
 
 void MotionPlanner::timer_callback() {
