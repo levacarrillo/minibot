@@ -41,8 +41,6 @@ class AppContext:
         self.start_position = None
         self.current_step = 0
 
-        self.simulation_running  = False
-
         self.map_polygons_points = None
         self.lasers_lines  = []
         self.lasers_values = []
@@ -309,7 +307,6 @@ class AppContext:
     # SHARED METHODS
     def run_simulation(self):
         if self.robot.exists():
-            self.simulation_running = True
             self.ros_params['run_behavior'] = True
             self.ros_params['step'] = 0
             self.ros_params['max_steps'] = self.get_context_param('max_steps')
@@ -321,7 +318,6 @@ class AppContext:
             self.route.delete()
 
     def stop_simulation(self):
-        self.simulation_running = False
         self.ros_params['run_behavior'] = False
         self.ros.send_state_params(self.ros_params)
         self.ros.finish_movement()
@@ -389,7 +385,7 @@ class AppContext:
             self.ros.set_lidar_data(self.lasers_values)
             
             if self.check_for_collision() and goal_pose:
-                print('OVERLAPPING...')
+                self.ros.get_logger().info(f'ROBOT COLLISION')
                 self.stop_simulation()
                 self.start_position = None
 
@@ -400,8 +396,7 @@ class AppContext:
                                                               self.get_context_param('radius'))
                 self.ros.set_light_data(light_data)
 
-                if self.ros_params['run_behavior'] and goal_pose and self.check_for_collision() is False:
-                    # self.simulation_running = True
+                if self.ros.get_ros_params().run_behavior and goal_pose and self.check_for_collision() is False:
                     current_position = self.robot.get_position()
 
                     if self.start_position is None:
@@ -450,14 +445,14 @@ class AppContext:
 
                         self.service.sleep(self.velocity_slider)
                     self.set_context_param('current_step', self.current_step)
-                elif self.ros.get_ros_params().run_behavior is False and self.simulation_running:
-                    print(f'REACHED GOAL')
+                elif self.ros.get_ros_params().run_behavior is False and self.ros_params['run_behavior']:
+                    # GOAL REACHED
+                    self.ros.get_logger().info(f'GOAL_REACHED!')
                     self.list_position, self.list_angles= self.route.get_all_route()
-
-
-                    self.simulation_running = False
+                    self.ros_params['run_behavior'] = False
                     self.set_context_param('panel_status', 'normal')
                     self.set_context_param('button_stop',  'disabled')
+
                 elif self.run_last_simulation:
                     for i in range(len(self.list_position)):
                         self.robot.set_angle(self.list_angles[i])

@@ -33,6 +33,14 @@ class Ros(Node):
 
         self.create_timer(0.01, self._update_ros_params)
 
+    def print_logger(text, status = None):
+        if status == "WARN":
+            self.get_logger().warn(text)    
+        elif status == "ERROR":
+            self.get_logger().error(text)
+        else:
+            self.get_logger().info(text)
+
     def _update_ros_params(self):
         req = GetParams.Request()
         params_future = self._get_params_cli.call_async(req)
