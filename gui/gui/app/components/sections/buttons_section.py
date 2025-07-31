@@ -5,13 +5,13 @@ class ButtonsSection:
     def __init__(self, context):
         label_simulator  = Label(context.side_frame, text = "Simulator", font = ('arial', 11, 'bold'))
         plot_topological = Button(context.side_frame, width = 18, text = "Plot topological", 
-                                            command = context.plot_topological_map)
+                                            command = context.plot_topological_map, state = DISABLED)
         button_run       = Button(context.side_frame, width = 18, text = "Run simulation", 
-                                            command = context.run_simulation)
+                                            command = context.run_simulation, state = DISABLED)
         button_run_last  = Button(context.side_frame, width = 18, text = "Run last simulation",
-                                            command = context.last_simulation)
+                                            command = context.last_simulation, state = DISABLED)
         button_stop      = Button(context.side_frame, width = 18, text = "Stop simulation",
-                                            command = context.stop_simulation)
+                                            command = context.stop_simulation, state = DISABLED)
         
         self.plot_topological = plot_topological
         self.button_run       = button_run

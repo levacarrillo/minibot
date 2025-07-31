@@ -140,10 +140,13 @@ class AppContext:
             self.buttons_section.plot_topological .config(state = value)
         elif name == 'button_run' :
             self.buttons_section.button_run       .config(state = value)
+        elif name == 'button_run_last' :
+            self.buttons_section.button_last  .config(state = value)
         elif name == 'button_stop':
             self.buttons_section.button_stop      .config(state = value)
         elif name == 'panel_status':
             self.buttons_section.button_run       .config(state = value)
+            self.buttons_section.button_last      .config(state = value)
             self.env_section.environment          .config(state = value)
             self.env_section.behavior             .config(state = value)
             self.env_section.steps                .config(state = value)
@@ -315,6 +318,8 @@ class AppContext:
             self.ros_params['max_advance'] = self.get_context_param('max_advance')
             self.ros_params['max_turn_angle'] = self.get_context_param('max_turn_angle')
 
+            self.set_context_param('panel_status', 'disabled')
+            self.set_context_param('button_stop', 'normal')
             self.ros.send_state_params(self.ros_params)
             self.route.delete()
 
@@ -450,9 +455,9 @@ class AppContext:
                 elif self.ros.behavior_running() is False and self._simulation_running:
                     # SIMULATION FINISHED
                     self._simulation_running = False
-                    self.list_position, self.list_angles= self.route.get_all_route()
                     self.set_context_param('panel_status', 'normal')
-                    self.set_context_param('button_stop',  'disabled')
+                    self.set_context_param('button_stop', 'disabled')
+                    self.list_position, self.list_angles= self.route.get_all_route()
 
                 elif self.run_last_simulation:
                     for i in range(len(self.list_position)):
