@@ -33,7 +33,7 @@ class Ros(Node):
 
         self.create_timer(0.01, self._update_ros_params)
 
-    def print_logger(text, status = None):
+    def print_logger(self, text, status = None):
         if status == "WARN":
             self.get_logger().warn(text)    
         elif status == "ERROR":
@@ -50,11 +50,16 @@ class Ros(Node):
         try:
             response = future.result()
             self._ros_params = response
+            # if self._ros_params.run_behavior:
+                # self.print_logger(f'self._ros_params.run_behavior->{self._ros_params.run_behavior}')
         except Exception as e:
             self._ros_params = None
 
     def get_ros_params(self):
         return self._ros_params
+
+    def behavior_running(self):
+        return self._ros_params.run_behavior
 
     def request_ros_params(self):
         req = GetParams.Request()

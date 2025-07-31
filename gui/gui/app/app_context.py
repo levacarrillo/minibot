@@ -45,6 +45,7 @@ class AppContext:
         self.lasers_lines  = []
         self.lasers_values = []
 
+        self._simulation_running = False
         self.run_last_simulation = False
         self.show_sensors = None
         self.velocity_slider = 1
@@ -380,10 +381,10 @@ class AppContext:
     def animation_loop(self):
         if self.robot.exists():
 
-            goal_pose = self.service.format_goal_pose(self.ros.get_goal_pose(), self.canvas_size)
             
             self.ros.set_lidar_data(self.lasers_values)
             
+            goal_pose = self.service.format_goal_pose(self.ros.get_goal_pose(), self.canvas_size)
             if self.check_for_collision() and goal_pose:
                 self.ros.get_logger().info(f'ROBOT COLLISION')
                 self.stop_simulation()
@@ -396,7 +397,8 @@ class AppContext:
                                                               self.get_context_param('radius'))
                 self.ros.set_light_data(light_data)
 
-                if self.ros.get_ros_params().run_behavior and goal_pose and self.check_for_collision() is False:
+                if goal_pose and self.check_for_collision() is False:
+                    self._simulation_running = True
                     current_position = self.robot.get_position()
 
                     if self.start_position is None:
@@ -445,11 +447,10 @@ class AppContext:
 
                         self.service.sleep(self.velocity_slider)
                     self.set_context_param('current_step', self.current_step)
-                elif self.ros.get_ros_params().run_behavior is False and self.ros_params['run_behavior']:
-                    # GOAL REACHED
-                    self.ros.get_logger().info(f'GOAL_REACHED!')
+                elif self.ros.behavior_running() is False and self._simulation_running:
+                    # SIMULATION FINISHED
+                    self._simulation_running = False
                     self.list_position, self.list_angles= self.route.get_all_route()
-                    self.ros_params['run_behavior'] = False
                     self.set_context_param('panel_status', 'normal')
                     self.set_context_param('button_stop',  'disabled')
 
