@@ -245,6 +245,11 @@ class AppContext:
         self.plot_grid()
         self.map_polygons_points = self.service.transoform_to_points_list(polygon_list)
 
+        if self.file.check_for_topological_map(self.get_context_param('map')):
+            self.set_context_param('button_plot_topological', 'normal')
+        else:
+            self.set_context_param('button_plot_topological', 'disabled')
+
         for polygon_to_plot in polygon_to_plot_list:
             self.canvas.create_polygon(
                 polygon_to_plot,
@@ -332,10 +337,10 @@ class AppContext:
         self.run_last_simulation = True
 
     def plot_topological_map(self):
-        # self.buttons_section.plot_topological.config(state = "disabled")
         map = self.get_context_param('map')
         topological_file = self.file.get_map(map, topological = True)
         node_coords, node_coords_to_plot, connections = self.service.parse_topological_map(topological_file, self.canvas_size, self.canvas_scale)
+        # self.ros.print_logger(f'node_coords_to_plot->{node_coords_to_plot}')
         # # print(node_coords)
         # print(node_coords_to_plot)
         # if node_coords is None:
