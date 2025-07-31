@@ -13,7 +13,7 @@ class SensorsSection:
         lidar_value         = Label(context.side_frame, text = "Lidar value [m]:")
         light_value         = Label(context.side_frame, text = "Light value:")
 
-        entry_num_sensors   = Entry(context.side_frame, textvariable = StringVar(value = "50"),      width = 10)
+        entry_num_sensors   = Entry(context.side_frame, textvariable = StringVar(value = "40"),      width = 10)
         entry_origin_angle  = Entry(context.side_frame, textvariable = StringVar(value = "-1.5707"), width = 10)
         entry_range         = Entry(context.side_frame, textvariable = StringVar(value = "3.1416"),  width = 10)
         entry_light         = Entry(context.side_frame, textvariable = light_threshold, width = 10)
