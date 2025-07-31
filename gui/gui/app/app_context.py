@@ -39,7 +39,6 @@ class AppContext:
         self.distance_tolerance = 1
         
         self.start_position = None
-        self.current_step = 0
 
         self.map_polygons_points = None
         self.lasers_lines  = []
@@ -416,8 +415,6 @@ class AppContext:
 
                     if self.route.is_empty():
                         self.route.initialize_route(current_position, self.robot.get_angle())
-                        self.current_step = 0
-
 
                     if self.fast_mode:
                         self.robot.rotate(goal_pose['angle'])
@@ -427,8 +424,7 @@ class AppContext:
                                             self.robot.get_position(),
                                             self.robot.get_angle())
                         self.start_position = None
-                        if self.current_step < self.get_context_param('max_steps'):
-                            self.current_step += 1 
+
                     else:
                         delta = goal_pose['angle'] - self.angle_increment
                         if abs(delta) >= self.angle_tolerance:
@@ -452,11 +448,9 @@ class AppContext:
                                                  self.robot.get_position(),
                                                  self.robot.get_angle())
                                 self.start_position = None
-                                if self.current_step < self.get_context_param('max_steps'):
-                                    self.current_step += 1 
 
                         self.service.sleep(self.velocity_slider)
-                    self.set_context_param('current_step', self.current_step)
+                    self.set_context_param('current_step', self.ros.get_current_step())
                 elif self.ros.behavior_running() is False and self._simulation_running:
                     # SIMULATION FINISHED
                     self._simulation_running = False

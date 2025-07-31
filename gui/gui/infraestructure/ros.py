@@ -31,7 +31,7 @@ class Ros(Node):
         while not self.set_params_cli.wait_for_service(timeout_sec = 1.0):
             self.get_logger().warn('SERVICE /set_params NOT AVAILABLE, WAITING AGAIN...')
 
-        self.create_timer(0.01, self._update_ros_params)
+        self.create_timer(0.005, self._update_ros_params)
 
     def print_logger(self, text, status = None):
         if status == "WARN":
@@ -50,16 +50,14 @@ class Ros(Node):
         try:
             response = future.result()
             self._ros_params = response
-            # if self._ros_params.run_behavior:
-                # self.print_logger(f'self._ros_params.run_behavior->{self._ros_params.run_behavior}')
         except Exception as e:
             self._ros_params = None
 
-    def get_ros_params(self):
-        return self._ros_params
-
     def behavior_running(self):
         return self._ros_params.run_behavior
+    
+    def get_current_step(self):
+        return self._ros_params.step
 
     def request_ros_params(self):
         req = GetParams.Request()
