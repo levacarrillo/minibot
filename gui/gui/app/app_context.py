@@ -363,7 +363,7 @@ class AppContext:
     def generate_laser_readings(self):
         robot_state   = self.robot.get_state()
         sensor_params = self.service.format_to_sensors_params(
-            self.get_context_param('robot_angle'),
+            self.robot.get_angle(),
             self.get_context_param('num_sensors'),
             self.get_context_param('origin_angle'),
             self.get_context_param('range_sensor'),
