@@ -56,7 +56,7 @@ void sm_avoid_obstacles(Sensors laser_data, MovementParams *params, Movement *mo
 
         case 5: // SM STATE: BACKWARD, OBSTACLE IN FRONT
             *movement = generate_movement(BACKWARD, *params);
-            params->state = 0;
+            params->state = 2;
             break;
 
         default:
