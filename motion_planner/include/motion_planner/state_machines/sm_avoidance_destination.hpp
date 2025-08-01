@@ -76,7 +76,7 @@ bool sm_avoidance_destination(Sensors sensors_data, MovementParams *params, Move
 
         case 6: // SM STATE: GO BACKWARD, OBSTACLE IN FRONT
             *movement = generate_movement(BACKWARD, *params);
-            params->state = 0;
+            params->state = 5;
             break;
 
         case 7: // SM STATE: CHECK FOR DESTINATION
