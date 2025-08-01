@@ -99,33 +99,41 @@ class Service():
         x = px / canvas_size['width']
         y = (canvas_size['height'] - py)/ canvas_size['height']
         return str(x)[:6], str(y)[:6]
+    
+    def vec_to_m(self, vec, canvas_size):
+        x = vec['x']  / canvas_size['width']
+        y = vec['y'] / canvas_size['height']
+        return math.hypot(x, y)
 
     def sleep(self, slider_value):
         delay = (3 - int(slider_value)) * 0.01
         time.sleep(delay)
 
-    def generate_lasers_readings(self, robot_state, params, polygons, noise_param):
+    def generate_lasers_readings(self, robot_state, params, polygons, noise_param, canvas_size, pixels_per_m):
         lasers_list   = []
-        lasers_values = [0.0]
+        lasers_values = []
         for i in range(params['num_sensors']):
             noise = self.get_noise(noise_param) if noise_param else 0
             angle = params['start_angle'] + i * params['step_angle']
+            max_value = self.m_to_pixels(params['max_value'], pixels_per_m)
+            laser_max_vec  = self.polar_to_cartesian_point(max_value + noise, angle)
 
-            laser_max_vect  = self.polar_to_cartesian_point(params['max_value'] + noise, angle)
-
-            laser_max_point = self.sum_vectors(robot_state['position'], laser_max_vect)
+            laser_max_point = self.sum_vectors(robot_state['position'], laser_max_vec)
             laser_value_point = self.check_for_obstacle(
                 robot_state['position'], laser_max_point, polygons)
 
             lasers_list.append(self.format_to_line(robot_state['position'], laser_value_point))
-            lidar_values = self.format_lidar_data(
-                params['origin_angle'],
-                params['range_sensors'],
-                params['max_value'],
-                lasers_values)
+            laser_value_vec = self.get_line_segment(robot_state['position'], laser_value_point)
+            laser_value = self.vec_to_m(laser_value_vec, canvas_size)
+            lasers_values.append(laser_value)
+        lidar_values = self.format_lidar_data(
+            params['origin_angle'],
+            params['range_sensors'],
+            params['max_value'],
+            lasers_values)
         return lasers_list, lidar_values
         
-    def transoform_to_points_list(self, list_of_list):
+    def transform_to_points_list(self, list_of_list):
         points_lists = []
         for list in list_of_list:
             points = []

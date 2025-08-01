@@ -127,7 +127,7 @@ class AppContext:
         elif name == 'light_threshold':
             return float(self.sensors_section.light_value.get())
         elif name == 'laser_threshold':
-            return self.service.m_to_pixels(self.sensors_section.laser_value.get(), self.pixels_per_m)
+            return float(self.sensors_section.laser_value.get())
         else:
             print(f'AppContext.get_context_param()->PARAMETER {name} NOT RECOGNIZED BY CONTEXT')
     
@@ -242,7 +242,7 @@ class AppContext:
         scale, polygon_list, polygon_to_plot_list = self.service.parse_map(map_file, self.canvas_size)
         self.set_canvas_scale(scale)
         self.plot_grid()
-        self.map_polygons_points = self.service.transoform_to_points_list(polygon_list)
+        self.map_polygons_points = self.service.transform_to_points_list(polygon_list)
 
         if self.file.check_for_topological_map(self.get_context_param('map')):
             self.set_context_param('button_plot_topological', 'normal')
@@ -371,7 +371,12 @@ class AppContext:
         
         noise_param = self.const['sigma'] if self.sensor_noise else None
         self.lasers_lines, self.lasers_values = self.service.generate_lasers_readings(
-            robot_state, sensor_params, self.map_polygons_points, noise_param)
+            robot_state,
+            sensor_params,
+            self.map_polygons_points,
+            noise_param,
+            self.canvas_size,
+            self.pixels_per_m)
 
     def check_for_collision(self):
         ids_robot   = self.canvas.find_withtag('robot')
