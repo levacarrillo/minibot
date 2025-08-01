@@ -124,7 +124,7 @@ class Service():
 
             lasers_list.append(self.format_to_line(robot_state['position'], laser_value_point))
             laser_value_vec = self.get_line_segment(robot_state['position'], laser_value_point)
-            laser_value = self.vec_to_m(laser_value_vec, canvas_size)
+            laser_value = self.vec_to_m(laser_value_vec, canvas_size) + 0.0015
             lasers_values.append(laser_value)
         lidar_values = self.format_lidar_data(
             params['origin_angle'],
@@ -211,7 +211,7 @@ class Service():
     def polar_to_cartesian_point(self, radius, angle):
         x = radius * math.cos(-angle)
         y = radius * math.sin(-angle)
-        return { 'x': int(x), 'y': int(y) }
+        return { 'x': x, 'y': y }
     
 
     def degrees_to_radians(self, degrees):

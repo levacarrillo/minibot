@@ -151,6 +151,7 @@ std::optional<Sensors> MotionPlanner::get_sensors_data() {
                                                         == rclcpp::FutureReturnCode::SUCCESS) {
     auto response = laser_result.get();
     this->sensors_data.laser_readings = response->scan;
+    this->set_parameter(rclcpp::Parameter("laser_threshold", response->max_value));
     this->sensors_data.obstacle_direction = get_obstacle_direction(this->sensors_data);
   } else {
     RCLCPP_ERROR(this->get_logger(), "FAILED TO CALL SERVICE /get_scan");
