@@ -256,6 +256,9 @@ class AppContext:
                 fill = self.color['obstacle_inner'],
                 width = 1, tag = 'map')
 
+    def get_square_coords(self, center, radius):
+        return self.service.get_square_coords(center, radius)
+
     def get_circles_coords(self, center, radius):
         body_coords   = self.service.get_circle_coords(center, radius)
         body = self.service.format_figure_to_plot(body_coords, self.color['robot'])
@@ -379,7 +382,7 @@ class AppContext:
             self.pixels_per_m)
 
     def check_for_collision(self):
-        ids_robot   = self.canvas.find_withtag('robot')
+        ids_robot   = self.canvas.find_withtag('collision_body')
         ids_map = self.canvas.find_withtag('map')
 
         for id_robot in ids_robot:

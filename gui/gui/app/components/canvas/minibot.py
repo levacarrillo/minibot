@@ -29,6 +29,10 @@ class Robot:
         for part in polygon_parts:
             self.context.canvas.create_polygon(part['coords'], outline = part['color'],
                                             fill = part['color'], width = 1, tag = 'robot')
+        
+        collision_body = self.context.get_square_coords(self.position, self.radius)
+        self.context.canvas.create_rectangle(collision_body, outline = '', width = 1,
+                                                        tags = ('robot', 'collision_body'))
 
     def remap_position(self):
         self.plot(self.context.remap_position(self.position))

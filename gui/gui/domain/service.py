@@ -309,6 +309,12 @@ class Service():
                 center['x'] + radius,
                 center['y'] + radius]
 
+    def get_square_coords(self, center, radius):
+        return [center['x'] - radius / math.sqrt(2),
+                center['y'] - radius / math.sqrt(2),
+                center['x'] + radius / math.sqrt(2),
+                center['y'] + radius / math.sqrt(2)]
+
     def get_grid_line(self, canvas_axis_size, canvas_axis_scale, line_per_meters):
         return canvas_axis_size / (line_per_meters * canvas_axis_scale)
     
