@@ -9,22 +9,26 @@ endif()
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(geometry_msgs REQUIRED)
+find_package(std_msgs REQUIRED)
+find_package(nav_msgs REQUIRED)
 find_package(tf2 REQUIRED)
 find_package(tf2_ros REQUIRED)
-find_package(nav_msgs REQUIRED)
+find_package(interfaces REQUIRED)
 
-add_executable(mobile_base_simul src/mobile_base_simul.cpp)
-ament_target_dependencies(mobile_base_simul rclcpp tf2 tf2_ros geometry_msgs nav_msgs)
 
-install(TARGETS
-  mobile_base_simul
-  DESTINATION lib/${PROJECT_NAME}
-)
+# uncomment the following section in order to fill in
+# further dependencies manually.
+# find_package(<dependency> REQUIRED)
 
-install(
-  DIRECTORY launch
-  DESTINATION share/${PROJECT_NAME}/
-)
+add_executable(mobile_base src/mobile_base.cpp)
+ament_target_dependencies(mobile_base rclcpp interfaces tf2 tf2_ros std_msgs geometry_msgs nav_msgs)
+
+target_include_directories(mobile_base PUBLIC
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+  $<INSTALL_INTERFACE:include/${PROJECT_NAME}>)
+target_compile_features(mobile_base PUBLIC c_std_99 cxx_std_17)  # Require C99 and C++17
+
+install(TARGETS mobile_base DESTINATION lib/${PROJECT_NAME})
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
