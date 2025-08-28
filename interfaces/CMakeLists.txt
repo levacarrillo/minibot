@@ -17,6 +17,7 @@ rosidl_generate_interfaces(${PROJECT_NAME}
   "srv/SetParams.srv"
   "srv/GetVelParams.srv"
   "srv/SetVelParams.srv"
+  "srv/OdomSetPoint.srv"
   "action/GoToPose.action"
   DEPENDENCIES
 )
