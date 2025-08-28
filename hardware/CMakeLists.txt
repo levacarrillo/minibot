@@ -7,65 +7,21 @@ endif()
 
 # find dependencies
 find_package(ament_cmake REQUIRED)
-find_package(robot_state_publisher REQUIRED)
-find_package(xacro REQUIRED)
-find_package(rviz2 REQUIRED)
-find_package(sensor_msgs REQUIRED)
-find_package(interfaces REQUIRED)
-find_package(tf2 REQUIRED)
-find_package(tf2_ros REQUIRED)
-find_package(nav_msgs REQUIRED)
-find_package(geometry_msgs REQUIRED)
-find_package(random_numbers REQUIRED)
-find_package(visualization_msgs REQUIRED)
+find_package(rclcpp REQUIRED)
 
-add_executable(lidar_simulator src/lidar_simulator.cpp)
-ament_target_dependencies(lidar_simulator rclcpp sensor_msgs interfaces tf2 tf2_ros geometry_msgs random_numbers nav_msgs)
-
-add_executable(light_sensors_simulator src/light_sensors_simulator.cpp)
-ament_target_dependencies(light_sensors_simulator rclcpp interfaces visualization_msgs tf2_ros geometry_msgs)
+# uncomment the following section in order to fill in
+# further dependencies manually.
+# find_package(<dependency> REQUIRED)
 
 add_executable(robot_introspection src/robot_introspection.cpp)
-ament_target_dependencies(robot_introspection rclcpp interfaces)
+ament_target_dependencies(robot_introspection rclcpp)
+target_include_directories(robot_introspection PUBLIC
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+  $<INSTALL_INTERFACE:include/${PROJECT_NAME}>)
+target_compile_features(robot_introspection PUBLIC c_std_99 cxx_std_17)  # Require C99 and C++17
 
-add_executable(spotlight_marker src/spotlight_marker.cpp)
-ament_target_dependencies(spotlight_marker rclcpp visualization_msgs geometry_msgs tf2_ros)
-
-add_executable(static_tf_map_to_odom src/static_tf_map_to_odom.cpp)
-ament_target_dependencies(static_tf_map_to_odom rclcpp geometry_msgs tf2 tf2_ros)
-
-install(TARGETS
-  lidar_simulator
-  light_sensors_simulator
-  robot_introspection
-  spotlight_marker
-  static_tf_map_to_odom
+install(TARGETS robot_introspection
   DESTINATION lib/${PROJECT_NAME}
-)
-
-install(
-  DIRECTORY launch
-  DESTINATION share/${PROJECT_NAME}/
-)
-
-install(
-  DIRECTORY config
-  DESTINATION share/${PROJECT_NAME}/
-)
-
-install(
-  DIRECTORY urdf
-  DESTINATION share/${PROJECT_NAME}/
-)
-
-install(
-  DIRECTORY maps
-  DESTINATION share/${PROJECT_NAME}/
-)
-
-install(
-  DIRECTORY rviz
-  DESTINATION share/${PROJECT_NAME}/
 )
 
 if(BUILD_TESTING)
