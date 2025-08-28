@@ -1,12 +1,19 @@
 #include "rclcpp/rclcpp.hpp"
+#include "chrono"
 #include "rclcpp_action/rclcpp_action.hpp"
 #include "interfaces/srv/get_vel_params.hpp"
 #include "interfaces/srv/set_vel_params.hpp"
+#include "interfaces/srv/odom_set_point.hpp"
 #include "interfaces/action/go_to_pose.hpp"
+#include "nav_msgs/msg/odometry.hpp"
 #include "geometry_msgs/msg/twist.hpp"
+#include "tf2/LinearMath/Quaternion.h"
+#include "tf2/LinearMath/Matrix3x3.h"
 
 
+using namespace std::chrono_literals;
 using namespace std::placeholders;
+using OdomSetPoint = interfaces::srv::OdomSetPoint;
 using GoToPose = interfaces::action::GoToPose;
 using GetVelParams = interfaces::srv::GetVelParams;
 using SetVelParams = interfaces::srv::SetVelParams;
@@ -20,6 +27,12 @@ public:
         this->declare_parameter("linear_velocity", this->linear_velocity);
         this->declare_parameter("angular_velocity", this->angular_velocity);
         cmd_vel_pub_ = this->create_publisher<geometry_msgs::msg::Twist>("/cmd_vel", 10);
+
+	odom_sub_= this->create_subscription<nav_msgs::msg::Odometry>(
+	    "odom", 10, std::bind(&PoseCommander::odomCallback, this, _1));
+
+	set_point_= this->create_client<interfaces::srv::OdomSetPoint>("odom_set_point");
+
         set_vel_service = this->create_service<SetVelParams>(
             "set_vel_params",
             std::bind(&PoseCommander::handler_set_velocity, this, _1, _2)
@@ -40,11 +53,28 @@ public:
 private:
     float linear_velocity;
     float angular_velocity;
+    double curr_distance;
+    double curr_angle;
     rclcpp_action::Server<GoToPose>::SharedPtr action_server_;
     rclcpp::Service<GetVelParams>::SharedPtr get_vel_service;
     rclcpp::Service<SetVelParams>::SharedPtr set_vel_service;
+    rclcpp::Client<OdomSetPoint>::SharedPtr set_point_;
     rclcpp::Publisher<geometry_msgs::msg::Twist>::SharedPtr cmd_vel_pub_;
-
+    rclcpp::Subscription<nav_msgs::msg::Odometry>::SharedPtr odom_sub_;
+    
+    void odomCallback(const nav_msgs::msg::Odometry::SharedPtr msg) {
+        curr_distance = msg->pose.pose.position.x;
+        tf2::Quaternion q(
+	    msg->pose.pose.orientation.x,
+ 	    msg->pose.pose.orientation.y,
+	    msg->pose.pose.orientation.z,
+ 	    msg->pose.pose.orientation.w
+	);	
+	tf2::Matrix3x3 m(q);
+	double roll, pitch, yaw;
+	m.getRPY(roll, pitch, yaw);
+	curr_angle = yaw;
+    } 
     
     void handler_get_velocity(const std::shared_ptr<GetVelParams::Request> /*request*/,
         std::shared_ptr<GetVelParams::Response> response)
@@ -94,14 +124,13 @@ private:
 
         feedback->feedback = "Twisting...";
         goal_handle->publish_feedback(feedback);
+
         cmd.angular.z = (goal->angle > 0 ? this->angular_velocity : - this->angular_velocity);
-        cmd_vel_pub_->publish(cmd);
 
-        double time_twist = std::abs(goal->angle) / 0.5;
-        rclcpp::Time start_twist = this->now();
-        rclcpp::Duration duration_twist = rclcpp::Duration::from_seconds(time_twist);
+	while (abs(curr_angle) < abs(goal->angle)) {
+	    RCLCPP_INFO(this->get_logger(), "CURR DISP->%f\tCURR ANGLE->%f", curr_distance, curr_angle); 
+            cmd_vel_pub_->publish(cmd);
 
-        while (this->now() - start_twist < duration_twist) {
             if (goal_handle->is_canceling()) {
                 RCLCPP_INFO(this->get_logger(), "CANCELING MOVEMENT...");
                 cmd.angular.z = 0.0;
@@ -110,21 +139,17 @@ private:
                 goal_handle->canceled(result);
                 return;
             }
-            rclcpp::sleep_for(std::chrono::milliseconds(100));
-        }
-
+            rclcpp::sleep_for(std::chrono::milliseconds(10));
+	}
 
         feedback->feedback = "Moving...";
         goal_handle->publish_feedback(feedback);
         cmd.angular.z = 0.0;
         cmd.linear.x = (goal->distance > 0 ? this->linear_velocity : - this->linear_velocity);
-        cmd_vel_pub_->publish(cmd);
 
-        double time_move = std::abs(goal->distance) / 0.2;
-        rclcpp::Time start_move = this->now();
-        rclcpp::Duration duration_move = rclcpp::Duration::from_seconds(time_move);
+        while (abs(curr_distance) < abs(goal->distance)) {
+            cmd_vel_pub_->publish(cmd);
 
-        while (this->now() - start_move < duration_move) {
             if (goal_handle->is_canceling()) {
                 cmd.linear.x = 0.0;
                 cmd_vel_pub_->publish(cmd);
@@ -134,11 +159,25 @@ private:
             }
             rclcpp::sleep_for(std::chrono::milliseconds(100));
         }
-
         
         cmd.linear.x  = 0.0;
         cmd.angular.z = 0.0;
         cmd_vel_pub_->publish(cmd);
+
+	auto request = std::make_shared<interfaces::srv::OdomSetPoint::Request>();
+	request->robot_x = 0.0;
+	request->robot_y = 0.0;
+	request->robot_w = 0.0;
+
+	while(!set_point_->wait_for_service(1s)) {
+	}
+	using ResponseFuture = rclcpp::Client<interfaces::srv::OdomSetPoint>::SharedFuture;
+	auto response_callback = [this](ResponseFuture future) {
+	  auto res = future.get();
+	  RCLCPP_INFO(this->get_logger(), "RES-> %d", res.get()->done);
+	};
+
+	set_point_->async_send_request(request, response_callback);
 
         result->success = true;
         goal_handle->succeed(result);

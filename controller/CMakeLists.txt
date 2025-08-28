@@ -10,6 +10,9 @@ find_package(geometry_msgs REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(interfaces REQUIRED)
 find_package(rclcpp_action REQUIRED)
+find_package(nav_msgs REQUIRED)
+find_package(tf2 REQUIRED)
+
 
 add_executable(line_follower src/line_follower.cpp)
 ament_target_dependencies(line_follower rclcpp geometry_msgs)
@@ -18,7 +21,7 @@ add_executable(move_in_circles src/move_in_circles.cpp)
 ament_target_dependencies(move_in_circles rclcpp geometry_msgs)
 
 add_executable(pose_commander src/pose_commander.cpp)
-ament_target_dependencies(pose_commander rclcpp geometry_msgs interfaces rclcpp_action)
+ament_target_dependencies(pose_commander rclcpp tf2 nav_msgs geometry_msgs interfaces rclcpp_action)
 
 
 install(TARGETS
