@@ -8,22 +8,27 @@ endif()
 # find dependencies
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
+find_package(std_msgs REQUIRED)
+find_package(interfaces REQUIRED)
 
 # uncomment the following section in order to fill in
 # further dependencies manually.
 # find_package(<dependency> REQUIRED)
 
 add_executable(robot_introspection src/robot_introspection.cpp)
+add_executable(light_sensors src/light_sensors.cpp)
+
 ament_target_dependencies(robot_introspection rclcpp)
+ament_target_dependencies(light_sensors rclcpp std_msgs interfaces)
+
 target_include_directories(robot_introspection PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include/${PROJECT_NAME}>)
 target_compile_features(robot_introspection PUBLIC c_std_99 cxx_std_17)  # Require C99 and C++17
 
-install(TARGETS robot_introspection
+install(TARGETS robot_introspection light_sensors
   DESTINATION lib/${PROJECT_NAME}
 )
-
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
   # the following line skips the linter which checks for copyrights
