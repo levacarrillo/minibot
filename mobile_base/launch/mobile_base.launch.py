@@ -30,8 +30,8 @@ def generate_launch_description():
         ),
         Node(
             package='mobile_base',
-            executable='mobile_base_simul',
-            name='mobile_base_simul',
+            executable='mobile_base',
+            name='mobile_base',
             output='screen',
             condition=IfCondition(use_sim)
         ),
