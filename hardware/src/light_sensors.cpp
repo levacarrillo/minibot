@@ -1,14 +1,12 @@
 #include "rclcpp/rclcpp.hpp"
 #include "std_msgs/msg/int32_multi_array.hpp"
 #include "interfaces/srv/get_light_readings.hpp"
-#include <memory>
-#include <array>
 
 
 class LightSensors : public rclcpp::Node {
 public:
     LightSensors() : Node("light_sensors") {
-
+	RCLCPP_INFO(this->get_logger(), "INITIALIZING light_sensors node by Luis Gonzalez...");
         light_sensors_sub_ = this->create_subscription<std_msgs::msg::Int32MultiArray>("light_sensors", 10, std::bind(&LightSensors::light_callback, this, std::placeholders::_1));
         service_ = this->create_service<interfaces::srv::GetLightReadings>(
             "/get_light_readings",
@@ -18,12 +16,10 @@ public:
     }
 
 private:
-    void light_callback(const std_msgs::msg::Int32MultiArray::SharedPtr msg) const {
-	std::cout << "[";
-	for (int i=0; i<8; ++i) {
-            std::cout << msg->data[i] <<", ";
+    void light_callback(const std_msgs::msg::Int32MultiArray::SharedPtr msg) {
+	for (size_t i = 0; i < readings_.size() && i < msg->data.size(); ++i) {
+	    readings_[i] = static_cast<float>(msg->data[i]);
 	}
-	std::cout << " ]" << std::endl;
     }
 
     void handle_request(

@@ -9,6 +9,7 @@ endif()
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(std_msgs REQUIRED)
+find_package(sensor_msgs REQUIRED)
 find_package(interfaces REQUIRED)
 
 # uncomment the following section in order to fill in
@@ -17,16 +18,18 @@ find_package(interfaces REQUIRED)
 
 add_executable(robot_introspection src/robot_introspection.cpp)
 add_executable(light_sensors src/light_sensors.cpp)
+add_executable(lidar_sensor  src/lidar_sensor.cpp)
 
 ament_target_dependencies(robot_introspection rclcpp)
 ament_target_dependencies(light_sensors rclcpp std_msgs interfaces)
+ament_target_dependencies(lidar_sensor  rclcpp std_msgs interfaces sensor_msgs)
 
 target_include_directories(robot_introspection PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include/${PROJECT_NAME}>)
 target_compile_features(robot_introspection PUBLIC c_std_99 cxx_std_17)  # Require C99 and C++17
 
-install(TARGETS robot_introspection light_sensors
+install(TARGETS robot_introspection light_sensors lidar_sensor
   DESTINATION lib/${PROJECT_NAME}
 )
 if(BUILD_TESTING)
