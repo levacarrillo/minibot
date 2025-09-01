@@ -20,7 +20,7 @@ add_executable(robot_introspection src/robot_introspection.cpp)
 add_executable(light_sensors src/light_sensors.cpp)
 add_executable(lidar_sensor  src/lidar_sensor.cpp)
 
-ament_target_dependencies(robot_introspection rclcpp)
+ament_target_dependencies(robot_introspection rclcpp std_msgs interfaces)
 ament_target_dependencies(light_sensors rclcpp std_msgs interfaces)
 ament_target_dependencies(lidar_sensor  rclcpp std_msgs interfaces sensor_msgs)
 

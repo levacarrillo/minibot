@@ -57,6 +57,9 @@ class LidarSensor: public rclcpp::Node {
             size_t num_readings = static_cast<size_t>((msg.angle_max - msg.angle_min) / msg.angle_increment);
             msg.ranges.resize(num_readings);
             laser_scan.clear();
+	    for(size_t i=0; i < 3; ++i) {
+	        laser_scan.push_back(0.1);
+	    } 
 
             publisher_->publish(msg);
         }
