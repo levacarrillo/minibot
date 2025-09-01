@@ -1,4 +1,3 @@
-#include "chrono"
 #include "rclcpp/rclcpp.hpp"
 #include "tf2/LinearMath/Quaternion.h"
 #include "tf2_ros/transform_broadcaster.h"
@@ -18,13 +17,14 @@ using namespace std::chrono;
 using OdomSetPoint = interfaces::srv::OdomSetPoint;
 
 class MobileBase : public rclcpp::Node {
+
 public:
   MobileBase() : Node("mobile_base") {
-    std::cout << "Initializing mobile_base node by Luis Gonzalez" << std::endl;     
+    std::cout << "INITIALIZING mobile_base NODE BY Luis Gonzalez" << std::endl;     
     
     odom_pub_= this->create_publisher<nav_msgs::msg::Odometry>("odom", 10);
     tf_broadcaster_= std::make_shared<tf2_ros::TransformBroadcaster>(this);
-    publisher_ = this->create_publisher<std_msgs::msg::Float32MultiArray>("motors_speeds", 10);
+    motors_pub_= this->create_publisher<std_msgs::msg::Float32MultiArray>("motors_speeds", 10);
         
     odom_service_= this->create_service<OdomSetPoint>(
 		    "odom_set_point",
@@ -38,12 +38,25 @@ public:
 		    "/cmd_vel",
 		    10,
 		    std::bind(&MobileBase::cmdVelCallback, this, std::placeholders::_1));
-    timer_ = this->create_wall_timer(
-		    std::chrono::milliseconds(10),
-		    std::bind(&MobileBase::updatePosition, this));
   }	
 
 private:
+  bool once_flag = true;
+  std::shared_ptr<tf2_ros::TransformBroadcaster> tf_broadcaster_;
+
+  rclcpp::Service<interfaces::srv::OdomSetPoint>::SharedPtr odom_service_;
+
+  rclcpp::Subscription<geometry_msgs::msg::Twist>::SharedPtr cmd_vel_sub_;
+  rclcpp::Subscription<std_msgs::msg::Int32MultiArray>::SharedPtr encoders_sub_;
+  
+  rclcpp::Publisher<nav_msgs::msg::Odometry>::SharedPtr odom_pub_;
+  rclcpp::Publisher<std_msgs::msg::Float32MultiArray>::SharedPtr motors_pub_;
+
+  long last_encoder_left;
+  long last_encoder_right;
+  double left_distance = 0, right_distance = 0;
+  double robot_x = 0.0, robot_y = 0.0, robot_t = 0.0;
+
   void SetPoint(const std::shared_ptr<OdomSetPoint::Request>,
 		      std::shared_ptr<OdomSetPoint::Response> response)
   {
@@ -74,10 +87,11 @@ private:
     robot_t = normalizeAngle(delta_theta + robot_t);
     robot_x += dist_x * cos(robot_t);
     robot_y += dist_x * sin(robot_t);
-    RCLCPP_INFO(this->get_logger(), "ROBOT POSITION: X->%f, Y->%f, ANGLE->%f", robot_x, robot_y, robot_t);
+    // RCLCPP_INFO(this->get_logger(), "ROBOT POSITION: X->%f, Y->%f, ANGLE->%f", robot_x, robot_y, robot_t);
 
     last_encoder_left  = msg->data[0];
     last_encoder_right = msg->data[1];
+    updatePosition();
   }
 
   void cmdVelCallback(const geometry_msgs::msg::Twist::SharedPtr msg) {
@@ -90,7 +104,7 @@ private:
     message.data[0] = left_speed;
     message.data[1] = right_speed;
     // rclcpp_info(this->get_logger(), "publishing floats->[%f, %f]", left_speed, right_speed);
-    publisher_->publish(message);
+    motors_pub_->publish(message);
   }
 
   double normalizeAngle(double angle) {
@@ -143,23 +157,6 @@ private:
 
     tf_broadcaster_->sendTransform(transform);
   }
-
-  bool once_flag = true;
-  std::shared_ptr<tf2_ros::TransformBroadcaster> tf_broadcaster_;
-
-  rclcpp::Service<interfaces::srv::OdomSetPoint>::SharedPtr odom_service_;
-
-  rclcpp::Subscription<geometry_msgs::msg::Twist>::SharedPtr cmd_vel_sub_;
-  rclcpp::Subscription<std_msgs::msg::Int32MultiArray>::SharedPtr encoders_sub_;
-  
-  rclcpp::Publisher<nav_msgs::msg::Odometry>::SharedPtr odom_pub_;
-  rclcpp::Publisher<std_msgs::msg::Float32MultiArray>::SharedPtr publisher_;
-  rclcpp::TimerBase::SharedPtr timer_;
-
-  long last_encoder_left;
-  long last_encoder_right;
-  double left_distance = 0, right_distance = 0;
-  double robot_x = 0.0, robot_y = 0.0, robot_t = 0.0;
 };
 
 int main(int argc, char ** argv) {

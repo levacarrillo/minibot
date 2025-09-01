@@ -128,7 +128,7 @@ private:
         cmd.angular.z = (goal->angle > 0 ? this->angular_velocity : - this->angular_velocity);
 
 	while (abs(curr_angle) < abs(goal->angle)) {
-	    RCLCPP_INFO(this->get_logger(), "CURR DISP->%f\tCURR ANGLE->%f", curr_distance, curr_angle); 
+	    // RCLCPP_INFO(this->get_logger(), "CURR DISP->%f\tCURR ANGLE->%f", curr_distance, curr_angle); 
             cmd_vel_pub_->publish(cmd);
 
             if (goal_handle->is_canceling()) {
