@@ -1,7 +1,7 @@
 import os
 from launch_ros.actions import Node
 from launch import LaunchDescription
-from launch.actions import DeclareLaunchArgument 
+from launch.actions import DeclareLaunchArgument, ExecuteProcess
 from launch.substitutions import LaunchConfiguration
 from launch.conditions import IfCondition #, UnlessCondition
 from ament_index_python.packages import get_package_share_directory
@@ -34,4 +34,9 @@ def generate_launch_description():
             output='screen',
             parameters=[params_path],
         ),
+        ExecuteProcess(
+            cmd=['ros2', 'run', 'micro_ros_agent', 'micro_ros_agent', 'serial', '--dev', '/dev/ttyACM0'],
+            output='screen'
+        ),
+
     ])
