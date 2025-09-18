@@ -10,6 +10,18 @@
 !config/
 !config/*.yaml
 
+!firmware/
+!firmware/esp32s3_micro_ros/
+!firmware/esp32s3_micro_ros/include/
+!firmware/esp32s3_micro_ros/include/README
+!firmware/esp32s3_micro_ros/lib/
+!firmware/esp32s3_micro_ros/lib/README
+!firmware/esp32s3_micro_ros/platformio.ini
+!firmware/esp32s3_micro_ros/src/
+!firmware/esp32s3_micro_ros/src/*.cpp
+!firmware/esp32s3_micro_ros/test/
+!firmware/esp32s3_micro_ros/test/README
+
 !include/
 !include/hardware/
 
