@@ -10,17 +10,6 @@
 !config/
 !config/*.yaml
 
-!firmware/
-!firmware/include/
-!firmware/include/README
-!firmware/lib
-!firmware/lib/README
-!firmware/*.ini
-!firmware/src/
-!firmware/src/*.cpp
-!firmware/test/
-!firmware/test/README
-
 !include/
 !include/hardware/
 
