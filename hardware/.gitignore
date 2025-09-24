@@ -11,30 +11,8 @@
 !config/*.yaml
 
 !firmware/
-
 !firmware/esp32_relays/
-!firmware/esp32_relays/include/
-!firmware/esp32_relays/include/README
-!firmware/esp32_relays/lib/
-!firmware/esp32_relays/lib/README
-!firmware/esp32_relays/platformio.ini
-!firmware/esp32_relays/src/
-!firmware/esp32_relays/src/*.cpp
-!firmware/esp32_relays/test/
-!firmware/esp32_relays/test/README
-
-
 !firmware/esp32s3_minibot/
-!firmware/esp32s3_minibot/include/
-!firmware/esp32s3_minibot/include/README
-!firmware/esp32s3_minibot/lib/
-!firmware/esp32s3_minibot/lib/README
-!firmware/esp32s3_minibot/platformio.ini
-!firmware/esp32s3_minibot/src/
-!firmware/esp32s3_minibot/src/*.cpp
-!firmware/esp32s3_minibot/test/
-!firmware/esp32s3_minibot/test/README
-
 
 !include/
 !include/hardware/
