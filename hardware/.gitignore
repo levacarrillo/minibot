@@ -11,8 +11,16 @@
 !config/*.yaml
 
 !firmware/
+
 !firmware/esp32_relays/
+
 !firmware/esp32s3_minibot/
+!firmware/esp32s3_minibot/include/
+!firmware/esp32s3_minibot/lib/
+!firmware/esp32s3_minibot/src/
+!firmware/esp32s3_minibot/src/*.cpp
+!firmware/esp32s3_minibot/src/*.h
+!firmware/esp32s3_minibot/test/
 
 !include/
 !include/hardware/
