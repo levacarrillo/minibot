@@ -12,6 +12,9 @@
 #define LEFT_LINE_SENSOR 37
 #define CENTER_LINE_SENSOR 42
 
+#define LEFT 0
+#define RIGHT 1
+
 // --- ENCODERS PINS ---
 #define RH_ENCODER_A 20
 #define RH_ENCODER_B 19
