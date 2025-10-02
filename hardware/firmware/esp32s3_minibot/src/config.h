@@ -3,16 +3,16 @@
 
 #include <Arduino.h>
 
-// --- Comunicación ---
+// --- COMUNICATION ---
 #define BAUDRATE 3000000
 
-// --- Pines sensores ---
+// --- DIGITAL SENSOR PINS ---
 #define STOP_BUTTON 39
 #define RIGHT_LINE_SENSOR 2
 #define LEFT_LINE_SENSOR 37
 #define CENTER_LINE_SENSOR 42
 
-// --- Pines encoders ---
+// --- ENCODERS PINS ---
 #define RH_ENCODER_A 20
 #define RH_ENCODER_B 19
 #define LH_ENCODER_A 35
@@ -31,7 +31,7 @@
 #define MOTOR_RIGHT_INI3 38
 #define MOTOR_RIGHT_INI4 21
 
-// --- Control ---
+// --- CONTROL ---
 const unsigned int pulses_per_turn = 600;
 const int max_rpm = 350;
 const float wheel_diameter = 43.38 / 1000.0;
