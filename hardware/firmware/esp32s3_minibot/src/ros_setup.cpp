@@ -7,7 +7,8 @@
 #include <micro_ros_platformio.h>
 #include <sensors.h>
 #include <encoders.h>
-#include <motor_control.h>
+#include <motors_control.h>
+#include <config.h>
 
 
 #if !defined(MICRO_ROS_TRANSPORT_ARDUINO_SERIAL)
@@ -41,12 +42,12 @@ void timer_callback(rcl_timer_t * timer, int64_t last_call_time) {
         read_line_sensors();
 
         sensors_msg.data.data = sensors_data;
-        sensors_msg.data.data[19] = encoder_count[0];
-        sensors_msg.data.data[20] = encoder_count[1];
-        sensors_msg.data.data[21] = goal_rpm[0];
-        sensors_msg.data.data[22] = goal_rpm[1];
-        sensors_msg.data.data[23] = curr_rpm[0];
-        sensors_msg.data.data[24] = curr_rpm[1];
+        sensors_msg.data.data[19] = encoder_count[LEFT];
+        sensors_msg.data.data[20] = encoder_count[RIGHT];
+        sensors_msg.data.data[21] = goal_rpm[LEFT];
+        sensors_msg.data.data[22] = goal_rpm[RIGHT];
+        sensors_msg.data.data[23] = curr_rpm[LEFT];
+        sensors_msg.data.data[24] = curr_rpm[RIGHT];
 
         sensors_msg.data.size = 25;
         sensors_msg.data.capacity = 25;
@@ -56,9 +57,14 @@ void timer_callback(rcl_timer_t * timer, int64_t last_call_time) {
 
 void subscription_callback(const void * msgin) {
     const std_msgs__msg__Float32MultiArray * msg = (const std_msgs__msg__Float32MultiArray *) msgin;
+    set_speeds_reference(msg->data.data[LEFT], msg->data.data[RIGHT]);
 }
 
 void setup_ros() {
+    float vels_buffer[2];
+    vels_msg.data.data = vels_buffer;
+    vels_msg.data.size = 2;
+    vels_msg.data.capacity = 2; 
     set_microros_serial_transports(Serial);
     delay(100);
     allocator = rcl_get_default_allocator();
