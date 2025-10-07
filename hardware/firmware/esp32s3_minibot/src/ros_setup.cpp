@@ -5,6 +5,10 @@
 #include <std_msgs/msg/int32_multi_array.h>
 #include <std_msgs/msg/float32_multi_array.h>
 #include <micro_ros_platformio.h>
+#include <sensors.h>
+#include <encoders.h>
+#include <motor_control.h>
+
 
 #if !defined(MICRO_ROS_TRANSPORT_ARDUINO_SERIAL)
 #error Example for arduino framework with serial transport
@@ -16,7 +20,6 @@ rcl_publisher_t sensors_pub;
 std_msgs__msg__Int32MultiArray sensors_msg;
 std_msgs__msg__Float32MultiArray vels_msg;
 
-int32_t sensors_data[8];
 
 rcl_node_t node;
 rcl_timer_t timer;
@@ -32,10 +35,21 @@ void error_loop() { while(1) { delay(100); }}
 void timer_callback(rcl_timer_t * timer, int64_t last_call_time) {
     RCLC_UNUSED(last_call_time);
 
-    if (timer != NULL) {
+    if (timer != NULL) {        
+        read_light_sensors();
+        read_sharp_sensors();
+        read_line_sensors();
+
         sensors_msg.data.data = sensors_data;
-        sensors_msg.data.size = 8;
-        sensors_msg.data.capacity = 8;
+        sensors_msg.data.data[19] = encoder_count[0];
+        sensors_msg.data.data[20] = encoder_count[1];
+        sensors_msg.data.data[21] = goal_rpm[0];
+        sensors_msg.data.data[22] = goal_rpm[1];
+        sensors_msg.data.data[23] = curr_rpm[0];
+        sensors_msg.data.data[24] = curr_rpm[1];
+
+        sensors_msg.data.size = 25;
+        sensors_msg.data.capacity = 25;
         RCSOFTCHECK(rcl_publish(&sensors_pub, &sensors_msg, NULL));
     }
 }
