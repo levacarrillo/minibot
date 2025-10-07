@@ -5,6 +5,7 @@
 
 
 extern volatile long encoder_count[2];
+extern volatile long encoder_last_count[2];
 void setup_encoders();
 
 #endif

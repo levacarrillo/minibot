@@ -4,11 +4,11 @@
 #include <rclc/executor.h>
 #include <std_msgs/msg/int32_multi_array.h>
 #include <std_msgs/msg/float32_multi_array.h>
-#include <micro_ros_platformio.h>
+#include <config.h>
 #include <sensors.h>
 #include <encoders.h>
 #include <motors_control.h>
-#include <config.h>
+#include <micro_ros_platformio.h>
 
 
 #if !defined(MICRO_ROS_TRANSPORT_ARDUINO_SERIAL)
@@ -21,14 +21,13 @@ rcl_publisher_t sensors_pub;
 std_msgs__msg__Int32MultiArray sensors_msg;
 std_msgs__msg__Float32MultiArray vels_msg;
 
-
 rcl_node_t node;
 rcl_timer_t timer;
 rclc_support_t support;
 rclc_executor_t executor;
 rcl_allocator_t allocator;
 
-#define RCCHECK(fn) { rcl_ret_t temp_rc = fn; if((temp_rc != RCL_RET_OK)) {error_loop();}}
+#define RCCHECK(fn) { rcl_ret_t temp_rc = fn; if((temp_rc != RCL_RET_OK)) { error_loop(); }}
 #define RCSOFTCHECK(fn) { rcl_ret_t temp_rc = fn; if((temp_rc != RCL_RET_OK)){}}
 
 void error_loop() { while(1) { delay(100); }}
@@ -36,21 +35,19 @@ void error_loop() { while(1) { delay(100); }}
 void timer_callback(rcl_timer_t * timer, int64_t last_call_time) {
     RCLC_UNUSED(last_call_time);
 
-    if (timer != NULL) {        
-        read_light_sensors();
-        read_sharp_sensors();
-        read_line_sensors();
-
+    if (timer != NULL) {
+        read_sensors();
+        calculate_rpms();
         sensors_msg.data.data = sensors_data;
-        sensors_msg.data.data[19] = encoder_count[LEFT];
-        sensors_msg.data.data[20] = encoder_count[RIGHT];
-        sensors_msg.data.data[21] = goal_rpm[LEFT];
-        sensors_msg.data.data[22] = goal_rpm[RIGHT];
-        sensors_msg.data.data[23] = curr_rpm[LEFT];
-        sensors_msg.data.data[24] = curr_rpm[RIGHT];
+        sensors_msg.data.data[21] = encoder_count[LEFT];
+        sensors_msg.data.data[22] = encoder_count[RIGHT];
+        sensors_msg.data.data[23] = goal_rpm[LEFT];
+        sensors_msg.data.data[24] = goal_rpm[RIGHT];
+        sensors_msg.data.data[25] = curr_rpm[LEFT];
+        sensors_msg.data.data[26] = curr_rpm[RIGHT];
 
-        sensors_msg.data.size = 25;
-        sensors_msg.data.capacity = 25;
+        sensors_msg.data.size = 27;
+        sensors_msg.data.capacity = 27;
         RCSOFTCHECK(rcl_publish(&sensors_pub, &sensors_msg, NULL));
     }
 }
@@ -63,7 +60,7 @@ void subscription_callback(const void * msgin) {
 void setup_ros() {
     float vels_buffer[2];
     vels_msg.data.data = vels_buffer;
-    vels_msg.data.size = 2;
+    vels_msg.data.size = 0;
     vels_msg.data.capacity = 2; 
     set_microros_serial_transports(Serial);
     delay(100);

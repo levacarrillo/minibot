@@ -1,7 +1,8 @@
 #include "encoders.h"
 #include "config.h"
 
-volatile long encoder_count[2] = {0,0};
+volatile long encoder_count[2] = {0, 0};
+volatile long encoder_last_count[2] = {0, 0};
 
 void IRAM_ATTR left_encoder_event() {
   bool A = digitalRead(LH_ENCODER_A);
