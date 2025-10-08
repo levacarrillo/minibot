@@ -2,15 +2,16 @@
 #include "encoders.h"
 #include "config.h"
 
-float Kp[2] = {1.2, 1.2};
+float Kp[2] = {1.8, 1.8};
 float Ki[2] = {0.005, 0.005};
-float Kd[2] = {0.0, 0.0};
+float Kd[2] = {0.001, 0.001};
 
 float error_rpm[2] = {0.0, 0.0};
-float pid_output[2] = {0.0, 0.0};
-
 float integral_error[2] = {0.0, 0.0};
 float prev_error[2] = {0.0, 0.0};
+
+float pid_output[2] = {0.0, 0.0};
+
 
 int curr_rpm[2]   = {0, 0};
 int goal_rpm[2]   = {0, 0};
@@ -56,15 +57,24 @@ void calculate_rpms() {
     
     error_rpm[LEFT]  = goal_rpm[LEFT]  - curr_rpm[LEFT];
     error_rpm[RIGHT] = goal_rpm[RIGHT] - curr_rpm[RIGHT];
+
+    integral_error[LEFT]  += error_rpm[LEFT]  * elapsed_time;
+    integral_error[RIGHT] += error_rpm[RIGHT] * elapsed_time;
+
     
     previous_time = current_time;
     compute_pid();
+    prev_error[LEFT]  = error_rpm[LEFT];
+    prev_error[RIGHT] = error_rpm[RIGHT];
   }
 }
 
 void compute_pid() {
-  pid_output[LEFT]  = error_rpm[LEFT]  * Kp[LEFT];
-  pid_output[RIGHT] = error_rpm[RIGHT] * Kp[RIGHT];
+  float derivative_left  = (error_rpm[LEFT]  - prev_error[LEFT])  / sampling_time;
+  float derivative_right = (error_rpm[RIGHT] - prev_error[RIGHT]) / sampling_time;
+
+  pid_output[LEFT]  = Kp[LEFT]  * error_rpm[LEFT]  + Ki[LEFT]  * integral_error[LEFT]  + Kd[LEFT]  * derivative_left;
+  pid_output[RIGHT] = Kp[RIGHT] * error_rpm[RIGHT] + Ki[RIGHT] * integral_error[RIGHT] + Kd[RIGHT] * derivative_right;
   
   pid_to_pwm();
 }
