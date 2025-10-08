@@ -35,7 +35,7 @@
 #define MOTOR_RIGHT_INI4    21
 
 // --- CONTROL ---
-const int sampling_time = 10; // MILLISECONDS
+const int sampling_time = 100; // MILLISECONDS
 const int max_rpm = 350;
 const unsigned int pulses_per_turn = 600;
 const float wheel_diameter = 43.38 / 1000.0;

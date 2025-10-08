@@ -39,8 +39,8 @@ void timer_callback(rcl_timer_t * timer, int64_t last_call_time) {
         read_sensors();
         calculate_rpms();
         sensors_msg.data.data = sensors_data;
-        sensors_msg.data.data[21] = encoder_count[LEFT];
-        sensors_msg.data.data[22] = encoder_count[RIGHT];
+        sensors_msg.data.data[21] = encoders_count[LEFT];
+        sensors_msg.data.data[22] = encoders_count[RIGHT];
         sensors_msg.data.data[23] = goal_rpm[LEFT];
         sensors_msg.data.data[24] = goal_rpm[RIGHT];
         sensors_msg.data.data[25] = curr_rpm[LEFT];

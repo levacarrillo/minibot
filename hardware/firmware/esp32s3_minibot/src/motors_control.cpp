@@ -2,17 +2,21 @@
 #include "encoders.h"
 #include "config.h"
 
-float P[2] = {4.0, 4.0};
-float I[2] = {0.005, 0.005};
-float D[2] = {0.0, 0.0};
+float Kp[2] = {1.2, 1.2};
+float Ki[2] = {0.005, 0.005};
+float Kd[2] = {0.0, 0.0};
+
+float error_rpm[2] = {0.0, 0.0};
+float pid_output[2] = {0.0, 0.0};
 
 float integral_error[2] = {0.0, 0.0};
 float prev_error[2] = {0.0, 0.0};
-float pid_output[2] = {0.0, 0.0};
 
 int curr_rpm[2]   = {0, 0};
 int goal_rpm[2]   = {0, 0};
 float goal_speed[2] = {0.0, 0.0};
+
+int pwm[2] = {0, 0};
 
 unsigned long current_time  = 0;
 unsigned long previous_time = 0;
@@ -35,44 +39,49 @@ void set_speeds_reference(float goal_left, float goal_right) {
   goal_speed[RIGHT] = goal_right;
   goal_rpm[LEFT]  = fabs((goal_left  * 60) / (M_PI * wheel_diameter));
   goal_rpm[RIGHT] = fabs((goal_right * 60) / (M_PI * wheel_diameter));
-  // curr_rpm[LEFT]  = int(goal_left);
-  // curr_rpm[RIGHT] = int(goal_right);
 }
 
 void calculate_rpms() {
   current_time = millis();
   unsigned long elapsed_time = current_time - previous_time;
   if (elapsed_time >= sampling_time) {
-    volatile long delta_left  = fabs(encoder_count[LEFT]  - encoder_last_count[LEFT]);
-    volatile long delta_right = fabs(encoder_count[RIGHT] - encoder_last_count[RIGHT]);
+    volatile long delta_left  = fabs(encoders_count[LEFT]  - encoders_last_count[LEFT]);
+    volatile long delta_right = fabs(encoders_count[RIGHT] - encoders_last_count[RIGHT]);
 
     curr_rpm[LEFT]  = 60000 * delta_left  / (pulses_per_turn * elapsed_time);
     curr_rpm[RIGHT] = 60000 * delta_right / (pulses_per_turn * elapsed_time);
     
-    encoder_last_count[LEFT]  = encoder_count[LEFT];
-    encoder_last_count[RIGHT] = encoder_count[RIGHT];
+    encoders_last_count[LEFT]  = encoders_count[LEFT];
+    encoders_last_count[RIGHT] = encoders_count[RIGHT];
+    
+    error_rpm[LEFT]  = goal_rpm[LEFT]  - curr_rpm[LEFT];
+    error_rpm[RIGHT] = goal_rpm[RIGHT] - curr_rpm[RIGHT];
+    
     previous_time = current_time;
+    compute_pid();
   }
-
 }
 
-int pid_to_pwm(float pid_val, float max_ref) {
-  float abs_v = fabs(pid_val);
-  if (abs_v > max_ref) abs_v = max_ref;
-  return (int)((abs_v / max_ref) * 255.0);
+void compute_pid() {
+  pid_output[LEFT]  = error_rpm[LEFT]  * Kp[LEFT];
+  pid_output[RIGHT] = error_rpm[RIGHT] * Kp[RIGHT];
+  
+  pid_to_pwm();
 }
 
-void apply_pwm(int side, int pwm, float goal_speed_val) {
-  if (fabs(goal_speed_val) < 1e-6) {
-    if (side == LEFT) { ledcWrite(PWM_CHANNEL_LEFT1, 0); ledcWrite(PWM_CHANNEL_LEFT2, 0); }
-    else              { ledcWrite(PWM_CHANNEL_RIGHT1, 0); ledcWrite(PWM_CHANNEL_RIGHT2, 0); }
-  } else {
-    if (goal_speed_val < 0) {
-      if (side == LEFT) { ledcWrite(PWM_CHANNEL_LEFT1, pwm); ledcWrite(PWM_CHANNEL_LEFT2, 0); }
-      else              { ledcWrite(PWM_CHANNEL_RIGHT1, pwm); ledcWrite(PWM_CHANNEL_RIGHT2, 0); }
-    } else {
-      if (side == LEFT) { ledcWrite(PWM_CHANNEL_LEFT1, 0); ledcWrite(PWM_CHANNEL_LEFT2, pwm); }
-      else              { ledcWrite(PWM_CHANNEL_RIGHT1, 0); ledcWrite(PWM_CHANNEL_RIGHT2, pwm); }
-    }
+void pid_to_pwm() {
+  pwm[LEFT]  = constrain(map(pid_output[LEFT],  0, max_rpm, 0, 255), 0, 255);
+  pwm[RIGHT] = constrain(map(pid_output[RIGHT], 0, max_rpm, 0, 255), 0, 255);
+
+  if (fabs(goal_speed[LEFT]) < 1e-6) { ledcWrite(PWM_CHANNEL_LEFT1, 0); ledcWrite(PWM_CHANNEL_LEFT2, 0); }
+  else { 
+    if (goal_speed[LEFT] < 0) { ledcWrite(PWM_CHANNEL_LEFT1, pwm[LEFT]); ledcWrite(PWM_CHANNEL_LEFT2, 0); }
+    else { ledcWrite(PWM_CHANNEL_LEFT1, 0); ledcWrite(PWM_CHANNEL_LEFT2, pwm[LEFT]); }
   }
+
+  if (fabs(goal_speed[RIGHT]) < 1e-6) { ledcWrite(PWM_CHANNEL_RIGHT1, 0); ledcWrite(PWM_CHANNEL_RIGHT2, 0); }
+  else {
+    if (goal_speed[RIGHT] < 0) { ledcWrite(PWM_CHANNEL_RIGHT1, pwm[RIGHT]); ledcWrite(PWM_CHANNEL_RIGHT2, 0); }
+    else { ledcWrite(PWM_CHANNEL_RIGHT1, 0); ledcWrite(PWM_CHANNEL_RIGHT2, pwm[RIGHT]); }
+  }  
 }
