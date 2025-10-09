@@ -25,7 +25,7 @@ public:
     battery_supply_status = this->get_parameter("battery_supply_status").as_string();
  
     subscription_=this->create_subscription<std_msgs::msg::Int32MultiArray>(
-		    "current_state",
+		    "sensors",
 		    10,
 		    std::bind(&RobotIntrospection::state_callback, this, _1));
     publisher_= this->create_publisher<interfaces::msg::RobotStatus>("robot_status", 10);
@@ -53,7 +53,7 @@ private:
     float min_analog = 2560;
     float max_analog = 4095;
     
-    float percentage = min_perc + (msg->data[4] - min_analog) * (max_perc - min_perc) / (max_analog - min_analog);
+    float percentage = min_perc + (msg->data[19] - min_analog) * (max_perc - min_perc) / (max_analog - min_analog);
     // RCLCPP_INFO(this->get_logger(), "PERCENTAGE->%f", percentage);
     battery_voltage = int(percentage);
     battery_charge_percentage = 8.4 * percentage;

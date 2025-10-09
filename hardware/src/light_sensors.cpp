@@ -7,7 +7,7 @@ class LightSensors : public rclcpp::Node {
 public:
     LightSensors() : Node("light_sensors") {
 	RCLCPP_INFO(this->get_logger(), "INITIALIZING light_sensors node by Luis Gonzalez...");
-        light_sensors_sub_ = this->create_subscription<std_msgs::msg::Int32MultiArray>("light_sensors", 10, std::bind(&LightSensors::light_callback, this, std::placeholders::_1));
+        light_sensors_sub_ = this->create_subscription<std_msgs::msg::Int32MultiArray>("sensors", 10, std::bind(&LightSensors::light_callback, this, std::placeholders::_1));
         service_ = this->create_service<interfaces::srv::GetLightReadings>(
             "/get_light_readings",
             std::bind(&LightSensors::handle_request, this, std::placeholders::_1, std::placeholders::_2)

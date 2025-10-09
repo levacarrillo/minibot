@@ -12,7 +12,7 @@ class LidarSensor: public rclcpp::Node {
         LidarSensor() : Node("lidar_sensor") {
 	    RCLCPP_INFO(this->get_logger(), "INITIALIZING lidar_sensor node by Luis Gonzalez...");
 	    readings_sub_= this->create_subscription<std_msgs::msg::Int32MultiArray>(
-			    "sharp_sensors", 10, std::bind(&LidarSensor::sharpsCallback, this, _1));
+			    "sensors", 10, std::bind(&LidarSensor::sharpsCallback, this, _1));
             publisher_ = this->create_publisher<sensor_msgs::msg::LaserScan>("/scan", 10);
             service_ = this->create_service<interfaces::srv::GetScan>(
                 "/get_scan",

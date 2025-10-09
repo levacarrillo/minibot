@@ -31,7 +31,7 @@ public:
 		    std::bind(&MobileBase::SetPoint, this, std::placeholders::_1, std::placeholders::_2));
 
     encoders_sub_= this->create_subscription<std_msgs::msg::Int32MultiArray>(
-		    "/encoders_count",
+		    "/sensors",
 		    10,
 		    std::bind(&MobileBase::encodersCallback, this, std::placeholders::_1));
     cmd_vel_sub_ = this->create_subscription<geometry_msgs::msg::Twist>(
@@ -69,8 +69,8 @@ private:
 
   void encodersCallback(const std_msgs::msg::Int32MultiArray::SharedPtr msg) {
     if (once_flag) {
-      last_encoder_left  = msg->data[0];
-      last_encoder_right = msg->data[1];
+      last_encoder_left  = msg->data[21];
+      last_encoder_right = msg->data[22];
       left_distance  = 0;
       right_distance = 0; 
       once_flag = false; 

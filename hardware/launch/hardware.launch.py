@@ -35,7 +35,7 @@ def generate_launch_description():
             parameters=[params_path],
         ),
         ExecuteProcess(
-            cmd=['ros2', 'run', 'micro_ros_agent', 'micro_ros_agent', 'serial', '--dev', '/dev/ttyACM0'],
+            cmd=['ros2', 'run', 'micro_ros_agent', 'micro_ros_agent', 'serial', '--dev', '/dev/ttyACM0', '-b', '3000000'],
             output='screen'
         ),
 
