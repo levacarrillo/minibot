@@ -36,7 +36,7 @@ public:
 private:
   int robot_id;
   std::string robot_name;
-  int temperature;
+  float temperature;
   float battery_voltage;
   float battery_capacity;
   int battery_cells_number;
@@ -55,12 +55,12 @@ private:
     
     float percentage = min_perc + (msg->data[19] - min_analog) * (max_perc - min_perc) / (max_analog - min_analog);
     // RCLCPP_INFO(this->get_logger(), "PERCENTAGE->%f", percentage);
-    battery_voltage = int(percentage);
-    battery_charge_percentage = 8.4 * percentage;
+    battery_voltage = 8.4 * percentage;
+    battery_charge_percentage = int(percentage);
   }
 
   void timer_loop() {
-    /*
+    
     FILE* pipe = popen("vcgencmd measure_temp", "r");
     if (!pipe) {
         RCLCPP_ERROR(this->get_logger(), "ERROR EXECUTING vcgencmd");
@@ -74,7 +74,11 @@ private:
     }
     pclose(pipe);
 
-    RCLCPP_INFO(this->get_logger(), "CPU TEMPERATURE-> %s", temp_result.c_str()); //*/
+    // RCLCPP_INFO(this->get_logger(), "CPU TEMPERATURE-> %s", temp_result.c_str());
+    temp_result.erase(temp_result.length() -2, 2);
+    temp_result.erase(0, 5);
+
+    temperature = std::stof(temp_result);
 
     auto message = interfaces::msg::RobotStatus();
     message.robot_id    = robot_id;

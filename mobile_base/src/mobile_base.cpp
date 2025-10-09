@@ -24,7 +24,7 @@ public:
     
     odom_pub_= this->create_publisher<nav_msgs::msg::Odometry>("odom", 10);
     tf_broadcaster_= std::make_shared<tf2_ros::TransformBroadcaster>(this);
-    motors_pub_= this->create_publisher<std_msgs::msg::Float32MultiArray>("motors_speeds", 10);
+    motors_pub_= this->create_publisher<std_msgs::msg::Float32MultiArray>("motors_speed", 10);
         
     odom_service_= this->create_service<OdomSetPoint>(
 		    "odom_set_point",
