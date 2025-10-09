@@ -71,7 +71,7 @@ void setup_ros() {
     RCCHECK(rclc_subscription_init_default(&motors_sub, &node, ROSIDL_GET_MSG_TYPE_SUPPORT(std_msgs, msg, Float32MultiArray), "motors_speed"));
     RCCHECK(rclc_publisher_init_default(&sensors_pub, &node, ROSIDL_GET_MSG_TYPE_SUPPORT(std_msgs, msg, Int32MultiArray), "sensors"));
 
-    const unsigned int timer_timeout = 1;
+    const unsigned int timer_timeout = 5;
     RCCHECK(rclc_timer_init_default(&timer, &support, RCL_MS_TO_NS(timer_timeout), timer_callback));
     RCCHECK(rclc_executor_init(&executor, &support.context, 2, &allocator));
     RCCHECK(rclc_executor_add_timer(&executor, &timer));
@@ -79,5 +79,5 @@ void setup_ros() {
 }
 
 void loop_ros() {
-    RCSOFTCHECK(rclc_executor_spin_some(&executor, RCL_MS_TO_NS(1)));
+    RCSOFTCHECK(rclc_executor_spin_some(&executor, RCL_MS_TO_NS(10)));
 }
