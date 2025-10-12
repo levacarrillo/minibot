@@ -20,6 +20,9 @@
 !tests/infraestructure/
 !tests/infraestructure/*.py
 
+!config/
+!config/*.xml
+
 !launch/
 !launch/*.launch
 !launch/*.launch.py
