@@ -55,6 +55,7 @@ void timer_callback(rcl_timer_t * timer, int64_t last_call_time) {
 void subscription_callback(const void * msgin) {
     const std_msgs__msg__Float32MultiArray * msg = (const std_msgs__msg__Float32MultiArray *) msgin;
     set_speeds_reference(msg->data.data[LEFT], msg->data.data[RIGHT]);
+    delay(1);
 }
 
 void setup_ros() {

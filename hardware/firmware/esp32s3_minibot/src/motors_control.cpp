@@ -2,16 +2,16 @@
 #include "encoders.h"
 #include "config.h"
 
-float Kp[2] = {1.8, 1.8};
-float Ki[2] = {0.005, 0.005};
-float Kd[2] = {0.001, 0.001};
+float Kp[2] = {2.5, 2.5};
+float Ki[2] = {0.014, 0.012};
+float Kd[2] = {1.5, 3.5};
 
-float error_rpm[2] = {0.0, 0.0};
-float integral_error[2] = {0.0, 0.0};
-float prev_error[2] = {0.0, 0.0};
+double error[2] = {0.0, 0.0};
+double last_error[2] = {0.0, 0.0};
+double last_last_error[2] = {0.0, 0.0};
 
-float pid_output[2] = {0.0, 0.0};
-
+double cv[2] = {0.0, 0.0};
+double last_cv[2] = {0.0, 0.0};
 
 int curr_rpm[2]   = {0, 0};
 int goal_rpm[2]   = {0, 0};
@@ -55,33 +55,31 @@ void calculate_rpms() {
     encoders_last_count[LEFT]  = encoders_count[LEFT];
     encoders_last_count[RIGHT] = encoders_count[RIGHT];
     
-    error_rpm[LEFT]  = goal_rpm[LEFT]  - curr_rpm[LEFT];
-    error_rpm[RIGHT] = goal_rpm[RIGHT] - curr_rpm[RIGHT];
-
-    integral_error[LEFT]  += error_rpm[LEFT]  * elapsed_time;
-    integral_error[RIGHT] += error_rpm[RIGHT] * elapsed_time;
-
+    error[LEFT]  = goal_rpm[LEFT]  - curr_rpm[LEFT];
+    error[RIGHT] = goal_rpm[RIGHT] - curr_rpm[RIGHT];
     
     previous_time = current_time;
     compute_pid();
-    prev_error[LEFT]  = error_rpm[LEFT];
-    prev_error[RIGHT] = error_rpm[RIGHT];
   }
 }
 
 void compute_pid() {
-  float derivative_left  = (error_rpm[LEFT]  - prev_error[LEFT])  / sampling_time;
-  float derivative_right = (error_rpm[RIGHT] - prev_error[RIGHT]) / sampling_time;
+  cv[LEFT]  = last_cv[LEFT] + (Kp[LEFT] + (Kd[LEFT] / sampling_time)) * error[LEFT] + (-Kp[LEFT] + Ki[LEFT] * sampling_time - (2 * Kd[LEFT] / sampling_time)) * last_error[LEFT] + (Kd[LEFT] / sampling_time) * last_last_error[LEFT];
+  cv[RIGHT] = last_cv[RIGHT] + (Kp[RIGHT] + (Kd[RIGHT] / sampling_time)) * error[RIGHT] + (-Kp[RIGHT] + Ki[RIGHT] * sampling_time - (2 * Kd[RIGHT] / sampling_time)) * last_error[RIGHT] + (Kd[RIGHT] / sampling_time) * last_last_error[RIGHT];
 
-  pid_output[LEFT]  = Kp[LEFT]  * error_rpm[LEFT]  + Ki[LEFT]  * integral_error[LEFT]  + Kd[LEFT]  * derivative_left;
-  pid_output[RIGHT] = Kp[RIGHT] * error_rpm[RIGHT] + Ki[RIGHT] * integral_error[RIGHT] + Kd[RIGHT] * derivative_right;
-  
+  last_cv[LEFT]  = cv[LEFT];
+  last_cv[RIGHT] = cv[RIGHT];
+  last_last_error[LEFT]  = last_error[LEFT];
+  last_last_error[RIGHT] = last_error[RIGHT];
+  last_error[LEFT]  = error[LEFT];
+  last_error[RIGHT] = error[RIGHT];
+
   pid_to_pwm();
 }
 
 void pid_to_pwm() {
-  pwm[LEFT]  = constrain(map(pid_output[LEFT],  0, max_rpm, 0, 255), 0, 255);
-  pwm[RIGHT] = constrain(map(pid_output[RIGHT], 0, max_rpm, 0, 255), 0, 255);
+  pwm[LEFT]  = constrain(map(cv[LEFT],  0, max_rpm, 0, 255), 0, 255);
+  pwm[RIGHT] = constrain(map(cv[RIGHT], 0, max_rpm, 0, 255), 0, 255);
 
   if (fabs(goal_speed[LEFT]) < 1e-6) { ledcWrite(PWM_CHANNEL_LEFT1, 0); ledcWrite(PWM_CHANNEL_LEFT2, 0); }
   else { 
