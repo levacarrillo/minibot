@@ -6,6 +6,7 @@ if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
 endif()
 
 find_package(ament_cmake REQUIRED)
+find_package(std_msgs REQUIRED)
 find_package(geometry_msgs REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(interfaces REQUIRED)
@@ -23,11 +24,15 @@ ament_target_dependencies(move_in_circles rclcpp geometry_msgs)
 add_executable(pose_commander src/pose_commander.cpp)
 ament_target_dependencies(pose_commander rclcpp tf2 nav_msgs geometry_msgs interfaces rclcpp_action)
 
+add_executable(pose_calibration src/pose_calibration.cpp)
+ament_target_dependencies(pose_calibration rclcpp std_msgs tf2 nav_msgs geometry_msgs interfaces rclcpp_action)
+
 
 install(TARGETS
   line_follower
   move_in_circles
   pose_commander
+  pose_calibration
   DESTINATION lib/${PROJECT_NAME}
 )
 
@@ -49,3 +54,4 @@ if(BUILD_TESTING)
 endif()
 
 ament_package()
+
