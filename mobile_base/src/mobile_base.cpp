@@ -56,6 +56,7 @@ private:
   long last_encoder_right;
   double left_distance = 0, right_distance = 0;
   double robot_x = 0.0, robot_y = 0.0, robot_t = 0.0;
+  double curr_linear_vel_x = 0.0, curr_linear_vel_y = 0.0, curr_angular_vel = 0.0;
 
   void SetPoint(const std::shared_ptr<OdomSetPoint::Request>,
 		      std::shared_ptr<OdomSetPoint::Response> response)
@@ -68,16 +69,22 @@ private:
   }
 
   void encodersCallback(const std_msgs::msg::Int32MultiArray::SharedPtr msg) {
+    double left_count  = msg->data[21];
+    double right_count = msg->data[22];
+    double curr_vel_left  = msg->data[25];
+    double curr_vel_right = msg->data[26];
+  
     if (once_flag) {
-      last_encoder_left  = msg->data[21];
-      last_encoder_right = msg->data[22];
+      last_encoder_left  = left_count;
+      last_encoder_right = right_count;
       left_distance  = 0;
       right_distance = 0; 
       once_flag = false; 
     }
+ 
     // RCLCPP_INFO(this->get_logger(), "encodersCallback.msg->[%d, %d]", msg->data[0], msg->data[1]);
-    double dist_left  = (msg->data[0] - last_encoder_left)  / TICKS_PER_METER;
-    double dist_right = (msg->data[1] - last_encoder_right) / TICKS_PER_METER;
+    double dist_left  = (left_count  - last_encoder_left)  / TICKS_PER_METER;
+    double dist_right = (right_count - last_encoder_right) / TICKS_PER_METER;
     
     double delta_theta = (dist_right - dist_left) / BASE_WIDTH;
     left_distance  += dist_left;
@@ -89,8 +96,14 @@ private:
     robot_y += dist_x * sin(robot_t);
     // RCLCPP_INFO(this->get_logger(), "ROBOT POSITION: X->%f, Y->%f, ANGLE->%f", robot_x, robot_y, robot_t);
 
-    last_encoder_left  = msg->data[0];
-    last_encoder_right = msg->data[1];
+    last_encoder_left  = left_count;
+    last_encoder_right = right_count;
+
+    curr_linear_vel_x = cos(robot_t) * (curr_vel_left + curr_vel_right) / 2.0;
+    curr_linear_vel_y = sin(robot_t) * (curr_vel_left + curr_vel_right) / 2.0;
+    curr_angular_vel = (curr_vel_right - curr_vel_left) / BASE_WIDTH;
+    // RCLCPP_INFO(this->get_logger(), "CURRENT VEL: Vx->%f, Vy->%f, ANGULAR->%f", curr_linear_vel_x, curr_linear_vel_y, curr_angular_vel);
+
     updatePosition();
   }
 
@@ -134,8 +147,9 @@ private:
     odom_msg.pose.pose.orientation.z = q.z();
     odom_msg.pose.pose.orientation.w = q.w();
 
-    odom_msg.twist.twist.linear.x = 0.0;
-    odom_msg.twist.twist.angular.z = 0.0;
+    odom_msg.twist.twist.linear.x = curr_linear_vel_x;
+    odom_msg.twist.twist.linear.y = curr_linear_vel_y;
+    odom_msg.twist.twist.angular.z = curr_angular_vel;
 
     odom_pub_->publish(odom_msg);
 
