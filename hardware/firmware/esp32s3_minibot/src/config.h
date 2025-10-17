@@ -29,10 +29,15 @@
 #define PWM_CHANNEL_RIGHT1   2
 #define PWM_CHANNEL_RIGHT2   3
 
+
 #define MOTOR_LEFT_INI1     40
 #define MOTOR_LEFT_INI2     41
 #define MOTOR_RIGHT_INI3    38
 #define MOTOR_RIGHT_INI4    21
+
+#define PWM_FREQ_ALARM     700
+#define ALARM_BUZZER        48
+#define BATTERY_THRESHOLD 3500
 
 // --- CONTROL ---
 const int sampling_time = 10; // MILLISECONDS

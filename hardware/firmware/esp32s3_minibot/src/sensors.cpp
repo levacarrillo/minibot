@@ -1,4 +1,5 @@
 #include "sensors.h"
+#include "alarm.h"
 #include "config.h"
 
 
@@ -35,4 +36,7 @@ void read_sensors() {
   
   // --- STOP BUTTON --- 
   sensors_data[20] = digitalRead(STOP_BUTTON);
+
+  // CHECKING BATTERY DATA
+  check_battery_levels(sensors_data[19], 4000);
 }
