@@ -3,7 +3,7 @@
 
 #include <Arduino.h>
 
-extern int32_t sensors_data[21];
+extern int32_t sensors_data[22];
 
 void read_sensors();
 

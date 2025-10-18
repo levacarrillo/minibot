@@ -3,7 +3,7 @@
 #include "config.h"
 
 
-int32_t sensors_data[21];
+int32_t sensors_data[22];
 
 void read_sensors() {
   // --- LIGHT SENSORS ---
@@ -33,9 +33,10 @@ void read_sensors() {
 
   // --- BATTERY SENSORS ---
   sensors_data[19] = analogRead(1);
+  sensors_data[20] = analogRead(2);
   
   // --- STOP BUTTON --- 
-  sensors_data[20] = digitalRead(STOP_BUTTON);
+  sensors_data[21] = digitalRead(STOP_BUTTON);
 
   // CHECKING BATTERY DATA
   check_battery_levels(sensors_data[19], 4000);

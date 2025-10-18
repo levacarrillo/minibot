@@ -8,7 +8,7 @@
 
 // --- DIGITAL SENSOR PINS ---
 #define STOP_BUTTON         39
-#define RIGHT_LINE_SENSOR    2
+#define RIGHT_LINE_SENSOR   36
 #define LEFT_LINE_SENSOR    37
 #define CENTER_LINE_SENSOR  42
 
