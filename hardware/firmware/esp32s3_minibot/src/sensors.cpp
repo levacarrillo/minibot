@@ -39,5 +39,5 @@ void read_sensors() {
   sensors_data[21] = digitalRead(STOP_BUTTON);
 
   // CHECKING BATTERY DATA
-  check_battery_levels(sensors_data[19], 4000);
+  check_battery_levels(sensors_data[19], sensors_data[20]);
 }
