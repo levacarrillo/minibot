@@ -1,6 +1,7 @@
 uint8 robot_id
 string robot_name
-float32 temperature
+float32 microcontroller_temperature
+float32 raspberry_pi_temperature
 float32 battery_voltage
 float32 battery_capacity
 uint8 battery_cells_number
