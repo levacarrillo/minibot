@@ -45,4 +45,8 @@ const int max_rpm = 350;
 const unsigned int pulses_per_turn = 600;
 const float wheel_diameter = 43.38 / 1000.0;
 
+const float Kp[2] = {2.5, 2.5};
+const float Ki[2] = {0.014, 0.012};
+const float Kd[2] = {1.5, 3.5};
+
 #endif

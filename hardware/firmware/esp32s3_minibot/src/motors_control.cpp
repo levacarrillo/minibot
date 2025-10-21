@@ -2,10 +2,6 @@
 #include "encoders.h"
 #include "config.h"
 
-float Kp[2] = {2.5, 2.5};
-float Ki[2] = {0.014, 0.012};
-float Kd[2] = {1.5, 3.5};
-
 double error[2] = {0.0, 0.0};
 double last_error[2] = {0.0, 0.0};
 double last_last_error[2] = {0.0, 0.0};

@@ -39,15 +39,15 @@ void timer_callback(rcl_timer_t * timer, int64_t last_call_time) {
         read_sensors();
         calculate_rpms();
         sensors_msg.data.data = sensors_data;
-        sensors_msg.data.data[22] = encoders_count[LEFT];
-        sensors_msg.data.data[23] = encoders_count[RIGHT];
-        sensors_msg.data.data[24] = goal_rpm[LEFT];
-        sensors_msg.data.data[25] = goal_rpm[RIGHT];
-        sensors_msg.data.data[26] = curr_rpm[LEFT];
-        sensors_msg.data.data[27] = curr_rpm[RIGHT];
+        sensors_msg.data.data[23] = encoders_count[LEFT];
+        sensors_msg.data.data[24] = encoders_count[RIGHT];
+        sensors_msg.data.data[25] = goal_rpm[LEFT];
+        sensors_msg.data.data[26] = goal_rpm[RIGHT];
+        sensors_msg.data.data[27] = curr_rpm[LEFT];
+        sensors_msg.data.data[28] = curr_rpm[RIGHT];
 
-        sensors_msg.data.size = 28;
-        sensors_msg.data.capacity = 28;
+        sensors_msg.data.size = 29;
+        sensors_msg.data.capacity = 29;
         RCSOFTCHECK(rcl_publish(&sensors_pub, &sensors_msg, NULL));
     }
 }
