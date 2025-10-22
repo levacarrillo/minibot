@@ -14,16 +14,12 @@ public:
 
     this->declare_parameter<int>("robot_id", this->robot_id);
     this->declare_parameter<std::string>("robot_name", this->robot_name);
-    this->declare_parameter<double>("battery_capacity", this->battery_capacity);
-    this->declare_parameter<int>("battery_cells_number", this->battery_cells_number);
     this->declare_parameter<std::string>("battery_supply_status", this->battery_supply_status);
 
     this->robot_id = this->get_parameter("robot_id").as_int();
     this->robot_name  = this->get_parameter("robot_name").as_string();
-    this->battery_capacity = this->get_parameter("battery_capacity").as_double();
-    this->battery_cells_number = this->get_parameter("battery_cells_number").as_int();
     this->battery_supply_status = this->get_parameter("battery_supply_status").as_string();
-    RCLCPP_INFO(this->get_logger(), "PARAMETERS LOADED robot_id=%d, name=%s, battery_capacity=%.2fV, battery_cells_number=%d, battery_supply_status=%s", robot_id, robot_name.c_str(), battery_capacity, battery_cells_number, battery_supply_status.c_str());
+    // RCLCPP_INFO(this->get_logger(), "PARAMETERS LOADED robot_id=%d, name=%s, battery_capacity=%.2fV, battery_cells_number=%d, battery_supply_status=%s", robot_id, robot_name.c_str(), battery_capacity, battery_cells_number, battery_supply_status.c_str());
  
     subscription_=this->create_subscription<std_msgs::msg::Int32MultiArray>(
 		    "sensors",
@@ -38,12 +34,11 @@ public:
 private:
   int robot_id;
   std::string robot_name;
-  float raspberry_pi_temperature;
+  float max_battery_voltage = 8.4; // Volts
+  float raspberrypi_temperature;
   float microcontroller_temperature;
-  float battery_voltage;
-  float battery_capacity;
-  int battery_cells_number;
-  int battery_charge_percentage;
+  std::vector<float> battery_voltage = {0.0, 0.0};
+  std::vector<int> battery_charge_percentage = {0, 0};
   std::string battery_supply_status;
 
   rclcpp::TimerBase::SharedPtr timer_;
@@ -57,10 +52,24 @@ private:
     float min_analog = 2560;
     float max_analog = 4095;
     
-    float percentage = min_perc + (msg->data[19] - min_analog) * (max_perc - min_perc) / (max_analog - min_analog);
+    float battery1_percentage = min_perc + (msg->data[19] - min_analog) * (max_perc - min_perc) / (max_analog - min_analog);
+    float battery2_percentage = min_perc + (msg->data[20] - min_analog) * (max_perc - min_perc) / (max_analog - min_analog);
+
+    if (battery1_percentage < 0) {
+        battery1_percentage = 0; 
+    } else if (battery1_percentage > 100) {
+	battery1_percentage = 100;
+    }
+
+    if (battery2_percentage < 0) {
+        battery2_percentage = 0;
+    } else if (battery2_percentage > 100) {
+        battery2_percentage = 100;
+    }
+
     // RCLCPP_INFO(this->get_logger(), "PERCENTAGE->%f", percentage);
-    battery_voltage = 8.4 * percentage / 100;
-    battery_charge_percentage = int(percentage);
+    battery_voltage = {float(max_battery_voltage * battery1_percentage / 100), float(max_battery_voltage * battery2_percentage) };
+    battery_charge_percentage = { int(battery1_percentage), int(battery2_percentage)};
 
     microcontroller_temperature = float(msg->data[22]);
   }
@@ -84,16 +93,15 @@ private:
     temp_result.erase(temp_result.length() -2, 2);
     temp_result.erase(0, 5);
 
-    raspberry_pi_temperature = std::stof(temp_result);
+    raspberrypi_temperature = std::stof(temp_result);
 
     auto message = interfaces::msg::RobotStatus();
     message.robot_id    = robot_id;
     message.robot_name  = robot_name; 
-    message.raspberry_pi_temperature = raspberry_pi_temperature;
+    message.raspberrypi_temperature = raspberrypi_temperature;
     message.microcontroller_temperature = microcontroller_temperature;
+    
     message.battery_voltage = battery_voltage;
-    message.battery_capacity = battery_capacity;
-    message.battery_cells_number = battery_cells_number;
     message.battery_charge_percentage = battery_charge_percentage;
     message.battery_supply_status = battery_supply_status;
 
