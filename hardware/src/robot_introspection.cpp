@@ -68,7 +68,7 @@ private:
     }
 
     // RCLCPP_INFO(this->get_logger(), "PERCENTAGE->%f", percentage);
-    battery_voltage = {float(max_battery_voltage * battery1_percentage / 100), float(max_battery_voltage * battery2_percentage) };
+    battery_voltage = {float(max_battery_voltage * battery1_percentage / 100), float(max_battery_voltage * battery2_percentage / 100) };
     battery_charge_percentage = { int(battery1_percentage), int(battery2_percentage)};
 
     microcontroller_temperature = float(msg->data[22]);
