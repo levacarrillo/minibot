@@ -38,11 +38,11 @@ public:
         auto message = interfaces::msg::RobotStatus();
         message.robot_id = this->robot_id;
         message.robot_name = this->robot_name;
-        message.temperature = this->temperature;
-        message.battery_voltage = this->battery_voltage;
-        message.battery_capacity = this->battery_capacity;
-        message.battery_cells_number = this->battery_cells_number;
-        message.battery_charge_percentage = this->battery_charge_percentage;
+        //message.temperature = this->temperature;
+        // message.battery_voltage = this->battery_voltage;
+        // message.battery_capacity = this->battery_capacity;
+        // message.battery_cells_number = this->battery_cells_number;
+        // message.battery_charge_percentage = this->battery_charge_percentage;
         message.battery_supply_status = this->battery_supply_status;
 
         publisher_->publish(message);

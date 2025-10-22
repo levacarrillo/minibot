@@ -5,20 +5,20 @@
    <Container>
     <DockSplitter count="1" sizes="1" orientation="-">
      <DockSplitter count="2" sizes="0.5;0.5" orientation="|">
-      <DockArea name="LEFT MOTOR">
-       <plot flip_y="false" style="Lines" flip_x="false" mode="TimeSeries">
-        <range top="350.000000" right="1760245876.120018" left="1760245871.128903" bottom="0.000000"/>
-        <limitY min="0" max="350"/>
-        <curve color="#1f77b4" name="/sensors/data[23]"/>
-        <curve color="#d62728" name="/sensors/data[25]"/>
+      <DockArea name="RPM - LEFT MOTOR ">
+       <plot style="Lines" flip_x="false" flip_y="false" mode="TimeSeries">
+        <range top="350.000000" right="1761122546.782661" left="1761122541.797820" bottom="0.000000"/>
+        <limitY max="350" min="0"/>
+        <curve name="/sensors/data[25]" color="#d62728"/>
+        <curve name="/sensors/data[27]" color="#1f77b4"/>
        </plot>
       </DockArea>
-      <DockArea name="RIGHT MOTOR">
-       <plot flip_y="false" style="Lines" flip_x="false" mode="TimeSeries">
-        <range top="350.000000" right="1760245876.120018" left="1760245871.128903" bottom="0.000000"/>
-        <limitY min="0" max="350"/>
-        <curve color="#1f77b4" name="/sensors/data[24]"/>
-        <curve color="#ff7f0e" name="/sensors/data[26]"/>
+      <DockArea name="RPM - RIGHT MOTOR">
+       <plot style="Lines" flip_x="false" flip_y="false" mode="TimeSeries">
+        <range top="350.000000" right="1761122546.782661" left="1761122541.797820" bottom="0.000000"/>
+        <limitY max="350" min="0"/>
+        <curve name="/sensors/data[26]" color="#ff7f0e"/>
+        <curve name="/sensors/data[28]" color="#d62728"/>
        </plot>
       </DockArea>
      </DockSplitter>
@@ -32,7 +32,7 @@
  <!-- - - - - - - - - - - - - - - -->
  <Plugins>
   <plugin ID="DataLoad CSV">
-   <parameters time_axis="" delimiter="0"/>
+   <parameters delimiter="0" time_axis=""/>
   </plugin>
   <plugin ID="DataLoad MCAP"/>
   <plugin ID="DataLoad ROS2 bags">

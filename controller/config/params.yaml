@@ -1,4 +1,4 @@
 pose_commander:
   ros__parameters:
-    linear_velocity: 0.2 # METERS PER SECOND
-    angular_velocity: 0.5 # RADIANS PER SECOND
+    linear_velocity: 0.4   # METERS PER SECOND
+    angular_velocity: 3.14 # RADIANS PER SECOND
