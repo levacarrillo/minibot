@@ -23,7 +23,9 @@ public:
     std::cout << "INITIALIZING mobile_base NODE BY Luis Gonzalez" << std::endl;     
     
     odom_pub_= this->create_publisher<nav_msgs::msg::Odometry>("odom", 10);
+
     tf_broadcaster_= std::make_shared<tf2_ros::TransformBroadcaster>(this);
+
     motors_pub_= this->create_publisher<std_msgs::msg::Float32MultiArray>("motors_speed", 10);
         
     odom_service_= this->create_service<OdomSetPoint>(
@@ -38,6 +40,8 @@ public:
 		    "/cmd_vel",
 		    10,
 		    std::bind(&MobileBase::cmdVelCallback, this, std::placeholders::_1));
+
+    vels_pub_ = this->create_publisher<std_msgs::msg::Float32MultiArray>("velocity_for_check", 10);
   }	
 
 private:
@@ -51,12 +55,14 @@ private:
   
   rclcpp::Publisher<nav_msgs::msg::Odometry>::SharedPtr odom_pub_;
   rclcpp::Publisher<std_msgs::msg::Float32MultiArray>::SharedPtr motors_pub_;
+  rclcpp::Publisher<std_msgs::msg::Float32MultiArray>::SharedPtr vels_pub_;
 
   long last_encoder_left;
   long last_encoder_right;
   double left_distance = 0, right_distance = 0;
   double robot_x = 0.0, robot_y = 0.0, robot_t = 0.0;
   double curr_linear_vel_x = 0.0, curr_linear_vel_y = 0.0, curr_angular_vel = 0.0;
+  geometry_msgs::msg::Twist goal_vel;
 
   void SetPoint(const std::shared_ptr<OdomSetPoint::Request>,
 		      std::shared_ptr<OdomSetPoint::Response> response)
@@ -104,11 +110,24 @@ private:
     curr_angular_vel = (curr_vel_right - curr_vel_left) / BASE_WIDTH;
     // RCLCPP_INFO(this->get_logger(), "CURRENT VEL: Vx->%f, Vy->%f, ANGULAR->%f", curr_linear_vel_x, curr_linear_vel_y, curr_angular_vel);
 
+    auto message = std_msgs::msg::Float32MultiArray();
+    message.data.resize(6);
+    message.data[0] = goal_vel.linear.x;
+    message.data[1] = goal_vel.linear.y;
+    message.data[2] = goal_vel.angular.z;
+    message.data[3] = curr_linear_vel_x;
+    message.data[4] = curr_linear_vel_y;
+    message.data[5] = curr_angular_vel;
+
+    vels_pub_->publish(message);
     updatePosition();
   }
 
   void cmdVelCallback(const geometry_msgs::msg::Twist::SharedPtr msg) {
     // RCLCPP_INFO(this->get_logger(), "VELS: LINEAR-> %f, ANGULAR-> %f", msg->linear.x, msg->angular.z);
+    goal_vel.linear.x = msg->linear.x;
+    goal_vel.linear.y = msg->linear.y;
+    goal_vel.angular.z = msg->angular.z;
     float right_speed = msg->linear.x + msg->angular.z * BASE_WIDTH / 2.0;
     float left_speed  = msg->linear.x - msg->angular.z * BASE_WIDTH / 2.0;
 

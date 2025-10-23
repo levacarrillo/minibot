@@ -29,7 +29,7 @@ public:
 
         cmd_vel_pub_ = this->create_publisher<geometry_msgs::msg::Twist>("/cmd_vel", 10);
 
-	pose_pub_ = this->create_publisher<std_msgs::msg::Float32MultiArray>("pose_to_verify", 10);
+	pose_pub_ = this->create_publisher<std_msgs::msg::Float32MultiArray>("pose_for_check", 10);
 
 	odom_sub_= this->create_subscription<nav_msgs::msg::Odometry>(
 	    "odom", 10, std::bind(&PoseCommander::odomCallback, this, _1));
