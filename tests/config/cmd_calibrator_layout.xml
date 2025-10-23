@@ -1,24 +1,25 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <root>
  <tabbed_widget parent="main_window" name="Main Window">
-  <Tab tab_name="CMD VELOCITY" containers="1">
+  <Tab containers="1" tab_name="CMD VELOCITY">
    <Container>
-    <DockSplitter count="1" sizes="1" orientation="-">
-     <DockSplitter count="2" sizes="0.5;0.5" orientation="|">
+    <DockSplitter count="1" orientation="-" sizes="1">
+     <DockSplitter count="2" orientation="|" sizes="0.5;0.5">
       <DockArea name="Linear Velocity">
-       <plot flip_y="false" style="Lines" flip_x="false" mode="TimeSeries">
-        <range right="12.674810" left="7.670960" top="0.100000" bottom="-0.100000"/>
+       <plot flip_y="false" flip_x="false" style="Lines" mode="TimeSeries">
+        <range bottom="-0.100000" left="25.628254" right="30.623878" top="0.100000"/>
         <limitY/>
-        <curve color="#1f77b4" name="/cmd_vel/linear/x"/>
-        <curve color="#1ac938" name="/odom/twist/twist/linear/x"/>
+        <curve color="#1f77b4" name="/velocity_for_check/data[0]"/>
+        <curve color="#d62728" name="/velocity_for_check/data[3]"/>
+        <curve color="#1ac938" name="/velocity_for_check/data[4]"/>
        </plot>
       </DockArea>
       <DockArea name="Angular Velocity">
-       <plot flip_y="false" style="Lines" flip_x="false" mode="TimeSeries">
-        <range right="12.674810" left="7.670960" top="0.100000" bottom="-0.100000"/>
+       <plot flip_y="false" flip_x="false" style="Lines" mode="TimeSeries">
+        <range bottom="-0.100000" left="25.628254" right="30.623878" top="0.100000"/>
         <limitY/>
-        <curve color="#d62728" name="/cmd_vel/angular/z"/>
-        <curve color="#ff7f0e" name="/odom/twist/twist/angular/z"/>
+        <curve color="#ff7f0e" name="/velocity_for_check/data[2]"/>
+        <curve color="#f14cc1" name="/velocity_for_check/data[5]"/>
        </plot>
       </DockArea>
      </DockSplitter>
@@ -50,7 +51,7 @@
    <max_array_size value="100"/>
    <boolean_strings_to_number value="true"/>
    <remove_suffix_from_strings value="true"/>
-   <selected_topics value="/odom;/cmd_vel"/>
+   <selected_topics value="/velocity_for_check"/>
   </plugin>
   <plugin ID="UDP Server"/>
   <plugin ID="WebSocket Server"/>

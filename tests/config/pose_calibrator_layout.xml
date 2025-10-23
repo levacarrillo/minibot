@@ -3,22 +3,18 @@
  <tabbed_widget name="Main Window" parent="main_window">
   <Tab containers="1" tab_name="Pose">
    <Container>
-    <DockSplitter sizes="1" orientation="-" count="1">
-     <DockSplitter sizes="0.5;0.5" orientation="|" count="2">
+    <DockSplitter orientation="-" sizes="1" count="1">
+     <DockSplitter orientation="|" sizes="0.5;0.5" count="2">
       <DockArea name="Linear pose">
-       <plot flip_y="false" style="Lines" flip_x="false" mode="TimeSeries">
-        <range bottom="-0.003769" left="24.887545" right="29.884990" top="0.102531"/>
+       <plot flip_x="false" style="Lines" flip_y="false" mode="TimeSeries">
+        <range left="24.887545" right="29.884990" bottom="-0.003769" top="0.102531"/>
         <limitY/>
-        <curve name="/pose_to_calibrate/data[0]" color="#1f77b4"/>
-        <curve name="/pose_to_calibrate/data[2]" color="#d62728"/>
        </plot>
       </DockArea>
       <DockArea name="Angular pose">
-       <plot flip_y="false" style="Lines" flip_x="false" mode="TimeSeries">
-        <range bottom="-0.181078" left="24.887545" right="29.884990" top="0.093811"/>
+       <plot flip_x="false" style="Lines" flip_y="false" mode="TimeSeries">
+        <range left="24.887545" right="29.884990" bottom="-0.181078" top="0.093811"/>
         <limitY/>
-        <curve name="/pose_to_calibrate/data[1]" color="#1ac938"/>
-        <curve name="/pose_to_calibrate/data[3]" color="#ff7f0e"/>
        </plot>
       </DockArea>
      </DockSplitter>
@@ -32,7 +28,7 @@
  <!-- - - - - - - - - - - - - - - -->
  <Plugins>
   <plugin ID="DataLoad CSV">
-   <parameters delimiter="0" time_axis=""/>
+   <parameters time_axis="" delimiter="0"/>
   </plugin>
   <plugin ID="DataLoad MCAP"/>
   <plugin ID="DataLoad ROS2 bags">
@@ -50,7 +46,7 @@
    <max_array_size value="100"/>
    <boolean_strings_to_number value="true"/>
    <remove_suffix_from_strings value="true"/>
-   <selected_topics value="/pose_to_calibrate"/>
+   <selected_topics value="/pose_for_check"/>
   </plugin>
   <plugin ID="UDP Server"/>
   <plugin ID="WebSocket Server"/>
