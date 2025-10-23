@@ -1,4 +1,0 @@
-pose_calibration:
-  ros__parameters:
-    linear_velocity: 0.20 # METERS PER SECOND
-    angular_velocity: 3.14 # RADIANS PER SECOND
