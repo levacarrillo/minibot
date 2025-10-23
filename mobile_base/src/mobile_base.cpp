@@ -75,10 +75,10 @@ private:
   }
 
   void encodersCallback(const std_msgs::msg::Int32MultiArray::SharedPtr msg) {
-    double left_count  = msg->data[21];
-    double right_count = msg->data[22];
-    double curr_vel_left  = msg->data[25];
-    double curr_vel_right = msg->data[26];
+    double left_count  = msg->data[23];
+    double right_count = msg->data[24];
+    double curr_vel_left  = msg->data[27];
+    double curr_vel_right = msg->data[28];
   
     if (once_flag) {
       last_encoder_left  = left_count;
