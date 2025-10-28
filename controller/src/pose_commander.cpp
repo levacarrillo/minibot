@@ -53,13 +53,21 @@ public:
             std::bind(&PoseCommander::handle_cancel, this, _1),
             std::bind(&PoseCommander::handle_accepted, this, _1)
         );
+
+	timer_ = this->create_wall_timer(
+			50ms, std::bind(&PoseCommander::timer_callback, this));
+
     }
 
 private:
+    double curr_angle;
+    double goal_angle;
+    double curr_distance;
+    double goal_distance;
     float linear_velocity;
     float angular_velocity;
-    double curr_distance;
-    double curr_angle;
+
+    rclcpp::TimerBase::SharedPtr timer_;
     rclcpp_action::Server<GoToPose>::SharedPtr action_server_;
     rclcpp::Service<GetVelParams>::SharedPtr get_vel_service;
     rclcpp::Service<SetVelParams>::SharedPtr set_vel_service;
@@ -128,30 +136,24 @@ private:
         const auto goal = goal_handle->get_goal();
         geometry_msgs::msg::Twist cmd;
 
-	auto pose_message = std_msgs::msg::Float32MultiArray();
-	pose_message.data.resize(4);
-	pose_message.data[0] = goal->distance;
-	pose_message.data[1] = goal->angle;
-	pose_message.data[2] = curr_distance;
-	pose_message.data[3] = curr_angle;
-
         feedback->feedback = "Twisting...";
         goal_handle->publish_feedback(feedback);
 
         cmd.angular.z = (goal->angle > 0 ? this->angular_velocity : - this->angular_velocity);
 
+	goal_angle = goal->angle;
+	goal_distance = goal->distance;
+
 	RCLCPP_INFO(this->get_logger(), "\n TURNING ROBOT \n");
 
 	while (abs(curr_angle) < abs(goal->angle)) {
-	    RCLCPP_INFO(this->get_logger(), "CURR DIS->%.3f\tCURR ANGLE->%.3f", curr_distance, curr_angle); 
+	    // RCLCPP_INFO(this->get_logger(), "CURR DIS->%.3f\tCURR ANGLE->%.3f", curr_distance, curr_angle); 
             cmd_vel_pub_->publish(cmd);
-	    pose_pub_->publish(pose_message);
 
             if (goal_handle->is_canceling()) {
                 RCLCPP_INFO(this->get_logger(), "CANCELING MOVEMENT...");
                 cmd.angular.z = 0.0;
                 cmd_vel_pub_->publish(cmd);
-                pose_pub_->publish(pose_message);
                 result->success = false;
                 goal_handle->canceled(result);
                 return;
@@ -167,14 +169,12 @@ private:
 	RCLCPP_INFO(this->get_logger(), "\n MOVING LINEAR \n");
 
         while (abs(curr_distance) < abs(goal->distance)) {
-	    RCLCPP_INFO(this->get_logger(), "CURR DIS->%.3f\tCURR ANGLE->%.3f", curr_distance, curr_angle); 
+	    // RCLCPP_INFO(this->get_logger(), "CURR DIS->%.3f\tCURR ANGLE->%.3f", curr_distance, curr_angle); 
             cmd_vel_pub_->publish(cmd);
-	    pose_pub_->publish(pose_message);
 
             if (goal_handle->is_canceling()) {
                 cmd.linear.x = 0.0;
                 cmd_vel_pub_->publish(cmd);
-                pose_pub_->publish(pose_message);
                 result->success = false;
                 goal_handle->canceled(result);
                 return;
@@ -203,6 +203,19 @@ private:
 
         result->success = true;
         goal_handle->succeed(result);
+	RCLCPP_INFO(this->get_logger(), "MOVEMENT FINISHED AT DIS->%.3f\tCURR ANGLE->%.3f", curr_distance, curr_angle); 
+	goal_angle = 0.0;
+	goal_distance = 0.0;
+    }
+
+    void timer_callback() {
+        auto pose_message = std_msgs::msg::Float32MultiArray();
+	pose_message.data.resize(4);
+	pose_message.data[0] = goal_distance;
+	pose_message.data[1] = goal_angle;
+	pose_message.data[2] = curr_distance;
+	pose_message.data[3] = curr_angle;
+        pose_pub_->publish(pose_message);
     }
 };
 
