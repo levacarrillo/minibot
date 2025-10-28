@@ -9,8 +9,9 @@
 #include "interfaces/srv/odom_set_point.hpp"
 
 
-#define BASE_WIDTH 0.095
+#define BASE_WIDTH 0.095 // METERS
 #define TICKS_PER_METER 4442.0
+#define WHEEL_DIAMETER  0.04338 // METERS 
 
 
 using namespace std::chrono;
@@ -57,6 +58,9 @@ private:
   rclcpp::Publisher<std_msgs::msg::Float32MultiArray>::SharedPtr motors_pub_;
   rclcpp::Publisher<std_msgs::msg::Float32MultiArray>::SharedPtr vels_pub_;
 
+
+  float left_speed  = 0.0;
+  float right_speed = 0.0;
   long last_encoder_left;
   long last_encoder_right;
   double left_distance = 0, right_distance = 0;
@@ -77,9 +81,16 @@ private:
   void encodersCallback(const std_msgs::msg::Int32MultiArray::SharedPtr msg) {
     double left_count  = msg->data[23];
     double right_count = msg->data[24];
-    double curr_vel_left  = msg->data[27];
-    double curr_vel_right = msg->data[28];
-  
+    double curr_vel_left  = (M_PI * WHEEL_DIAMETER * msg->data[27]) / 60;
+    double curr_vel_right = (M_PI * WHEEL_DIAMETER * msg->data[28]) / 60;
+
+    if (left_speed < 0) {
+        curr_vel_left = - curr_vel_left;
+    }
+    if (right_speed < 0) {
+    	curr_vel_right = -curr_vel_right;
+    }
+
     if (once_flag) {
       last_encoder_left  = left_count;
       last_encoder_right = right_count;
@@ -100,7 +111,7 @@ private:
     robot_t = normalizeAngle(delta_theta + robot_t);
     robot_x += dist_x * cos(robot_t);
     robot_y += dist_x * sin(robot_t);
-    // RCLCPP_INFO(this->get_logger(), "ROBOT POSITION: X->%f, Y->%f, ANGLE->%f", robot_x, robot_y, robot_t);
+    //RCLCPP_INFO(this->get_logger(), "ROBOT POSITION: X->%f, Y->%f, ANGLE->%f", robot_x, robot_y, robot_t);
 
     last_encoder_left  = left_count;
     last_encoder_right = right_count;
@@ -128,8 +139,8 @@ private:
     goal_vel.linear.x = msg->linear.x;
     goal_vel.linear.y = msg->linear.y;
     goal_vel.angular.z = msg->angular.z;
-    float right_speed = msg->linear.x + msg->angular.z * BASE_WIDTH / 2.0;
-    float left_speed  = msg->linear.x - msg->angular.z * BASE_WIDTH / 2.0;
+    right_speed = msg->linear.x + msg->angular.z * BASE_WIDTH / 2.0;
+    left_speed  = msg->linear.x - msg->angular.z * BASE_WIDTH / 2.0;
 
     auto message = std_msgs::msg::Float32MultiArray();
     message.data.resize(2);

@@ -151,6 +151,7 @@ private:
                 RCLCPP_INFO(this->get_logger(), "CANCELING MOVEMENT...");
                 cmd.angular.z = 0.0;
                 cmd_vel_pub_->publish(cmd);
+                pose_pub_->publish(pose_message);
                 result->success = false;
                 goal_handle->canceled(result);
                 return;
@@ -173,6 +174,7 @@ private:
             if (goal_handle->is_canceling()) {
                 cmd.linear.x = 0.0;
                 cmd_vel_pub_->publish(cmd);
+                pose_pub_->publish(pose_message);
                 result->success = false;
                 goal_handle->canceled(result);
                 return;
