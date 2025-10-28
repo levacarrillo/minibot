@@ -49,7 +49,8 @@ def generate_launch_description():
             package='robot_state_publisher',
             executable='robot_state_publisher',
             name='robot_state_publisher',
-            parameters=[robot_description, {'use_sim_time': use_sim}]
+            parameters=[robot_description, {'use_sim_time': use_sim}],
+            condition=IfCondition(use_sim)
         ),
         Node(
             package='rviz2',

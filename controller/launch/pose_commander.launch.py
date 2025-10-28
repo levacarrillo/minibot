@@ -8,6 +8,7 @@ from launch.substitutions import PathJoinSubstitution
 from launch_ros.substitutions import FindPackageShare
 from ament_index_python.packages import get_package_share_directory
 from launch.launch_description_sources import PythonLaunchDescriptionSource
+from launch.conditions import IfCondition
 
 def generate_launch_description():
     use_sim = LaunchConfiguration('use_sim')
@@ -39,6 +40,7 @@ def generate_launch_description():
             executable='pose_commander',
             name='pose_commander',
             output='screen',
-            parameters=[params_path]
+            parameters=[params_path],
+            condition=IfCondition(use_sim)
         ),
     ])
