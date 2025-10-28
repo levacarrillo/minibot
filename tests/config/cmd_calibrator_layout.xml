@@ -3,21 +3,21 @@
  <tabbed_widget parent="main_window" name="Main Window">
   <Tab containers="1" tab_name="CMD VELOCITY">
    <Container>
-    <DockSplitter count="1" orientation="-" sizes="1">
-     <DockSplitter count="2" orientation="|" sizes="0.5;0.5">
+    <DockSplitter orientation="-" sizes="1" count="1">
+     <DockSplitter orientation="|" sizes="0.5;0.5" count="2">
       <DockArea name="Linear Velocity">
-       <plot flip_y="false" flip_x="false" style="Lines" mode="TimeSeries">
-        <range bottom="-0.100000" left="25.628254" right="30.623878" top="0.100000"/>
-        <limitY/>
+       <plot style="Lines" flip_x="false" mode="TimeSeries" flip_y="false">
+        <range left="84.545010" right="89.541974" bottom="-0.750000" top="0.750000"/>
+        <limitY max="0.75" min="-0.75"/>
         <curve color="#1f77b4" name="/velocity_for_check/data[0]"/>
         <curve color="#d62728" name="/velocity_for_check/data[3]"/>
         <curve color="#1ac938" name="/velocity_for_check/data[4]"/>
        </plot>
       </DockArea>
       <DockArea name="Angular Velocity">
-       <plot flip_y="false" flip_x="false" style="Lines" mode="TimeSeries">
-        <range bottom="-0.100000" left="25.628254" right="30.623878" top="0.100000"/>
-        <limitY/>
+       <plot style="Lines" flip_x="false" mode="TimeSeries" flip_y="false">
+        <range left="84.545010" right="89.541974" bottom="-15.000000" top="15.000000"/>
+        <limitY max="15" min="-15"/>
         <curve color="#ff7f0e" name="/velocity_for_check/data[2]"/>
         <curve color="#f14cc1" name="/velocity_for_check/data[5]"/>
        </plot>
@@ -33,7 +33,7 @@
  <!-- - - - - - - - - - - - - - - -->
  <Plugins>
   <plugin ID="DataLoad CSV">
-   <parameters delimiter="0" time_axis=""/>
+   <parameters time_axis="" delimiter="0"/>
   </plugin>
   <plugin ID="DataLoad MCAP"/>
   <plugin ID="DataLoad ROS2 bags">
