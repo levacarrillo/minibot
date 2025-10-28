@@ -108,8 +108,8 @@ private:
     rclcpp_action::GoalResponse handle_goal(
         const rclcpp_action::GoalUUID &/*uuid*/,
         std::shared_ptr<const GoToPose::Goal> goal) {
-	RCLCPP_INFO(this->get_logger(), "\n \n  NEW GOAL RECEIVED \n_____________________ \n");
-        RCLCPP_INFO(this->get_logger(), "GOAL RECEIVED: TWIST->%.3f rad, ADVANCE->%.3f m", goal->angle, goal->distance);
+	// RCLCPP_INFO(this->get_logger(), "\n \n  NEW GOAL RECEIVED \n_____________________ \n");
+        // RCLCPP_INFO(this->get_logger(), "GOAL RECEIVED: TWIST->%.3f rad, ADVANCE->%.3f m", goal->angle, goal->distance);
         return rclcpp_action::GoalResponse::ACCEPT_AND_EXECUTE;
     }
 
@@ -119,7 +119,7 @@ private:
     }
 
     rclcpp_action::CancelResponse handle_cancel(const std::shared_ptr<GoalHandleGoToPose> /*goal_handle*/) {
-        RCLCPP_INFO(this->get_logger(), "CANCEL REQUESTED EXTERNALLY");
+        RCLCPP_WARN(this->get_logger(), "CANCEL REQUESTED EXTERNALLY");
         return rclcpp_action::CancelResponse::ACCEPT;
     }
 
@@ -144,14 +144,14 @@ private:
 	goal_angle = goal->angle;
 	goal_distance = goal->distance;
 
-	RCLCPP_INFO(this->get_logger(), "\n TURNING ROBOT \n");
+	// RCLCPP_INFO(this->get_logger(), "\n TURNING ROBOT \n");
 
 	while (abs(curr_angle) < abs(goal->angle)) {
 	    // RCLCPP_INFO(this->get_logger(), "CURR DIS->%.3f\tCURR ANGLE->%.3f", curr_distance, curr_angle); 
             cmd_vel_pub_->publish(cmd);
 
             if (goal_handle->is_canceling()) {
-                RCLCPP_INFO(this->get_logger(), "CANCELING MOVEMENT...");
+                RCLCPP_WARN(this->get_logger(), "CANCELING MOVEMENT...");
                 cmd.angular.z = 0.0;
                 cmd_vel_pub_->publish(cmd);
                 result->success = false;
@@ -166,7 +166,7 @@ private:
         cmd.angular.z = 0.0;
         cmd.linear.x = (goal->distance > 0 ? this->linear_velocity : - this->linear_velocity);
 
-	RCLCPP_INFO(this->get_logger(), "\n MOVING LINEAR \n");
+	// RCLCPP_INFO(this->get_logger(), "\n MOVING LINEAR \n");
 
         while (abs(curr_distance) < abs(goal->distance)) {
 	    // RCLCPP_INFO(this->get_logger(), "CURR DIS->%.3f\tCURR ANGLE->%.3f", curr_distance, curr_angle); 
