@@ -30,7 +30,7 @@
 #define PWM_CHANNEL_RIGHT2   3
 
 
-#define MOTOR_LEFT_INI1     40
+#define MOTOR_LEFT_INI1     45
 #define MOTOR_LEFT_INI2     41
 #define MOTOR_RIGHT_INI3    38
 #define MOTOR_RIGHT_INI4    21
