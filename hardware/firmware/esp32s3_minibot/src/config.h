@@ -35,7 +35,7 @@
 #define MOTOR_RIGHT_INI3    38
 #define MOTOR_RIGHT_INI4    21
 
-#define ALARM_LED           46
+#define ALARM_LED           40
 #define ALARM_BUZZER        48
 #define BATTERY_THRESHOLD 3500
 
