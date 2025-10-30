@@ -11,6 +11,7 @@ find_package(rosidl_default_generators REQUIRED)
 
 rosidl_generate_interfaces(${PROJECT_NAME}
   "msg/RobotStatus.msg"
+  "srv/ResetMicro.srv"
   "srv/GetLightReadings.srv"
   "srv/GetParams.srv"
   "srv/GetScan.srv"

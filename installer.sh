@@ -17,6 +17,8 @@ APT_PACKAGES=(
   xterm
   python3
   screenfetch
+  libgpiod-dev
+  gpiod
   ros-jazzy-xacro
   ros-jazzy-random-numbers
   ros-jazzy-nav2-map-server

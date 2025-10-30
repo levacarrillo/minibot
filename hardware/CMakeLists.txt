@@ -24,6 +24,8 @@ ament_target_dependencies(robot_introspection rclcpp std_msgs interfaces)
 ament_target_dependencies(light_sensors rclcpp std_msgs interfaces)
 ament_target_dependencies(lidar_sensor  rclcpp std_msgs interfaces sensor_msgs)
 
+target_link_libraries(robot_introspection gpiod)
+
 target_include_directories(robot_introspection PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include/${PROJECT_NAME}>)

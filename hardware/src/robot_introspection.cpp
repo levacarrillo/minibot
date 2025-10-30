@@ -1,16 +1,37 @@
+#include "gpiod.h"
 #include "rclcpp/rclcpp.hpp"
 #include "interfaces/msg/robot_status.hpp"
+#include "interfaces/srv/reset_micro.hpp"
 #include "std_msgs/msg/int32_multi_array.hpp"
 
 
 using std::placeholders::_1;
+using std::placeholders::_2;
 using namespace std::chrono_literals;
+
+#define RST_GPIO 4
 
 class RobotIntrospection : public rclcpp::Node {
 
 public:
   RobotIntrospection() : Node ("robot_introspection") {
     RCLCPP_INFO(this->get_logger(), "INITIALIZING robot_introspection NODE BY LUIS GONZALEZ...");
+
+    chip = gpiod_chip_open_by_name("gpiochip0");
+    if (!chip) {
+	RCLCPP_ERROR(this->get_logger(), "ERROR OPENNING gpiochip0");
+        return;
+    }
+    line = gpiod_chip_get_line(chip, RST_GPIO);
+    if (!line) {
+	RCLCPP_ERROR(this->get_logger(), "ERROR GETTING THE LINE GPIO");
+        return;
+    }
+    if (gpiod_line_request_output(line, "ros2", 0) < 0) {
+	RCLCPP_ERROR(this->get_logger(), "ERROR CONFIGURING OUTPUT");
+        return;
+    }
+    gpiod_line_set_value(line, false);
 
     this->declare_parameter<int>("robot_id", this->robot_id);
     this->declare_parameter<std::string>("robot_name", this->robot_name);
@@ -27,9 +48,16 @@ public:
 		    std::bind(&RobotIntrospection::state_callback, this, _1));
     publisher_= this->create_publisher<interfaces::msg::RobotStatus>("robot_status", 10);
 
+    service_ = this->create_service<interfaces::srv::ResetMicro>("reset_microcontroller", std::bind(&RobotIntrospection::reset_micro, this, _1, _2));
+
     timer_= this->create_wall_timer(
 		    100ms, std::bind(&RobotIntrospection::timer_loop, this));
   }	
+
+  ~RobotIntrospection() {
+    gpiod_line_release(line);
+    gpiod_chip_close(chip);
+  }
 
 private:
   int robot_id;
@@ -41,11 +69,22 @@ private:
   std::vector<int> battery_charge_percentage = {0, 0};
   std::string battery_supply_status;
 
+  struct gpiod_chip *chip;
+  struct gpiod_line *line;
+
   rclcpp::TimerBase::SharedPtr timer_;
   rclcpp::TimerBase::SharedPtr timer_once_;
   rclcpp::Subscription<std_msgs::msg::Int32MultiArray>::SharedPtr subscription_;
   rclcpp::Publisher<interfaces::msg::RobotStatus>::SharedPtr publisher_;
+  rclcpp::Service<interfaces::srv::ResetMicro>::SharedPtr service_;
 
+  void auto_toggle() {
+    gpiod_line_set_value(line, false);
+    std::this_thread::sleep_for(std::chrono::milliseconds(1));
+    gpiod_line_set_value(line, true);
+    // RCLCPP_INFO(this->get_logger(), "GPIO %d", state);
+  }
+  
   void state_callback(const std_msgs::msg::Int32MultiArray::SharedPtr msg) {
     float min_perc = 0;//%
     float max_perc = 100;//%
@@ -72,6 +111,11 @@ private:
     battery_charge_percentage = { int(battery1_percentage), int(battery2_percentage)};
 
     microcontroller_temperature = float(msg->data[22]);
+  }
+
+  void reset_micro(const std::shared_ptr<interfaces::srv::ResetMicro::Request> request, std::shared_ptr<interfaces::srv::ResetMicro::Response> response) {
+    RCLCPP_WARN(this->get_logger(), "RESTARTING MICROCONTROLLER"); 
+    auto_toggle();
   }
   
   void timer_loop() {
