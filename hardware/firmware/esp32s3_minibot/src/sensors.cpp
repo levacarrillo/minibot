@@ -38,8 +38,8 @@ void read_sensors() {
   sensors_data[19] = analogRead(1);
   sensors_data[20] = analogRead(2);
   
-  // --- STOP BUTTON --- 
-  sensors_data[21] = digitalRead(STOP_BUTTON);
+  // --- CHARGE SENSOR --- 
+  sensors_data[21] = analogRead(CHARGE_SENSOR);
   
   // --- TEMPERATURE SENSOR ---
   temp_sensor_set_config(temp_sensor);

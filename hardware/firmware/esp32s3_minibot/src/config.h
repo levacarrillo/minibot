@@ -7,7 +7,7 @@
 #define BAUDRATE 3000000
 
 // --- DIGITAL SENSOR PINS ---
-#define STOP_BUTTON         39
+#define CHARGE_SENSOR       19
 #define RIGHT_LINE_SENSOR   36
 #define LEFT_LINE_SENSOR    37
 #define CENTER_LINE_SENSOR  42
@@ -17,7 +17,7 @@
 
 // --- ENCODERS PINS ---
 #define RH_ENCODER_A  20
-#define RH_ENCODER_B  19
+#define RH_ENCODER_B  39
 #define LH_ENCODER_A  35
 #define LH_ENCODER_B  47
 
