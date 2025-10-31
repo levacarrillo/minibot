@@ -61,6 +61,7 @@ public:
 
 private:
   int robot_id;
+  int time_check = 0;
   std::string robot_name;
   float max_battery_voltage = 8.4; // Volts
   float raspberrypi_temperature;
@@ -73,16 +74,15 @@ private:
   struct gpiod_line *line;
 
   rclcpp::TimerBase::SharedPtr timer_;
-  rclcpp::TimerBase::SharedPtr timer_once_;
   rclcpp::Subscription<std_msgs::msg::Int32MultiArray>::SharedPtr subscription_;
   rclcpp::Publisher<interfaces::msg::RobotStatus>::SharedPtr publisher_;
   rclcpp::Service<interfaces::srv::ResetMicro>::SharedPtr service_;
 
   void auto_toggle() {
+    RCLCPP_WARN(this->get_logger(), "RESTARTING MICROCONTROLLER"); 
     gpiod_line_set_value(line, false);
     std::this_thread::sleep_for(std::chrono::milliseconds(1));
     gpiod_line_set_value(line, true);
-    // RCLCPP_INFO(this->get_logger(), "GPIO %d", state);
   }
   
   void state_callback(const std_msgs::msg::Int32MultiArray::SharedPtr msg) {
@@ -114,11 +114,17 @@ private:
   }
 
   void reset_micro(const std::shared_ptr<interfaces::srv::ResetMicro::Request> request, std::shared_ptr<interfaces::srv::ResetMicro::Response> response) {
-    RCLCPP_WARN(this->get_logger(), "RESTARTING MICROCONTROLLER"); 
-    auto_toggle();
+      auto_toggle();
   }
   
   void timer_loop() {
+    time_check += 1;
+    if (time_check >= 50) {
+      time_check = 0;
+      if (microcontroller_temperature == 0) {
+        auto_toggle();
+      }
+    }
     
     FILE* pipe = popen("vcgencmd measure_temp", "r");
     if (!pipe) {
