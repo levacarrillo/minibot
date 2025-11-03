@@ -16,7 +16,10 @@ APT_PACKAGES=(
   htop
   xterm
   python3
+  python3-tk
   screenfetch
+  ros-jazzy-plotjuggler-ros
+  ros-jazzy-rviz2
   ros-jazzy-xacro
   ros-jazzy-random-numbers
   ros-jazzy-nav2-map-server
