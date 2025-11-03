@@ -2,7 +2,8 @@ robot_introspection:
   ros__parameters:
     robot_id: 2 
     robot_name: "Minibot 2"
-    battery_capacity: 50.0    #mah
-    battery_cells_number: 2
-    battery_charge_percentage: 80 #%
+    microcontroller_temperature: 27.0 # °C
+    raspberrypi_temperature: 46.2 # °C
+    battery_voltage: [8.2, 7.6] # VOLTS
+    battery_charge_percentage: [97, 90] # %
     battery_supply_status: "NOT CHARGING"
