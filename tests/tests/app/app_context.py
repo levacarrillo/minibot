@@ -161,12 +161,17 @@ class AppContext:
     # GENERAL METHOD
     def loop(self):
         robot_name = self._ros.get_robot_name()
-        self.status_panel.robot_name_var.set('No robot ' if robot_name is None else robot_name)
+        battery_charge  = self._ros.get_battery_charge()
+        mc_temperature  = self._ros.get_mc_temperature()
+        cpu_temperature = self._service.truncate(self._ros.get_cpu_temperature())
 
-        battery_charge = self._ros.get_battery_charge()
-        self.status_panel.progress_var.set(100 if battery_charge is None else battery_charge)
-        self.status_panel.battery_percentage_var.set(f'Battery: {99 if battery_charge is None else battery_charge}%')
+        self.status_panel.robot_name_var.set('No robot ' if robot_name is None else robot_name)
+        self.status_panel.battery_percent_1_var.set(f'{99 if battery_charge is None else battery_charge[0]}%')
+        self.status_panel.battery_percent_2_var.set(f'{99 if battery_charge is None else battery_charge[1]}%')
+        self.status_panel.progress_var.set(100 if battery_charge is None else battery_charge[0])
         
+        self.status_panel.micro_c_temperature_var.set(f'MC:  {mc_temperature}°C')
+        self.status_panel.cpu_temperature_var.set(f'CPU: {cpu_temperature}°C')
         self._movement_is_executing = self._ros.movement_is_running()
 
         self._cmd_pose_panel.run_stop.set('Stop' if self._movement_is_executing else 'Run')

@@ -46,8 +46,10 @@ class Ros(Node):
 
         self._robot_name = None
         self._battery_charge_percentage = None
+        self._microcontroller_temperature = 0.0
+        self._raspberrypi_temperature = 0.0
+        self._battery_supply_status = "UNDEFINED"
         self._movement_is_executing = False
-
         self.create_timer(0.5, self._request_services)
 
     def get_vel_params(self):
@@ -82,12 +84,24 @@ class Ros(Node):
     def _robot_status_callback(self, msg):
         self._robot_name = msg.robot_name
         self._battery_charge_percentage = msg.battery_charge_percentage
-    
+        self._microcontroller_temperature = msg.microcontroller_temperature
+        self._raspberrypi_temperature = msg.raspberrypi_temperature
+        self._battery_supply_status = msg.battery_supply_status
+
     def get_robot_name(self):
         return self._robot_name
 
     def get_battery_charge(self):
         return self._battery_charge_percentage
+
+    def get_mc_temperature(self):
+        return self._microcontroller_temperature
+    
+    def get_cpu_temperature(self):
+        return self._raspberrypi_temperature
+    
+    def get_battery_status(self):
+        return self._battery_supply_status
 
     def _request_services(self):
         lidar_req = GetScan.Request()

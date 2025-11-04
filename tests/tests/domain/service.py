@@ -17,6 +17,10 @@ class Service():
     def cm_to_m(self, cm):
         return float(cm) * 0.01
 
+    def truncate(self, num):
+        num = num * 10
+        return math.trunc(num) / 10
+
     def get_head_coords(self, width):
         coords = [
             width / 2,
