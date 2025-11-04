@@ -4,7 +4,8 @@ from tkinter import ttk
 
 class StatusPanel:
     def __init__(self, context):
-        self.progress_var  = IntVar()
+        self.progress_bar1_var  = IntVar()
+        self.progress_bar2_var  = IntVar()
         self.robot_name_var = StringVar()
         self.battery_percent_1_var = StringVar()
         self.battery_percent_2_var = StringVar()
@@ -20,8 +21,8 @@ class StatusPanel:
         label_battery  = Label(frame, text = 'Battery:', font = ('arial', 11, 'bold'))
         label_percent1 = Label(frame, textvariable = self.battery_percent_1_var)
         label_percent2 = Label(frame, textvariable = self.battery_percent_2_var)
-        battery_bar1   = ttk.Progressbar(frame, variable = self.progress_var, maximum = 100)
-        battery_bar2   = ttk.Progressbar(frame, variable = self.progress_var, maximum = 100)
+        battery_bar1   = ttk.Progressbar(frame, variable = self.progress_bar1_var, maximum = 100)
+        battery_bar2   = ttk.Progressbar(frame, variable = self.progress_bar2_var, maximum = 100)
 
         frame          .grid(column = 0, row = 0, sticky = (N, W), padx = (5, 0),  pady = (5, 5), columnspan = 5)
         label_select   .grid(column = 0, row = 0, sticky = (N, W), padx = (5, 0),  pady = (0, 0))
