@@ -3,17 +3,17 @@
 
 #include <Arduino.h>
 
+// --- DEFINITIONS ---
+#define LEFT   0
+#define RIGHT  1
+
 // --- COMUNICATION ---
 #define BAUDRATE 3000000
 
 // --- DIGITAL SENSOR PINS ---
-#define CHARGE_SENSOR       19
 #define RIGHT_LINE_SENSOR   36
 #define LEFT_LINE_SENSOR    37
 #define CENTER_LINE_SENSOR  42
-
-#define LEFT   0
-#define RIGHT  1
 
 // --- ENCODERS PINS ---
 #define RH_ENCODER_A  20
@@ -29,15 +29,34 @@
 #define PWM_CHANNEL_RIGHT1   2
 #define PWM_CHANNEL_RIGHT2   3
 
-
+// --- DIGITAL OUTPUTS ---
 #define MOTOR_LEFT_INI1     45
 #define MOTOR_LEFT_INI2     41
 #define MOTOR_RIGHT_INI3    38
 #define MOTOR_RIGHT_INI4    21
 
-#define ALARM_LED           40
-#define ALARM_BUZZER        48
-#define BATTERY_THRESHOLD 3500
+// --- ANALOG READINGS ---
+#define LDR_SENSOR_1        18
+#define LDR_SENSOR_2        17
+#define LDR_SENSOR_3        16
+#define LDR_SENSOR_4        15
+#define LDR_SENSOR_5         4
+#define LDR_SENSOR_6         5
+#define LDR_SENSOR_7         6
+#define LDR_SENSOR_8         7
+
+#define SHARP_SENSOR_1       8
+#define SHARP_SENSOR_2       3
+#define SHARP_SENSOR_3       9
+#define SHARP_SENSOR_4      10
+#define SHARP_SENSOR_5      11 
+#define SHARP_SENSOR_6      12 
+#define SHARP_SENSOR_7      13 
+#define SHARP_SENSOR_8      14
+
+#define BATTERY_SENSOR_1     1
+#define BATTERY_SENSOR_2     2
+
 
 // --- CONTROL ---
 const int sampling_time = 10; // MILLISECONDS

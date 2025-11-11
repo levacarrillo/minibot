@@ -4,7 +4,7 @@
 #include <Arduino.h>
 #include <driver/temp_sensor.h>
 
-extern int32_t sensors_data[23];
+extern int32_t sensors_data[22];
 
 void read_sensors();
 
