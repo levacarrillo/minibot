@@ -79,10 +79,10 @@ private:
   }
 
   void encodersCallback(const std_msgs::msg::Int32MultiArray::SharedPtr msg) {
-    double left_count  = msg->data[23];
-    double right_count = msg->data[24];
-    double curr_vel_left  = (M_PI * WHEEL_DIAMETER * msg->data[27]) / 60;
-    double curr_vel_right = (M_PI * WHEEL_DIAMETER * msg->data[28]) / 60;
+    double left_count  = msg->data[22];
+    double right_count = msg->data[23];
+    double curr_vel_left  = (M_PI * WHEEL_DIAMETER * msg->data[26]) / 60;
+    double curr_vel_right = (M_PI * WHEEL_DIAMETER * msg->data[27]) / 60;
 
     if (left_speed < 0) {
         curr_vel_left = - curr_vel_left;

@@ -110,7 +110,7 @@ private:
     battery_voltage = {float(max_battery_voltage * battery1_percentage / 100), float(max_battery_voltage * battery2_percentage / 100) };
     battery_charge_percentage = { int(battery1_percentage), int(battery2_percentage)};
 
-    microcontroller_temperature = float(msg->data[22]);
+    microcontroller_temperature = float(msg->data[21]);
   }
 
   void reset_micro(const std::shared_ptr<interfaces::srv::ResetMicro::Request> request, std::shared_ptr<interfaces::srv::ResetMicro::Response> response) {
