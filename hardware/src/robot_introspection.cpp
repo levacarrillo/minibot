@@ -1,4 +1,4 @@
-#include "gpiod.h"
+#include "gpiod.hpp"
 #include "rclcpp/rclcpp.hpp"
 #include "interfaces/msg/robot_status.hpp"
 #include "interfaces/srv/reset_micro.hpp"
@@ -9,7 +9,15 @@ using std::placeholders::_1;
 using std::placeholders::_2;
 using namespace std::chrono_literals;
 
-#define RST_GPIO 4
+#define GPIO_DISCONNECT_SOURCE           2
+#define GPIO_RESET_MICROCONTROLLER       3
+#define GPIO_FAN_CONTROLLER              4
+#define GPIO_CHECK_CHARGER_CONNECTION   14 
+#define GPIO_BATTERY1_LOW_DETECTION     15
+#define GPIO_BATTERY2_LOW_DETECTION     17
+#define GPIO_BATTERY1_FULL_DETECTION    18
+#define GPIO_BATTERY2_FULL_DETECTION    27
+
 
 class RobotIntrospection : public rclcpp::Node {
 
@@ -17,21 +25,21 @@ public:
   RobotIntrospection() : Node ("robot_introspection") {
     RCLCPP_INFO(this->get_logger(), "INITIALIZING robot_introspection NODE BY LUIS GONZALEZ...");
 
-    chip = gpiod_chip_open_by_name("gpiochip0");
-    if (!chip) {
-	RCLCPP_ERROR(this->get_logger(), "ERROR OPENNING gpiochip0");
-        return;
+    chip_ = gpiod::chip("gpiochip0");
+
+    for (int pin : input_pins_) {
+      auto line = chip_.get_line(pin);
+      line.request({"robot_introspection",
+      gpiod::line_request::DIRECTION_INPUT, 0});
+      input_lines_.push_back(line);
     }
-    line = gpiod_chip_get_line(chip, RST_GPIO);
-    if (!line) {
-	RCLCPP_ERROR(this->get_logger(), "ERROR GETTING THE LINE GPIO");
-        return;
+
+    for (int pin : output_pins_) {
+      auto line = chip_.get_line(pin);
+      line.request({"robot_introspection",
+      gpiod::line_request::DIRECTION_OUTPUT, 0}, 0);
+      output_lines_.push_back(line);
     }
-    if (gpiod_line_request_output(line, "ros2", 0) < 0) {
-	RCLCPP_ERROR(this->get_logger(), "ERROR CONFIGURING OUTPUT");
-        return;
-    }
-    gpiod_line_set_value(line, false);
 
     this->declare_parameter<int>("robot_id", this->robot_id);
     this->declare_parameter<std::string>("robot_name", this->robot_name);
@@ -54,11 +62,6 @@ public:
 		    100ms, std::bind(&RobotIntrospection::timer_loop, this));
   }	
 
-  ~RobotIntrospection() {
-    gpiod_line_release(line);
-    gpiod_chip_close(chip);
-  }
-
 private:
   int robot_id;
   int time_check = 0;
@@ -70,8 +73,23 @@ private:
   std::vector<int> battery_charge_percentage = {0, 0};
   std::string battery_supply_status;
 
-  struct gpiod_chip *chip;
-  struct gpiod_line *line;
+  gpiod::chip chip_;
+  std::vector<gpiod::line> input_lines_;
+  std::vector<gpiod::line> output_lines_;
+
+  std::vector<int> input_pins_ = {
+    GPIO_CHECK_CHARGER_CONNECTION,
+    GPIO_BATTERY1_LOW_DETECTION,
+    GPIO_BATTERY2_LOW_DETECTION,
+    GPIO_BATTERY1_FULL_DETECTION,
+    GPIO_BATTERY2_FULL_DETECTION
+  };
+
+  std::vector<int> output_pins_ = {
+    GPIO_DISCONNECT_SOURCE,
+    GPIO_RESET_MICROCONTROLLER,
+    GPIO_FAN_CONTROLLER
+  };
 
   rclcpp::TimerBase::SharedPtr timer_;
   rclcpp::Subscription<std_msgs::msg::Int32MultiArray>::SharedPtr subscription_;
@@ -80,16 +98,28 @@ private:
 
   void auto_toggle() {
     RCLCPP_WARN(this->get_logger(), "RESTARTING MICROCONTROLLER"); 
-    gpiod_line_set_value(line, false);
-    std::this_thread::sleep_for(std::chrono::milliseconds(1));
-    gpiod_line_set_value(line, true);
+    output_lines_[0].set_value(false);
+    output_lines_[1].set_value(false);
+    output_lines_[2].set_value(false);
+    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+    output_lines_[0].set_value(true);
+    output_lines_[1].set_value(true);
+    output_lines_[2].set_value(true);
+  }
+
+  void read_inputs() {
+    std::cout << "GPIO READINGS.-> [";
+    for(size_t i = 0; i < input_lines_.size(); i++) {
+      std::cout << input_lines_[i].get_value() << ", ";
+    }
+    std::cout << "]"<< std::endl; 
   }
   
   void state_callback(const std_msgs::msg::Int32MultiArray::SharedPtr msg) {
     float min_perc = 0;//%
     float max_perc = 100;//%
-    float min_analog = 2560;
-    float max_analog = 4095;
+    float min_analog = 1900;
+    float max_analog = 2650;
     
     float battery1_percentage = min_perc + (msg->data[19] - min_analog) * (max_perc - min_perc) / (max_analog - min_analog);
     float battery2_percentage = min_perc + (msg->data[20] - min_analog) * (max_perc - min_perc) / (max_analog - min_analog);
@@ -97,7 +127,7 @@ private:
     if (battery1_percentage < 0) {
         battery1_percentage = 0; 
     } else if (battery1_percentage > 100) {
-	battery1_percentage = 100;
+	    battery1_percentage = 100;
     }
 
     if (battery2_percentage < 0) {
@@ -113,7 +143,7 @@ private:
     microcontroller_temperature = float(msg->data[21]);
   }
 
-  void reset_micro(const std::shared_ptr<interfaces::srv::ResetMicro::Request> request, std::shared_ptr<interfaces::srv::ResetMicro::Response> response) {
+  void reset_micro(const std::shared_ptr<interfaces::srv::ResetMicro::Request>, std::shared_ptr<interfaces::srv::ResetMicro::Response>) {
       auto_toggle();
   }
   
@@ -125,11 +155,12 @@ private:
         auto_toggle();
       }
     }
+    read_inputs();
     
     FILE* pipe = popen("vcgencmd measure_temp", "r");
     if (!pipe) {
-        RCLCPP_ERROR(this->get_logger(), "ERROR EXECUTING vcgencmd");
-	return;
+      RCLCPP_ERROR(this->get_logger(), "ERROR EXECUTING vcgencmd");
+	    return;
     }
     char buffer[128];
     std::string temp_result;
