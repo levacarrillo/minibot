@@ -11,12 +11,12 @@
 #define BAUDRATE 3000000
 
 // --- DIGITAL SENSOR PINS ---
-#define RIGHT_LINE_SENSOR   36
+#define RIGHT_LINE_SENSOR   48
 #define LEFT_LINE_SENSOR    37
 #define CENTER_LINE_SENSOR  42
 
 // --- ENCODERS PINS ---
-#define RH_ENCODER_A  20
+#define RH_ENCODER_A  40
 #define RH_ENCODER_B  39
 #define LH_ENCODER_A  35
 #define LH_ENCODER_B  47
@@ -36,14 +36,14 @@
 #define MOTOR_RIGHT_INI4    21
 
 // --- ANALOG READINGS ---
-#define LDR_SENSOR_1        18
-#define LDR_SENSOR_2        17
-#define LDR_SENSOR_3        16
-#define LDR_SENSOR_4        15
-#define LDR_SENSOR_5         4
-#define LDR_SENSOR_6         5
-#define LDR_SENSOR_7         6
-#define LDR_SENSOR_8         7
+#define LDR_SENSOR_1         4
+#define LDR_SENSOR_2         5
+#define LDR_SENSOR_3         6
+#define LDR_SENSOR_4         7
+#define LDR_SENSOR_5        15
+#define LDR_SENSOR_6        16
+#define LDR_SENSOR_7        17 
+#define LDR_SENSOR_8        18
 
 #define SHARP_SENSOR_1       8
 #define SHARP_SENSOR_2       3
