@@ -2,6 +2,8 @@
 #include "rclcpp/rclcpp.hpp"
 #include "interfaces/msg/robot_status.hpp"
 #include "interfaces/srv/reset_micro.hpp"
+#include "interfaces/srv/turn_on_fan.hpp"
+#include "interfaces/srv/disconnect_source.hpp"
 #include "std_msgs/msg/int32_multi_array.hpp"
 
 
@@ -41,6 +43,8 @@ public:
       output_lines_.push_back(line);
     }
 
+
+
     this->declare_parameter<int>("robot_id", this->robot_id);
     this->declare_parameter<std::string>("robot_name", this->robot_name);
     this->declare_parameter<std::string>("battery_supply_status", this->battery_supply_status);
@@ -57,6 +61,8 @@ public:
     publisher_= this->create_publisher<interfaces::msg::RobotStatus>("robot_status", 10);
 
     service_ = this->create_service<interfaces::srv::ResetMicro>("reset_microcontroller", std::bind(&RobotIntrospection::reset_micro, this, _1, _2));
+    fan_service_ = this->create_service<interfaces::srv::TurnOnFan>("turn_on_fan", std::bind(&RobotIntrospection::turn_on_fan, this, _1, _2));
+    source_service_ = this->create_service<interfaces::srv::DisconnectSource>("disconnect_source", std::bind(&RobotIntrospection::disconnect_source, this, _1, _2));
 
     timer_= this->create_wall_timer(
 		    100ms, std::bind(&RobotIntrospection::timer_loop, this));
@@ -90,21 +96,20 @@ private:
     GPIO_RESET_MICROCONTROLLER,
     GPIO_FAN_CONTROLLER
   };
+ 
 
   rclcpp::TimerBase::SharedPtr timer_;
   rclcpp::Subscription<std_msgs::msg::Int32MultiArray>::SharedPtr subscription_;
   rclcpp::Publisher<interfaces::msg::RobotStatus>::SharedPtr publisher_;
   rclcpp::Service<interfaces::srv::ResetMicro>::SharedPtr service_;
+  rclcpp::Service<interfaces::srv::TurnOnFan>::SharedPtr fan_service_;
+  rclcpp::Service<interfaces::srv::DisconnectSource>::SharedPtr source_service_;
 
   void auto_toggle() {
     RCLCPP_WARN(this->get_logger(), "RESTARTING MICROCONTROLLER"); 
-    output_lines_[0].set_value(false);
     output_lines_[1].set_value(false);
-    output_lines_[2].set_value(false);
     std::this_thread::sleep_for(std::chrono::milliseconds(1000));
-    output_lines_[0].set_value(true);
     output_lines_[1].set_value(true);
-    output_lines_[2].set_value(true);
   }
 
   void read_inputs() {
@@ -145,6 +150,26 @@ private:
 
   void reset_micro(const std::shared_ptr<interfaces::srv::ResetMicro::Request>, std::shared_ptr<interfaces::srv::ResetMicro::Response>) {
       auto_toggle();
+  }
+
+  void turn_on_fan(const std::shared_ptr<interfaces::srv::TurnOnFan::Request> req, std::shared_ptr<interfaces::srv::TurnOnFan::Response> res) {
+    if (req->turn_on) {
+      RCLCPP_WARN(this->get_logger(), "TURNING ON FAN");
+      output_lines_[2].set_value(true);
+    } else {
+      RCLCPP_WARN(this->get_logger(), "TURNING OFF FAN");
+      output_lines_[2].set_value(false);
+    }
+  }
+
+  void disconnect_source(const std::shared_ptr<interfaces::srv::DisconnectSource::Request> req, std::shared_ptr<interfaces::srv::DisconnectSource::Response> res) {
+    if (req->disconnect) {
+      RCLCPP_WARN(this->get_logger(), "DISCONNECTING CHARGER SOURCE");
+      output_lines_[0].set_value(true);
+    } else {
+      RCLCPP_WARN(this->get_logger(), "CONNECTING CHARGER SOURCE");
+      output_lines_[0].set_value(true);
+    }
   }
   
   void timer_loop() {
